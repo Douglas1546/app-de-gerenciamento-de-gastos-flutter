@@ -1,0 +1,644 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
+import 'dart:math' as math;
+import '../providers/product_provider.dart';
+import '../models/product.dart';
+
+class ReportsTab extends StatefulWidget {
+  const ReportsTab({Key? key}) : super(key: key);
+
+  @override
+  State<ReportsTab> createState() => _ReportsTabState();
+}
+
+class _ReportsTabState extends State<ReportsTab> {
+  late int _selectedYear;
+  late int _selectedMonth;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _selectedYear = now.year;
+    _selectedMonth = now.month;
+  }
+
+  Color _getCategoryColor(ProductCategory category) {
+    switch (category) {
+      case ProductCategory.alimentos:
+        return Colors.green;
+      case ProductCategory.bebidas:
+        return Colors.blue;
+      case ProductCategory.tecnologia:
+        return Colors.purple;
+      case ProductCategory.contasDeCasa:
+        return Colors.orange;
+      case ProductCategory.higienePessoal:
+        return Colors.pink;
+      case ProductCategory.limpeza:
+        return Colors.teal;
+      case ProductCategory.vestuario:
+        return Colors.indigo;
+      case ProductCategory.saude:
+        return Colors.red;
+      case ProductCategory.entretenimento:
+        return Colors.amber;
+      case ProductCategory.outros:
+        return Colors.grey;
+    }
+  }
+
+  Widget _buildEvolutionChart(ProductProvider provider, NumberFormat currency) {
+    final evolution = provider.getSpendingEvolution(6);
+
+    if (evolution.isEmpty || evolution.every((e) => e['total'] == 0.0)) {
+      return Center(
+        child: Text(
+          'Sem dados para exibir',
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+        ),
+      );
+    }
+
+    final maxY = evolution
+        .map((e) => e['total'] as double)
+        .reduce((a, b) => a > b ? a : b);
+
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: maxY > 0 ? maxY / 4 : 1,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(color: Colors.grey[300]!, strokeWidth: 1);
+          },
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              getTitlesWidget: (value, meta) {
+                if (value.toInt() < 0 || value.toInt() >= evolution.length) {
+                  return const SizedBox();
+                }
+                final data = evolution[value.toInt()];
+                final date = data['date'] as DateTime;
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    DateFormat('MMM', 'pt_BR').format(date),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 50,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  'R\$${value.toInt()}',
+                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                );
+              },
+            ),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+        ),
+        borderData: FlBorderData(
+          show: true,
+          border: Border(
+            bottom: BorderSide(color: Colors.grey[300]!),
+            left: BorderSide(color: Colors.grey[300]!),
+          ),
+        ),
+        minX: 0,
+        maxX: (evolution.length - 1).toDouble(),
+        minY: 0,
+        maxY: maxY * 1.2,
+        lineTouchData: LineTouchData(
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            getTooltipItems: (touchedSpots) {
+              return touchedSpots.map((spot) {
+                final data = evolution[spot.x.toInt()];
+                final date = data['date'] as DateTime;
+                return LineTooltipItem(
+                  '${DateFormat('MMM/yy', 'pt_BR').format(date)}\n${currency.format(spot.y)}',
+                  const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        ),
+        lineBarsData: [
+          LineChartBarData(
+            spots:
+                evolution.asMap().entries.map((entry) {
+                  return FlSpot(
+                    entry.key.toDouble(),
+                    entry.value['total'] as double,
+                  );
+                }).toList(),
+            isCurved: false,
+            color: const Color(0xFF2E7D32),
+            barWidth: 3,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: Colors.white,
+                  strokeWidth: 2,
+                  strokeColor: const Color(0xFF2E7D32),
+                );
+              },
+            ),
+            belowBarData: BarAreaData(
+              show: true,
+              color: const Color(0xFF2E7D32).withOpacity(0.1),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    return Consumer<ProductProvider>(
+      builder: (context, provider, child) {
+        final report = provider.getMonthlyReport(_selectedYear, _selectedMonth);
+        final totalSpent = provider.getTotalSpentInMonth(
+          _selectedYear,
+          _selectedMonth,
+        );
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              // Month/Year Selector
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                color: const Color.fromARGB(137, 255, 255, 255),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          if (_selectedMonth == 1) {
+                            _selectedMonth = 12;
+                            _selectedYear--;
+                          } else {
+                            _selectedMonth--;
+                          }
+                        });
+                      },
+                    ),
+                    Text(
+                      DateFormat(
+                        'MMMM yyyy',
+                        'pt_BR',
+                      ).format(DateTime(_selectedYear, _selectedMonth)),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_forward,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          if (_selectedMonth == 12) {
+                            _selectedMonth = 1;
+                            _selectedYear++;
+                          } else {
+                            _selectedMonth++;
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              // Total Spent
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Card(
+                  elevation: 3,
+                  color: const Color(0xFF2E7D32),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Total Gasto no Mês',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white70,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          currency.format(totalSpent),
+                          style: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Theme(
+                  data: Theme.of(context).copyWith(
+                    dividerColor: const Color(0xFF2E7D32),
+                    dividerTheme: const DividerThemeData(
+                      color: Color(0xFF2E7D32),
+                      thickness: 1,
+                    ),
+                  ),
+                  child: ExpansionTile(
+                   initiallyExpanded: true,
+                   leading: const CircleAvatar(
+                     backgroundColor: Color(0xFF2E7D32),
+                     child: Icon(
+                       Icons.show_chart,
+                       color: Colors.white,
+                       size: 20,
+                     ),
+                   ),
+                  title: const Text(
+                    'Evolução dos Gastos',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      'Últimos 6 meses',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                  ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: SizedBox(
+                        height: 200,
+                        child: _buildEvolutionChart(provider, currency),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ),
+
+              if (report.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.analytics_outlined,
+                        size: 80,
+                        color: Colors.grey[400],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Nenhum gasto neste mês',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else ...[
+                // Bar Chart
+                if (report.isNotEmpty)
+                  Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Gastos por Categoria',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Distribuição do mês selecionado',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            height: 250,
+                            child: BarChart(
+                              BarChartData(
+                                alignment: BarChartAlignment.spaceAround,
+                                maxY:
+                                    report.values
+                                        .map((e) => e['totalSpent'] as double)
+                                        .reduce((a, b) => a > b ? a : b) *
+                                    1.2,
+                                barTouchData: BarTouchData(
+                                  enabled: true,
+                                  touchTooltipData: BarTouchTooltipData(
+                                    getTooltipItem: (
+                                      group,
+                                      groupIndex,
+                                      rod,
+                                      rodIndex,
+                                    ) {
+                                      final category = report.keys.elementAt(
+                                        groupIndex,
+                                      );
+                                      return BarTooltipItem(
+                                        '${category.displayName}\n',
+                                        const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text: currency.format(rod.toY),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ),
+                                gridData: FlGridData(
+                                  show: true,
+                                  drawVerticalLine: false,
+                                  horizontalInterval:
+                                      report.values
+                                          .map((e) => e['totalSpent'] as double)
+                                          .reduce((a, b) => a > b ? a : b) /
+                                      4,
+                                  getDrawingHorizontalLine: (value) {
+                                    return FlLine(
+                                      color: Colors.grey[300]!,
+                                      strokeWidth: 1,
+                                    );
+                                  },
+                                ),
+                                titlesData: FlTitlesData(
+                                  show: true,
+                                  bottomTitles: AxisTitles(
+                                    sideTitles: SideTitles(
+                                      showTitles: true,
+                                      reservedSize: 48,
+                                      getTitlesWidget: (value, meta) {
+                                        if (value.toInt() >= report.length) {
+                                          return const SizedBox();
+                                        }
+                                        final category = report.keys.elementAt(
+                                          value.toInt(),
+                                        );
+                                        final label = category.displayName
+                                            .substring(
+                                              0,
+                                              category.displayName.length > 10
+                                                  ? 10
+                                                  : category.displayName.length,
+                                            );
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 8,
+                                          ),
+                                          child: Transform.rotate(
+                                            angle: -math.pi / 6,
+                                            child: Text(
+                                              label,
+                                              style: const TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  leftTitles: AxisTitles(
+                                    sideTitles: SideTitles(
+                                      showTitles: true,
+                                      reservedSize: 50,
+                                      getTitlesWidget: (value, meta) {
+                                        return Text(
+                                          'R\$${value.toInt()}',
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.grey,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  topTitles: const AxisTitles(
+                                    sideTitles: SideTitles(showTitles: false),
+                                  ),
+                                  rightTitles: const AxisTitles(
+                                    sideTitles: SideTitles(showTitles: false),
+                                  ),
+                                ),
+                                borderData: FlBorderData(
+                                  show: true,
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Colors.grey[300]!,
+                                    ),
+                                    left: BorderSide(color: Colors.grey[300]!),
+                                  ),
+                                ),
+                                barGroups:
+                                    report.entries.map((entry) {
+                                      final index = report.keys
+                                          .toList()
+                                          .indexOf(entry.key);
+                                      return BarChartGroupData(
+                                        x: index,
+                                        barRods: [
+                                          BarChartRodData(
+                                            toY:
+                                                entry.value['totalSpent']
+                                                    as double,
+                                            color: _getCategoryColor(entry.key),
+                                            width: 20,
+                                            borderRadius:
+                                                const BorderRadius.vertical(
+                                                  top: Radius.circular(6),
+                                                ),
+                                          ),
+                                        ],
+                                      );
+                                    }).toList(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                // Category Details
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.only(bottom: 16),
+                  itemCount: report.length,
+                  itemBuilder: (context, index) {
+                    final category = report.keys.elementAt(index);
+                    final data = report[category]!;
+                    final totalSpent = data['totalSpent'] as double;
+                    final quantity = data['quantity'] as int;
+                    final items = data['items'] as List<Product>;
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          dividerColor: _getCategoryColor(category),
+                          dividerTheme: DividerThemeData(
+                            color: _getCategoryColor(category),
+                            thickness: 1,
+                          ),
+                        ),
+                        child: ExpansionTile(
+                          leading: CircleAvatar(
+                            backgroundColor: _getCategoryColor(category),
+                            child: const Icon(
+                              Icons.shopping_basket,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                          title: Text(
+                            category.displayName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              '${currency.format(totalSpent)} • $quantity ${quantity == 1 ? 'item' : 'itens'}',
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                          children:
+                              items.map((product) {
+                                return ListTile(
+                                  dense: true,
+                                  title: Text(product.name),
+                                  subtitle: Text(
+                                    'Qtd: ${product.quantity} • ${DateFormat('dd/MM/yyyy', 'pt_BR').format(product.purchasedAt!)}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                    product.price != null
+                                        ? currency.format(product.price!)
+                                        : currency.format(0),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF2E7D32),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
