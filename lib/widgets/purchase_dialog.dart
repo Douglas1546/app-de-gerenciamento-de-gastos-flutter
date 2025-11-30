@@ -51,18 +51,12 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
           children: [
             Text(
               'Produto: ${widget.product.name}',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             Text(
               'Quantidade: ${widget.product.quantity}',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -72,9 +66,13 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
                 border: OutlineInputBorder(),
                 prefixText: 'R\$ ',
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d+([.,]\d{0,2})?')),
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^\d+([.,]\d{0,2})?'),
+                ),
               ],
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -98,17 +96,14 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
                 children: [
                   const Text(
                     'Total:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Text(
                     currency.format(_totalPrice),
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
-                      color: Color(0xFF2E7D32),
+                      color: Color(0xFF3B82F6),
                     ),
                   ),
                 ],
@@ -125,7 +120,9 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              final unitPrice = double.parse(_priceController.text.replaceAll(',', '.'));
+              final unitPrice = double.parse(
+                _priceController.text.replaceAll(',', '.'),
+              );
               Navigator.of(context).pop(unitPrice);
             }
           },

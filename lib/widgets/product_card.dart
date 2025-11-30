@@ -101,7 +101,7 @@ class ProductCard extends StatelessWidget {
               showCheckbox
                   ? Checkbox(
                     value: product.isPurchased,
-                    activeColor: const Color(0xFF2E7D32),
+                    activeColor: const Color(0xFF3B82F6),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
@@ -170,19 +170,19 @@ class ProductCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2E7D32).withValues(alpha: 0.15),
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       product.quantity > 1
                           ? '${currency.format(product.price! / product.quantity)} un. • ${currency.format(product.price!)}'
                           : currency.format(product.price!),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF2E7D32),
-                      ),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF3B82F6),
                     ),
+                  ),
                   ),
                 if (product.purchasedAt != null)
                   Text(

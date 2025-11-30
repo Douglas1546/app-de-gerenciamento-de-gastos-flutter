@@ -50,7 +50,7 @@ class PurchasedTab extends StatelessWidget {
                               }
                             },
                             backgroundColor: Colors.grey[200],
-                            selectedColor: const Color(0xFF2E7D32),
+                            selectedColor: const Color(0xFF3B82F6),
                             labelStyle: TextStyle(
                               color: isSelected ? Colors.white : Colors.black87,
                               fontWeight: FontWeight.w500,
@@ -133,7 +133,7 @@ class PurchasedTab extends StatelessWidget {
                                     const SnackBar(
                                       content: Text('Produto atualizado!'),
                                       duration: Duration(seconds: 2),
-                                      backgroundColor: Color(0xFF2E7D32),
+                                      backgroundColor: Color(0xFF3B82F6),
                                     ),
                                   );
                                 }

@@ -35,11 +35,11 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF2E7D32), // Green 800
-            primary: const Color(0xFF2E7D32),
-            secondary: const Color(0xFF66BB6A), // Green 400
-            tertiary: const Color(0xFF81C784), // Green 300
-            surface: const Color(0xFFF1F8E9), // Light green background
+            seedColor: const Color(0xFF3B82F6),
+            primary: const Color(0xFF3B82F6),
+            secondary: const Color(0xFF90CAF9),
+            tertiary: const Color(0xFF64B5F6),
+            surface: Colors.white,
             brightness: Brightness.light,
           ),
           cardTheme: CardTheme(
@@ -73,8 +73,8 @@ class MyApp extends StatelessWidget {
           appBarTheme: const AppBarTheme(
             centerTitle: true,
             elevation: 0,
-            backgroundColor: Color(0xFF2E7D32),
-            foregroundColor: Colors.white,
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
           ),
         ),
         home: const MyHomePage(),
@@ -101,10 +101,10 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF2E7D32),
+          backgroundColor: Colors.white,
           title: const Text(
             'Lista de Compras',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
           ),
           elevation: 0,
         ),
@@ -119,21 +119,21 @@ class _MyHomePageState extends State<MyHomePage> {
             });
           },
           backgroundColor: Colors.white,
-          indicatorColor: const Color(0xFF2E7D32).withValues(alpha: 0.2),
+          indicatorColor: const Color(0xFF3B82F6).withValues(alpha: 0.12),
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.shopping_cart_outlined),
-              selectedIcon: Icon(Icons.shopping_cart, color: Color(0xFF2E7D32)),
+              selectedIcon: Icon(Icons.shopping_cart, color: Color(0xFF3B82F6)),
               label: 'A Comprar',
             ),
             NavigationDestination(
               icon: Icon(Icons.shopping_bag_outlined),
-              selectedIcon: Icon(Icons.shopping_bag, color: Color(0xFF2E7D32)),
+              selectedIcon: Icon(Icons.shopping_bag, color: Color(0xFF3B82F6)),
               label: 'Comprados',
             ),
             NavigationDestination(
               icon: Icon(Icons.analytics_outlined),
-              selectedIcon: Icon(Icons.analytics, color: Color(0xFF2E7D32)),
+              selectedIcon: Icon(Icons.analytics, color: Color(0xFF3B82F6)),
               label: 'Relatórios',
             ),
           ],

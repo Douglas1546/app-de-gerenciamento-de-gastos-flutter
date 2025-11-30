@@ -163,7 +163,7 @@ class _ReportsTabState extends State<ReportsTab> {
                   );
                 }).toList(),
             isCurved: false,
-            color: const Color(0xFF2E7D32),
+            color: const Color(0xFF3B82F6),
             barWidth: 3,
             isStrokeCapRound: true,
             dotData: FlDotData(
@@ -173,13 +173,13 @@ class _ReportsTabState extends State<ReportsTab> {
                   radius: 4,
                   color: Colors.white,
                   strokeWidth: 2,
-                  strokeColor: const Color(0xFF2E7D32),
+                  strokeColor: const Color(0xFF3B82F6),
                 );
               },
             ),
             belowBarData: BarAreaData(
               show: true,
-              color: const Color(0xFF2E7D32).withOpacity(0.1),
+              color: const Color(0xFF3B82F6).withOpacity(0.12),
             ),
           ),
         ],
@@ -335,7 +335,7 @@ class _ReportsTabState extends State<ReportsTab> {
                 padding: const EdgeInsets.all(16),
                 child: Card(
                   elevation: 3,
-                  color: const Color(0xFF2E7D32),
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -347,9 +347,9 @@ class _ReportsTabState extends State<ReportsTab> {
                           _isDaily
                               ? 'Total Gasto no Dia'
                               : 'Total Gasto no Mês',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
-                            color: Colors.white70,
+                            color: Colors.grey[700],
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -359,7 +359,7 @@ class _ReportsTabState extends State<ReportsTab> {
                           style: const TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Color(0xFF2E7D32),
                           ),
                         ),
                       ],
@@ -377,16 +377,16 @@ class _ReportsTabState extends State<ReportsTab> {
                 clipBehavior: Clip.antiAlias,
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    dividerColor: const Color(0xFF2E7D32),
+                    dividerColor: const Color(0xFF3B82F6),
                     dividerTheme: const DividerThemeData(
-                      color: Color(0xFF2E7D32),
+                      color: Color(0xFF3B82F6),
                       thickness: 1,
                     ),
                   ),
                   child: ExpansionTile(
                     initiallyExpanded: true,
                     leading: const CircleAvatar(
-                      backgroundColor: Color(0xFF2E7D32),
+                      backgroundColor: Color(0xFF3B82F6),
                       child: Icon(
                         Icons.show_chart,
                         color: Colors.white,

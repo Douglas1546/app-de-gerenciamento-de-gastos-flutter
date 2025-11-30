@@ -10,11 +10,8 @@ class ShoppingBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(color: const Color(0xFFF1F8E9)), // Light green base
-        CustomPaint(
-          painter: DoodlePainter(),
-          size: Size.infinite,
-        ),
+        Container(color: Colors.white),
+        CustomPaint(painter: DoodlePainter(), size: Size.infinite),
         child,
       ],
     );
@@ -39,16 +36,16 @@ class DoodlePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final random = Random(42); // Fixed seed for consistent pattern
     const gridSize = 80.0;
-    
+
     for (double y = 0; y < size.height; y += gridSize) {
       for (double x = 0; x < size.width; x += gridSize) {
         final iconIndex = random.nextInt(icons.length);
         final icon = icons[iconIndex];
-        
+
         // Add some randomness to position
         final offsetX = random.nextDouble() * 20 - 10;
         final offsetY = random.nextDouble() * 20 - 10;
-        
+
         // Draw icon using TextPainter
         final textPainter = TextPainter(
           text: TextSpan(
@@ -57,16 +54,19 @@ class DoodlePainter extends CustomPainter {
               fontSize: 24,
               fontFamily: icon.fontFamily,
               package: icon.fontPackage,
-              color: const Color(0xFF2E7D32).withValues(alpha: 0.08),
+              color: const Color(0xFF3B82F6).withValues(alpha: 0.06),
             ),
           ),
           textDirection: TextDirection.ltr,
         );
-        
+
         textPainter.layout();
         textPainter.paint(
           canvas,
-          Offset(x + gridSize / 2 + offsetX - 12, y + gridSize / 2 + offsetY - 12),
+          Offset(
+            x + gridSize / 2 + offsetX - 12,
+            y + gridSize / 2 + offsetY - 12,
+          ),
         );
       }
     }
