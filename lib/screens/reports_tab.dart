@@ -296,7 +296,7 @@ class _ReportsTabState extends State<ReportsTab> {
                             });
                           },
                           backgroundColor: Colors.grey[200],
-                          selectedColor: const Color(0xFF2E7D32),
+                          selectedColor: const Color(0xFF3B82F6),
                           labelStyle: TextStyle(
                             color: !_isDaily ? Colors.white : Colors.black87,
                             fontWeight: FontWeight.w500,
@@ -318,7 +318,7 @@ class _ReportsTabState extends State<ReportsTab> {
                             });
                           },
                           backgroundColor: Colors.grey[200],
-                          selectedColor: const Color(0xFF2E7D32),
+                          selectedColor: const Color(0xFF3B82F6),
                           labelStyle: TextStyle(
                             color: _isDaily ? Colors.white : Colors.black87,
                             fontWeight: FontWeight.w500,
@@ -359,7 +359,7 @@ class _ReportsTabState extends State<ReportsTab> {
                           style: const TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF2E7D32),
+                            color: Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                       ],
@@ -457,174 +457,199 @@ class _ReportsTabState extends State<ReportsTab> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     clipBehavior: Clip.antiAlias,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Gastos por Categoria',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    child: Theme(
+                      data: Theme.of(context).copyWith(
+                        dividerColor: const Color(0xFF3B82F6),
+                        dividerTheme: const DividerThemeData(
+                          color: Color(0xFF3B82F6),
+                          thickness: 1,
+                        ),
+                      ),
+                      child: ExpansionTile(
+                        initiallyExpanded: true,
+                        leading: const CircleAvatar(
+                          backgroundColor: Color(0xFF3B82F6),
+                          child: Icon(
+                            Icons.bar_chart,
+                            color: Colors.white,
+                            size: 20,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
+                        ),
+                        title: const Text(
+                          'Gastos por Categoria',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
                             'Distribuição do ${_isDaily ? 'dia' : 'mês'} selecionado',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[600],
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          SizedBox(
-                            height: 250,
-                            child: BarChart(
-                              BarChartData(
-                                alignment: BarChartAlignment.spaceAround,
-                                maxY:
-                                    report.values
-                                        .map((e) => e['totalSpent'] as double)
-                                        .reduce((a, b) => a > b ? a : b) *
-                                    1.2,
-                                barTouchData: BarTouchData(
-                                  enabled: true,
-                                  touchTooltipData: BarTouchTooltipData(
-                                    getTooltipItem: (
-                                      group,
-                                      groupIndex,
-                                      rod,
-                                      rodIndex,
-                                    ) {
-                                      final category = report.keys.elementAt(
+                        ),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: SizedBox(
+                              height: 250,
+                              child: BarChart(
+                                BarChartData(
+                                  alignment: BarChartAlignment.spaceAround,
+                                  maxY:
+                                      report.values
+                                          .map((e) => e['totalSpent'] as double)
+                                          .reduce((a, b) => a > b ? a : b) *
+                                      1.2,
+                                  barTouchData: BarTouchData(
+                                    enabled: true,
+                                    touchTooltipData: BarTouchTooltipData(
+                                      getTooltipItem: (
+                                        group,
                                         groupIndex,
-                                      );
-                                      return BarTooltipItem(
-                                        '${category.displayName}\n',
-                                        const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: currency.format(rod.toY),
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                            ),
+                                        rod,
+                                        rodIndex,
+                                      ) {
+                                        final category = report.keys.elementAt(
+                                          groupIndex,
+                                        );
+                                        return BarTooltipItem(
+                                          '${category.displayName}\n',
+                                          const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
+                                          children: [
+                                            TextSpan(
+                                              text: currency.format(rod.toY),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  gridData: FlGridData(
+                                    show: true,
+                                    drawVerticalLine: false,
+                                    horizontalInterval:
+                                        report.values
+                                            .map(
+                                              (e) => e['totalSpent'] as double,
+                                            )
+                                            .reduce((a, b) => a > b ? a : b) /
+                                        4,
+                                    getDrawingHorizontalLine: (value) {
+                                      return FlLine(
+                                        color: Colors.grey[300]!,
+                                        strokeWidth: 1,
                                       );
                                     },
                                   ),
-                                ),
-                                gridData: FlGridData(
-                                  show: true,
-                                  drawVerticalLine: false,
-                                  horizontalInterval:
-                                      report.values
-                                          .map((e) => e['totalSpent'] as double)
-                                          .reduce((a, b) => a > b ? a : b) /
-                                      4,
-                                  getDrawingHorizontalLine: (value) {
-                                    return FlLine(
-                                      color: Colors.grey[300]!,
-                                      strokeWidth: 1,
-                                    );
-                                  },
-                                ),
-                                titlesData: FlTitlesData(
-                                  show: true,
-                                  bottomTitles: AxisTitles(
-                                    sideTitles: SideTitles(
-                                      showTitles: true,
-                                      reservedSize: 48,
-                                      getTitlesWidget: (value, meta) {
-                                        if (value.toInt() >= report.length) {
-                                          return const SizedBox();
-                                        }
-                                        final category = report.keys.elementAt(
-                                          value.toInt(),
-                                        );
-                                        final label = category.displayName
-                                            .substring(
-                                              0,
-                                              category.displayName.length > 10
-                                                  ? 10
-                                                  : category.displayName.length,
-                                            );
-                                        return Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 8,
-                                          ),
-                                          child: Transform.rotate(
-                                            angle: -math.pi / 6,
-                                            child: Text(
-                                              label,
-                                              style: const TextStyle(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w500,
+                                  titlesData: FlTitlesData(
+                                    show: true,
+                                    bottomTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        reservedSize: 48,
+                                        getTitlesWidget: (value, meta) {
+                                          if (value.toInt() >= report.length) {
+                                            return const SizedBox();
+                                          }
+                                          final category = report.keys
+                                              .elementAt(value.toInt());
+                                          final label = category.displayName
+                                              .substring(
+                                                0,
+                                                category.displayName.length > 10
+                                                    ? 10
+                                                    : category
+                                                        .displayName
+                                                        .length,
+                                              );
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 8,
+                                            ),
+                                            child: Transform.rotate(
+                                              angle: -math.pi / 6,
+                                              child: Text(
+                                                label,
+                                                style: const TextStyle(
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                             ),
-                                          ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    leftTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        reservedSize: 50,
+                                        getTitlesWidget: (value, meta) {
+                                          return Text(
+                                            'R\$${value.toInt()}',
+                                            style: const TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    topTitles: const AxisTitles(
+                                      sideTitles: SideTitles(showTitles: false),
+                                    ),
+                                    rightTitles: const AxisTitles(
+                                      sideTitles: SideTitles(showTitles: false),
+                                    ),
+                                  ),
+                                  borderData: FlBorderData(
+                                    show: true,
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey[300]!,
+                                      ),
+                                      left: BorderSide(
+                                        color: Colors.grey[300]!,
+                                      ),
+                                    ),
+                                  ),
+                                  barGroups:
+                                      report.entries.map((entry) {
+                                        final index = report.keys
+                                            .toList()
+                                            .indexOf(entry.key);
+                                        return BarChartGroupData(
+                                          x: index,
+                                          barRods: [
+                                            BarChartRodData(
+                                              toY:
+                                                  entry.value['totalSpent']
+                                                      as double,
+                                              color: _getCategoryColor(
+                                                entry.key,
+                                              ),
+                                              width: 20,
+                                              borderRadius:
+                                                  const BorderRadius.vertical(
+                                                    top: Radius.circular(6),
+                                                  ),
+                                            ),
+                                          ],
                                         );
-                                      },
-                                    ),
-                                  ),
-                                  leftTitles: AxisTitles(
-                                    sideTitles: SideTitles(
-                                      showTitles: true,
-                                      reservedSize: 50,
-                                      getTitlesWidget: (value, meta) {
-                                        return Text(
-                                          'R\$${value.toInt()}',
-                                          style: const TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.grey,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  topTitles: const AxisTitles(
-                                    sideTitles: SideTitles(showTitles: false),
-                                  ),
-                                  rightTitles: const AxisTitles(
-                                    sideTitles: SideTitles(showTitles: false),
-                                  ),
+                                      }).toList(),
                                 ),
-                                borderData: FlBorderData(
-                                  show: true,
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      color: Colors.grey[300]!,
-                                    ),
-                                    left: BorderSide(color: Colors.grey[300]!),
-                                  ),
-                                ),
-                                barGroups:
-                                    report.entries.map((entry) {
-                                      final index = report.keys
-                                          .toList()
-                                          .indexOf(entry.key);
-                                      return BarChartGroupData(
-                                        x: index,
-                                        barRods: [
-                                          BarChartRodData(
-                                            toY:
-                                                entry.value['totalSpent']
-                                                    as double,
-                                            color: _getCategoryColor(entry.key),
-                                            width: 20,
-                                            borderRadius:
-                                                const BorderRadius.vertical(
-                                                  top: Radius.circular(6),
-                                                ),
-                                          ),
-                                        ],
-                                      );
-                                    }).toList(),
                               ),
                             ),
                           ),

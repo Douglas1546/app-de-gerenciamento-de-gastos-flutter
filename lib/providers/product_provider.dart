@@ -2,17 +2,19 @@ import 'package:flutter/foundation.dart';
 import '../database/database_helper.dart';
 import '../models/product.dart';
 
-enum PurchasedFilter { all, today, thisMonth, thisYear }
+enum PurchasedFilter { all, today, thisMonth, thisYear, specificDay }
 
 class ProductProvider extends ChangeNotifier {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   List<Product> _productsToBuy = [];
   List<Product> _purchasedProducts = [];
   PurchasedFilter _currentFilter = PurchasedFilter.all;
+  DateTime? _selectedDayFilter;
 
   List<Product> get productsToBuy => _productsToBuy;
   List<Product> get purchasedProducts => _filteredPurchasedProducts;
   PurchasedFilter get currentFilter => _currentFilter;
+  DateTime? get selectedDayFilter => _selectedDayFilter;
 
   ProductProvider() {
     loadProducts();
@@ -42,6 +44,16 @@ class ProductProvider extends ChangeNotifier {
         return _purchasedProducts.where((product) {
           if (product.purchasedAt == null) return false;
           return product.purchasedAt!.year == now.year;
+        }).toList();
+
+      case PurchasedFilter.specificDay:
+        final date = _selectedDayFilter ?? now;
+        final startOfDay = DateTime(date.year, date.month, date.day);
+        final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
+        return _purchasedProducts.where((product) {
+          if (product.purchasedAt == null) return false;
+          return product.purchasedAt!.isAfter(startOfDay) &&
+              product.purchasedAt!.isBefore(endOfDay);
         }).toList();
 
       case PurchasedFilter.all:
@@ -82,6 +94,12 @@ class ProductProvider extends ChangeNotifier {
 
   void setFilter(PurchasedFilter filter) {
     _currentFilter = filter;
+    notifyListeners();
+  }
+
+  void setFilterDay(DateTime day) {
+    _selectedDayFilter = day;
+    _currentFilter = PurchasedFilter.specificDay;
     notifyListeners();
   }
 

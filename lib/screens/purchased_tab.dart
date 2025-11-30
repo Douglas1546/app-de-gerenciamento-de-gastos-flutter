@@ -18,6 +18,8 @@ class PurchasedTab extends StatelessWidget {
         return 'Este Mês';
       case PurchasedFilter.thisYear:
         return 'Este Ano';
+      case PurchasedFilter.specificDay:
+        return 'Dia';
     }
   }
 
@@ -37,15 +39,39 @@ class PurchasedTab extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children:
-                      PurchasedFilter.values.map((filter) {
+                      [
+                        PurchasedFilter.all,
+                        PurchasedFilter.today,
+                        PurchasedFilter.specificDay,
+                        PurchasedFilter.thisMonth,
+                        PurchasedFilter.thisYear,
+                      ].map((filter) {
                         final isSelected = provider.currentFilter == filter;
                         return Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: FilterChip(
                             label: Text(_getFilterLabel(filter)),
                             selected: isSelected,
-                            onSelected: (selected) {
-                              if (selected) {
+                            onSelected: (_) async {
+                              if (filter == PurchasedFilter.specificDay) {
+                                final picked = await showDatePicker(
+                                  context: context,
+                                  initialDate:
+                                      provider.selectedDayFilter ??
+                                      DateTime.now(),
+                                  firstDate: DateTime(2000, 1, 1),
+                                  lastDate: DateTime(2100, 12, 31),
+                                );
+                                if (picked != null) {
+                                  provider.setFilterDay(picked);
+                                } else {
+                                  if (provider.selectedDayFilter != null) {
+                                    provider.setFilter(
+                                      PurchasedFilter.specificDay,
+                                    );
+                                  }
+                                }
+                              } else {
                                 provider.setFilter(filter);
                               }
                             },

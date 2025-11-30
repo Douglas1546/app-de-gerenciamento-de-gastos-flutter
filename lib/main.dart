@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'dart:io' show Platform;
 import 'package:flutter_displaymode/flutter_displaymode.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'providers/product_provider.dart';
 import 'screens/to_buy_tab.dart';
 import 'screens/purchased_tab.dart';
@@ -32,6 +33,13 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Lista de Compras',
         debugShowCheckedModeBanner: false,
+        locale: const Locale('pt', 'BR'),
+        supportedLocales: const [Locale('pt', 'BR'), Locale('en', '')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
@@ -101,10 +109,13 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color(0xFF3B82F6),
           title: const Text(
-            'Lista de Compras',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+            'DESPESAS',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 255, 255, 255),
+            ),
           ),
           elevation: 0,
         ),
@@ -124,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
             NavigationDestination(
               icon: Icon(Icons.shopping_cart_outlined),
               selectedIcon: Icon(Icons.shopping_cart, color: Color(0xFF3B82F6)),
-              label: 'A Comprar',
+              label: 'Comprar',
             ),
             NavigationDestination(
               icon: Icon(Icons.shopping_bag_outlined),
