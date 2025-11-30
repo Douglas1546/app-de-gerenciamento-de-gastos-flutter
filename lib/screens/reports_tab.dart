@@ -16,6 +16,8 @@ class ReportsTab extends StatefulWidget {
 class _ReportsTabState extends State<ReportsTab> {
   late int _selectedYear;
   late int _selectedMonth;
+  late DateTime _selectedDate;
+  bool _isDaily = false;
 
   @override
   void initState() {
@@ -23,6 +25,7 @@ class _ReportsTabState extends State<ReportsTab> {
     final now = DateTime.now();
     _selectedYear = now.year;
     _selectedMonth = now.month;
+    _selectedDate = DateTime(now.year, now.month, now.day);
   }
 
   Color _getCategoryColor(ProductCategory category) {
@@ -189,64 +192,139 @@ class _ReportsTabState extends State<ReportsTab> {
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
     return Consumer<ProductProvider>(
       builder: (context, provider, child) {
-        final report = provider.getMonthlyReport(_selectedYear, _selectedMonth);
-        final totalSpent = provider.getTotalSpentInMonth(
-          _selectedYear,
-          _selectedMonth,
-        );
+        final report =
+            _isDaily
+                ? provider.getDailyReport(
+                  _selectedDate.year,
+                  _selectedDate.month,
+                  _selectedDate.day,
+                )
+                : provider.getMonthlyReport(_selectedYear, _selectedMonth);
+        final totalSpent =
+            _isDaily
+                ? provider.getTotalSpentOnDay(
+                  _selectedDate.year,
+                  _selectedDate.month,
+                  _selectedDate.day,
+                )
+                : provider.getTotalSpentInMonth(_selectedYear, _selectedMonth);
 
         return SingleChildScrollView(
           child: Column(
             children: [
-              // Month/Year Selector
+              // Period Selector
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 color: const Color.fromARGB(137, 255, 255, 255),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
                   children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          if (_selectedMonth == 1) {
-                            _selectedMonth = 12;
-                            _selectedYear--;
-                          } else {
-                            _selectedMonth--;
-                          }
-                        });
-                      },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              if (_isDaily) {
+                                _selectedDate = _selectedDate.subtract(
+                                  const Duration(days: 1),
+                                );
+                              } else {
+                                if (_selectedMonth == 1) {
+                                  _selectedMonth = 12;
+                                  _selectedYear--;
+                                } else {
+                                  _selectedMonth--;
+                                }
+                              }
+                            });
+                          },
+                        ),
+                        Text(
+                          _isDaily
+                              ? DateFormat(
+                                'dd/MM/yyyy',
+                                'pt_BR',
+                              ).format(_selectedDate)
+                              : DateFormat(
+                                'MMMM yyyy',
+                                'pt_BR',
+                              ).format(DateTime(_selectedYear, _selectedMonth)),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.arrow_forward,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              if (_isDaily) {
+                                _selectedDate = _selectedDate.add(
+                                  const Duration(days: 1),
+                                );
+                              } else {
+                                if (_selectedMonth == 12) {
+                                  _selectedMonth = 1;
+                                  _selectedYear++;
+                                } else {
+                                  _selectedMonth++;
+                                }
+                              }
+                            });
+                          },
+                        ),
+                      ],
                     ),
-                    Text(
-                      DateFormat(
-                        'MMMM yyyy',
-                        'pt_BR',
-                      ).format(DateTime(_selectedYear, _selectedMonth)),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.arrow_forward,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          if (_selectedMonth == 12) {
-                            _selectedMonth = 1;
-                            _selectedYear++;
-                          } else {
-                            _selectedMonth++;
-                          }
-                        });
-                      },
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FilterChip(
+                          label: const Text('Mês'),
+                          selected: !_isDaily,
+                          onSelected: (selected) {
+                            setState(() {
+                              _isDaily = false;
+                            });
+                          },
+                          backgroundColor: Colors.grey[200],
+                          selectedColor: const Color(0xFF2E7D32),
+                          labelStyle: TextStyle(
+                            color: !_isDaily ? Colors.white : Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        FilterChip(
+                          label: const Text('Dia'),
+                          selected: _isDaily,
+                          onSelected: (selected) {
+                            setState(() {
+                              _isDaily = true;
+                              // sync selectedDate to current selected month/year if needed
+                              _selectedDate = DateTime(
+                                _selectedYear,
+                                _selectedMonth,
+                                _selectedDate.day,
+                              );
+                            });
+                          },
+                          backgroundColor: Colors.grey[200],
+                          selectedColor: const Color(0xFF2E7D32),
+                          labelStyle: TextStyle(
+                            color: _isDaily ? Colors.white : Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -265,9 +343,11 @@ class _ReportsTabState extends State<ReportsTab> {
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        const Text(
-                          'Total Gasto no Mês',
-                          style: TextStyle(
+                        Text(
+                          _isDaily
+                              ? 'Total Gasto no Dia'
+                              : 'Total Gasto no Mês',
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.white70,
                             fontWeight: FontWeight.w500,
@@ -304,37 +384,40 @@ class _ReportsTabState extends State<ReportsTab> {
                     ),
                   ),
                   child: ExpansionTile(
-                   initiallyExpanded: true,
-                   leading: const CircleAvatar(
-                     backgroundColor: Color(0xFF2E7D32),
-                     child: Icon(
-                       Icons.show_chart,
-                       color: Colors.white,
-                       size: 20,
-                     ),
-                   ),
-                  title: const Text(
-                    'Evolução dos Gastos',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      'Últimos 6 meses',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                    ),
-                  ),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: SizedBox(
-                        height: 200,
-                        child: _buildEvolutionChart(provider, currency),
+                    initiallyExpanded: true,
+                    leading: const CircleAvatar(
+                      backgroundColor: Color(0xFF2E7D32),
+                      child: Icon(
+                        Icons.show_chart,
+                        color: Colors.white,
+                        size: 20,
                       ),
                     ),
-                  ],
+                    title: const Text(
+                      'Evolução dos Gastos',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        'Últimos 6 meses',
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      ),
+                    ),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: SizedBox(
+                          height: 200,
+                          child: _buildEvolutionChart(provider, currency),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               ),
 
               if (report.isEmpty)
@@ -349,7 +432,9 @@ class _ReportsTabState extends State<ReportsTab> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Nenhum gasto neste mês',
+                        _isDaily
+                            ? 'Nenhum gasto neste dia'
+                            : 'Nenhum gasto neste mês',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -386,7 +471,7 @@ class _ReportsTabState extends State<ReportsTab> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Distribuição do mês selecionado',
+                            'Distribuição do ${_isDaily ? 'dia' : 'mês'} selecionado',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[600],

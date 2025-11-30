@@ -126,6 +126,51 @@ class ProductProvider extends ChangeNotifier {
     return total;
   }
 
+  // Report data grouped by category for a specific day
+  Map<ProductCategory, Map<String, dynamic>> getDailyReport(
+    int year,
+    int month,
+    int day,
+  ) {
+    final startOfDay = DateTime(year, month, day);
+    final endOfDay = DateTime(year, month, day, 23, 59, 59);
+
+    final dayProducts =
+        _purchasedProducts.where((product) {
+          if (product.purchasedAt == null) return false;
+          return product.purchasedAt!.isAfter(startOfDay) &&
+              product.purchasedAt!.isBefore(endOfDay);
+        }).toList();
+
+    final Map<ProductCategory, Map<String, dynamic>> report = {};
+
+    for (var product in dayProducts) {
+      if (!report.containsKey(product.category)) {
+        report[product.category] = {
+          'totalSpent': 0.0,
+          'quantity': 0,
+          'items': <Product>[],
+        };
+      }
+
+      report[product.category]!['totalSpent'] += product.price ?? 0.0;
+      report[product.category]!['quantity'] += product.quantity;
+      (report[product.category]!['items'] as List<Product>).add(product);
+    }
+
+    return report;
+  }
+
+  // Get total spent on a specific day
+  double getTotalSpentOnDay(int year, int month, int day) {
+    final report = getDailyReport(year, month, day);
+    double total = 0.0;
+    report.forEach((_, data) {
+      total += data['totalSpent'] as double;
+    });
+    return total;
+  }
+
   // Get spending evolution for the last N months
   List<Map<String, dynamic>> getSpendingEvolution(int numberOfMonths) {
     final now = DateTime.now();
