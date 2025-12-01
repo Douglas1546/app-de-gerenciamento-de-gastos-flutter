@@ -70,7 +70,7 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
                     _priceFocus.hasFocus
                         ? [
                           BoxShadow(
-                            color: const Color(0xFF3B82F6).withOpacity(0.12),
+                            color: const Color(0xFF2E7D32).withOpacity(0.12),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -131,7 +131,7 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
-                        color: Color(0xFF3B82F6),
+                        color: Color(0xFF2E7D32),
                       ),
                     ),
                   ),

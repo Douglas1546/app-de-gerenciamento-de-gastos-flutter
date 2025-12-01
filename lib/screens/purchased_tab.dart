@@ -33,7 +33,10 @@ class PurchasedTab extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.symmetric(vertical: 5),
-              color: const Color.fromARGB(137, 255, 255, 255),
+              color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF1E1E1E)
+                      : const Color.fromARGB(137, 255, 255, 255),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -75,10 +78,19 @@ class PurchasedTab extends StatelessWidget {
                                 provider.setFilter(filter);
                               }
                             },
-                            backgroundColor: Colors.grey[200],
-                            selectedColor: const Color(0xFF3B82F6),
+                            backgroundColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? const Color(0xFF2A2A2A)
+                                    : Colors.grey[200],
+                            selectedColor: const Color(0xFF2E7D32),
                             labelStyle: TextStyle(
-                              color: isSelected ? Colors.white : Colors.black87,
+                              color:
+                                  isSelected
+                                      ? Colors.white
+                                      : (Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black87),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -159,7 +171,7 @@ class PurchasedTab extends StatelessWidget {
                                     const SnackBar(
                                       content: Text('Produto atualizado!'),
                                       duration: Duration(seconds: 2),
-                                      backgroundColor: Color(0xFF3B82F6),
+                                      backgroundColor: Color(0xFF2E7D32),
                                     ),
                                   );
                                 }

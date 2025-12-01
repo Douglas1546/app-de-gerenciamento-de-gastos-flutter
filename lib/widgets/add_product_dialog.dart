@@ -77,7 +77,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                       _nameFocus.hasFocus
                           ? [
                             BoxShadow(
-                              color: const Color(0xFF3B82F6).withOpacity(0.12),
+                              color: const Color(0xFF2E7D32).withOpacity(0.12),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -118,7 +118,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                       _quantityFocus.hasFocus
                           ? [
                             BoxShadow(
-                              color: const Color(0xFF3B82F6).withOpacity(0.12),
+                              color: const Color(0xFF2E7D32).withOpacity(0.12),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -181,7 +181,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                             ? [
                               BoxShadow(
                                 color: const Color(
-                                  0xFF3B82F6,
+                                  0xFF2E7D32,
                                 ).withOpacity(0.12),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),

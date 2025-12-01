@@ -4,6 +4,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'dart:io' show Platform;
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'screens/settings_screen.dart';
+import 'providers/theme_provider.dart';
 import 'providers/product_provider.dart';
 import 'screens/to_buy_tab.dart';
 import 'screens/purchased_tab.dart';
@@ -28,78 +30,149 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ProductProvider(),
-      child: MaterialApp(
-        title: 'Lista de Compras',
-        debugShowCheckedModeBanner: false,
-        locale: const Locale('pt', 'BR'),
-        supportedLocales: const [Locale('pt', 'BR'), Locale('en', '')],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF3B82F6),
-            primary: const Color(0xFF3B82F6),
-            secondary: const Color(0xFF90CAF9),
-            tertiary: const Color(0xFF64B5F6),
-            surface: Colors.white,
-            brightness: Brightness.light,
-          ),
-          cardTheme: CardTheme(
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+      ],
+      child: Builder(
+        builder:
+            (context) => MaterialApp(
+              title: 'Lista de Compras',
+              debugShowCheckedModeBanner: false,
+              locale: const Locale('pt', 'BR'),
+              supportedLocales: const [Locale('pt', 'BR'), Locale('en', '')],
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              themeMode: context.watch<ThemeProvider>().themeMode,
+              theme: ThemeData(
+                useMaterial3: true,
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: const Color(0xFF2E7D32),
+                  primary: const Color(0xFF2E7D32),
+                  secondary: const Color(0xFF66BB6A),
+                  tertiary: const Color(0xFF81C784),
+                  surface: Colors.white,
+                  brightness: Brightness.light,
+                ),
+                cardTheme: CardTheme(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                ),
+                floatingActionButtonTheme: FloatingActionButtonThemeData(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 4,
+                ),
+                inputDecorationTheme: InputDecorationTheme(
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    borderSide: BorderSide(color: Color(0xFF2E7D32), width: 2),
+                  ),
+                  labelStyle: const TextStyle(color: Colors.black87),
+                  floatingLabelStyle: const TextStyle(color: Colors.black),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                ),
+                dialogTheme: DialogTheme(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                chipTheme: ChipThemeData(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                appBarTheme: const AppBarTheme(
+                  centerTitle: true,
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                ),
+              ),
+              darkTheme: ThemeData(
+                useMaterial3: true,
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: const Color(0xFF2E7D32),
+                  primary: const Color(0xFF2E7D32),
+                  secondary: const Color(0xFF66BB6A),
+                  tertiary: const Color(0xFF81C784),
+                  surface: const Color(0xFF121212),
+                  brightness: Brightness.dark,
+                ),
+                cardTheme: CardTheme(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                ),
+                floatingActionButtonTheme: FloatingActionButtonThemeData(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 4,
+                ),
+                inputDecorationTheme: InputDecorationTheme(
+                  filled: true,
+                  fillColor: const Color(0xFF1E1E1E),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    borderSide: BorderSide(color: Color(0xFF2A2A2A)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    borderSide: BorderSide(color: Color(0xFF2E7D32), width: 2),
+                  ),
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  floatingLabelStyle: const TextStyle(color: Colors.white),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                ),
+                dialogTheme: DialogTheme(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                chipTheme: ChipThemeData(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+              ),
+              home: const MyHomePage(),
             ),
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          ),
-          floatingActionButtonTheme: FloatingActionButtonThemeData(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 4,
-          ),
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            focusedBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-              borderSide: BorderSide(color: Color(0xFF3B82F6), width: 2),
-            ),
-            labelStyle: const TextStyle(color: Colors.black87),
-            floatingLabelStyle: const TextStyle(color: Colors.black),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-          ),
-          dialogTheme: DialogTheme(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-          chipTheme: ChipThemeData(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-          appBarTheme: const AppBarTheme(
-            centerTitle: true,
-            elevation: 0,
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-          ),
-        ),
-        home: const MyHomePage(),
       ),
     );
   }
@@ -123,14 +196,36 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF3B82F6),
-          title: const Text(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          title: Text(
             'DESPESAS',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 255, 255, 255),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
+          actions: [
+            PopupMenuButton<String>(
+              icon: Icon(
+                Icons.more_vert,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              onSelected: (value) {
+                if (value == 'settings') {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                  );
+                }
+              },
+              itemBuilder:
+                  (context) => const [
+                    PopupMenuItem<String>(
+                      value: 'settings',
+                      child: Text('Configurações'),
+                    ),
+                  ],
+            ),
+          ],
           elevation: 0,
         ),
         body: _pages[_currentIndex],
@@ -143,22 +238,22 @@ class _MyHomePageState extends State<MyHomePage> {
               _currentIndex = index;
             });
           },
-          backgroundColor: Colors.white,
-          indicatorColor: const Color(0xFF3B82F6).withValues(alpha: 0.12),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          indicatorColor: const Color(0xFF2E7D32).withValues(alpha: 0.12),
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.shopping_cart_outlined),
-              selectedIcon: Icon(Icons.shopping_cart, color: Color(0xFF3B82F6)),
+              selectedIcon: Icon(Icons.shopping_cart, color: Color(0xFF2E7D32)),
               label: 'Comprar',
             ),
             NavigationDestination(
               icon: Icon(Icons.shopping_bag_outlined),
-              selectedIcon: Icon(Icons.shopping_bag, color: Color(0xFF3B82F6)),
+              selectedIcon: Icon(Icons.shopping_bag, color: Color(0xFF2E7D32)),
               label: 'Comprados',
             ),
             NavigationDestination(
               icon: Icon(Icons.analytics_outlined),
-              selectedIcon: Icon(Icons.analytics, color: Color(0xFF3B82F6)),
+              selectedIcon: Icon(Icons.analytics, color: Color(0xFF2E7D32)),
               label: 'Relatórios',
             ),
           ],

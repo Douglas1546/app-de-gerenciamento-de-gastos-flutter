@@ -110,7 +110,7 @@ class ToBuyTab extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF3B82F6),
+        backgroundColor: const Color(0xFF2E7D32),
         onPressed: () async {
           final product = await showDialog(
             context: context,
@@ -127,7 +127,7 @@ class ToBuyTab extends StatelessWidget {
                 const SnackBar(
                   content: Text('Produto adicionado!'),
                   duration: Duration(seconds: 2),
-                  backgroundColor: Color(0xFF3B82F6),
+                  backgroundColor: Color(0xFF2E7D32),
                 ),
               );
             }

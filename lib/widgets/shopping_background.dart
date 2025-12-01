@@ -8,9 +8,10 @@ class ShoppingBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Stack(
       children: [
-        Container(color: Colors.white),
+        Container(color: isDark ? const Color(0xFF121212) : Colors.white),
         CustomPaint(painter: DoodlePainter(), size: Size.infinite),
         child,
       ],
@@ -54,7 +55,7 @@ class DoodlePainter extends CustomPainter {
               fontSize: 24,
               fontFamily: icon.fontFamily,
               package: icon.fontPackage,
-              color: const Color(0xFF3B82F6).withValues(alpha: 0.06),
+              color: const Color(0xFF2E7D32).withValues(alpha: 0.06),
             ),
           ),
           textDirection: TextDirection.ltr,

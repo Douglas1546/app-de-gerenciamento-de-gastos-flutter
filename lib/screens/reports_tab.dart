@@ -163,7 +163,7 @@ class _ReportsTabState extends State<ReportsTab> {
                   );
                 }).toList(),
             isCurved: false,
-            color: const Color(0xFF3B82F6),
+            color: const Color(0xFF2E7D32),
             barWidth: 3,
             isStrokeCapRound: true,
             dotData: FlDotData(
@@ -173,13 +173,13 @@ class _ReportsTabState extends State<ReportsTab> {
                   radius: 4,
                   color: Colors.white,
                   strokeWidth: 2,
-                  strokeColor: const Color(0xFF3B82F6),
+                  strokeColor: const Color(0xFF2E7D32),
                 );
               },
             ),
             belowBarData: BarAreaData(
               show: true,
-              color: const Color(0xFF3B82F6).withOpacity(0.12),
+              color: const Color(0xFF2E7D32).withOpacity(0.12),
             ),
           ),
         ],
@@ -215,16 +215,22 @@ class _ReportsTabState extends State<ReportsTab> {
               // Period Selector
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                color: const Color.fromARGB(137, 255, 255, 255),
+                color:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF1E1E1E)
+                        : const Color.fromARGB(137, 255, 255, 255),
                 child: Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.arrow_back,
-                            color: Color.fromARGB(255, 0, 0, 0),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 0, 0, 0),
                           ),
                           onPressed: () {
                             setState(() {
@@ -253,16 +259,22 @@ class _ReportsTabState extends State<ReportsTab> {
                                 'MMMM yyyy',
                                 'pt_BR',
                               ).format(DateTime(_selectedYear, _selectedMonth)),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 0, 0, 0),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.arrow_forward,
-                            color: Color.fromARGB(255, 0, 0, 0),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 0, 0, 0),
                           ),
                           onPressed: () {
                             setState(() {
@@ -295,10 +307,19 @@ class _ReportsTabState extends State<ReportsTab> {
                               _isDaily = false;
                             });
                           },
-                          backgroundColor: Colors.grey[200],
-                          selectedColor: const Color(0xFF3B82F6),
+                          backgroundColor:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFF2A2A2A)
+                                  : Colors.grey[200],
+                          selectedColor: const Color(0xFF2E7D32),
                           labelStyle: TextStyle(
-                            color: !_isDaily ? Colors.white : Colors.black87,
+                            color:
+                                !_isDaily
+                                    ? Colors.white
+                                    : (Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black87),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -317,10 +338,19 @@ class _ReportsTabState extends State<ReportsTab> {
                               );
                             });
                           },
-                          backgroundColor: Colors.grey[200],
-                          selectedColor: const Color(0xFF3B82F6),
+                          backgroundColor:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFF2A2A2A)
+                                  : Colors.grey[200],
+                          selectedColor: const Color(0xFF2E7D32),
                           labelStyle: TextStyle(
-                            color: _isDaily ? Colors.white : Colors.black87,
+                            color:
+                                _isDaily
+                                    ? Colors.white
+                                    : (Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black87),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -335,7 +365,10 @@ class _ReportsTabState extends State<ReportsTab> {
                 padding: const EdgeInsets.all(16),
                 child: Card(
                   elevation: 3,
-                  color: Colors.white,
+                  color:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF1E1E1E)
+                          : Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -349,17 +382,23 @@ class _ReportsTabState extends State<ReportsTab> {
                               : 'Total Gasto no Mês',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey[700],
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white70
+                                    : Colors.grey[700],
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         const SizedBox(height: 12),
                         Text(
                           currency.format(totalSpent),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 0, 0, 0),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                       ],
@@ -377,16 +416,16 @@ class _ReportsTabState extends State<ReportsTab> {
                 clipBehavior: Clip.antiAlias,
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                    dividerColor: const Color(0xFF3B82F6),
+                    dividerColor: const Color(0xFF2E7D32),
                     dividerTheme: const DividerThemeData(
-                      color: Color(0xFF3B82F6),
+                      color: Color(0xFF2E7D32),
                       thickness: 1,
                     ),
                   ),
                   child: ExpansionTile(
                     initiallyExpanded: true,
                     leading: const CircleAvatar(
-                      backgroundColor: Color(0xFF3B82F6),
+                      backgroundColor: Color(0xFF2E7D32),
                       child: Icon(
                         Icons.show_chart,
                         color: Colors.white,
@@ -459,16 +498,16 @@ class _ReportsTabState extends State<ReportsTab> {
                     clipBehavior: Clip.antiAlias,
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                        dividerColor: const Color(0xFF3B82F6),
+                        dividerColor: const Color(0xFF2E7D32),
                         dividerTheme: const DividerThemeData(
-                          color: Color(0xFF3B82F6),
+                          color: Color(0xFF2E7D32),
                           thickness: 1,
                         ),
                       ),
                       child: ExpansionTile(
                         initiallyExpanded: true,
                         leading: const CircleAvatar(
-                          backgroundColor: Color(0xFF3B82F6),
+                          backgroundColor: Color(0xFF2E7D32),
                           child: Icon(
                             Icons.bar_chart,
                             color: Colors.white,

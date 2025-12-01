@@ -107,7 +107,7 @@ class ProductCard extends StatelessWidget {
                   showCheckbox
                       ? Checkbox(
                         value: product.isPurchased,
-                        activeColor: const Color(0xFF3B82F6),
+                        activeColor: const Color(0xFF2E7D32),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
                         ),
@@ -161,14 +161,21 @@ class ProductCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF2A2A2A)
+                                : Colors.grey[200],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         'Qtd: ${product.quantity}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white70
+                                  : null,
                         ),
                       ),
                     ),
@@ -180,7 +187,7 @@ class ProductCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: const Color(
-                            0xFF3B82F6,
+                            0xFF2E7D32,
                           ).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -191,7 +198,7 @@ class ProductCard extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF3B82F6),
+                            color: Color(0xFF2E7D32),
                           ),
                         ),
                       ),
