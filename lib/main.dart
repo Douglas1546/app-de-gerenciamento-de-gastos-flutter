@@ -75,8 +75,8 @@ class MyApp extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(12)),
               borderSide: BorderSide(color: Color(0xFF3B82F6), width: 2),
             ),
-            labelStyle: const TextStyle(color: Colors.black54),
-            floatingLabelStyle: const TextStyle(color: Color(0xFF3B82F6)),
+            labelStyle: const TextStyle(color: Colors.black87),
+            floatingLabelStyle: const TextStyle(color: Colors.black),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 14,

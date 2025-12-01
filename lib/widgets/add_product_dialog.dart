@@ -149,7 +149,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                             icon: const Icon(Icons.add_circle_outline),
                             onPressed: () {
                               final current =
-                                  int.tryParse(_quantityController.text) ?? 1;
+                                  int.tryParse(_quantityController.text) ?? 0;
                               _quantityController.text =
                                   (current + 1).toString();
                             },
