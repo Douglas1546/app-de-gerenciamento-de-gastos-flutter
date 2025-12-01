@@ -5,7 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'dart:convert';
 import '../providers/theme_provider.dart';
@@ -20,41 +19,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String? _lastBackupPath;
-
-  Future<void> _openBackupLocation() async {
-    if (_lastBackupPath == null) return;
-    final dir = p.dirname(_lastBackupPath!);
-    try {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Abrindo pasta do backup...'),
-          duration: Duration(milliseconds: 800),
-        ),
-      );
-      if (Platform.isMacOS) {
-        final resOpen = await Process.run('open', [dir]);
-        if (resOpen.exitCode == 0) return;
-      }
-      if (Platform.isWindows) {
-        final resOpen = await Process.run('explorer', [dir]);
-        if (resOpen.exitCode == 0) return;
-      }
-      if (Platform.isLinux) {
-        final resOpen = await Process.run('xdg-open', [dir]);
-        if (resOpen.exitCode == 0) return;
-      }
-      final uri = Uri.file(dir);
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {}
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Não foi possível abrir a pasta do backup'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
