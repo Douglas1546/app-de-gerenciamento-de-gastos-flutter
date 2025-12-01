@@ -16,17 +16,20 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
   final _formKey = GlobalKey<FormState>();
   final _priceController = TextEditingController();
   double _totalPrice = 0.0;
+  final _priceFocus = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _priceController.addListener(_updateTotal);
+    _priceFocus.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
     _priceController.removeListener(_updateTotal);
     _priceController.dispose();
+    _priceFocus.dispose();
     super.dispose();
   }
 
@@ -59,30 +62,49 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: _priceController,
-              decoration: const InputDecoration(
-                labelText: 'Preço Unitário (R\$)',
-                border: OutlineInputBorder(),
-                prefixText: 'R\$ ',
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                boxShadow:
+                    _priceFocus.hasFocus
+                        ? [
+                          BoxShadow(
+                            color: const Color(0xFF3B82F6).withOpacity(0.12),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                        : [],
               ),
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                  RegExp(r'^\d+([.,]\d{0,2})?'),
+              child: TextFormField(
+                controller: _priceController,
+                focusNode: _priceFocus,
+                decoration: const InputDecoration(
+                  labelText: 'Preço Unitário (R\$)',
+                  border: OutlineInputBorder(),
+                  prefixText: 'R\$ ',
+                  prefixIcon: Icon(Icons.attach_money_outlined),
+                  hintText: 'Use vírgula para centavos',
                 ),
-              ],
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor, insira o preço';
-                }
-                if (double.tryParse(value.replaceAll(',', '.')) == null) {
-                  return 'Preço inválido';
-                }
-                return null;
-              },
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^\d+([.,]\d{0,2})?'),
+                  ),
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, insira o preço';
+                  }
+                  if (double.tryParse(value.replaceAll(',', '.')) == null) {
+                    return 'Preço inválido';
+                  }
+                  return null;
+                },
+              ),
             ),
             const SizedBox(height: 16),
             Container(
@@ -98,12 +120,19 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
                     'Total:',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  Text(
-                    currency.format(_totalPrice),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: Color(0xFF3B82F6),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 180),
+                    transitionBuilder:
+                        (child, anim) =>
+                            FadeTransition(opacity: anim, child: child),
+                    child: Text(
+                      currency.format(_totalPrice),
+                      key: ValueKey(_totalPrice.toStringAsFixed(2)),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Color(0xFF3B82F6),
+                      ),
                     ),
                   ),
                 ],

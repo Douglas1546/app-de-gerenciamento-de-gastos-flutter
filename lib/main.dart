@@ -64,9 +64,23 @@ class MyApp extends StatelessWidget {
             elevation: 4,
           ),
           inputDecorationTheme: InputDecorationTheme(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             filled: true,
             fillColor: Colors.white,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(color: Color(0xFF3B82F6), width: 2),
+            ),
+            labelStyle: const TextStyle(color: Colors.black54),
+            floatingLabelStyle: const TextStyle(color: Color(0xFF3B82F6)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
           ),
           dialogTheme: DialogTheme(
             shape: RoundedRectangleBorder(
