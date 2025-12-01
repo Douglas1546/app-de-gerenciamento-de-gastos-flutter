@@ -9,6 +9,7 @@ class ProductCard extends StatelessWidget {
   final VoidCallback? onCheckboxChanged;
   final VoidCallback? onDelete;
   final VoidCallback? onTap;
+  final bool showConfirmButton;
 
   const ProductCard({
     Key? key,
@@ -18,6 +19,7 @@ class ProductCard extends StatelessWidget {
     this.onCheckboxChanged,
     this.onDelete,
     this.onTap,
+    this.showConfirmButton = false,
   }) : super(key: key);
 
   Color _getCategoryColor(ProductCategory category) {
@@ -52,6 +54,7 @@ class ProductCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      clipBehavior: Clip.antiAlias,
       child: Dismissible(
         key: Key(product.id.toString()),
         direction:
@@ -94,148 +97,187 @@ class ProductCard extends StatelessWidget {
             onDelete!();
           }
         },
-        child: ListTile(
-          onTap: onTap,
-          contentPadding: const EdgeInsets.all(16),
-          leading:
-              showCheckbox
-                  ? Checkbox(
-                    value: product.isPurchased,
-                    activeColor: const Color(0xFF3B82F6),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    onChanged: (bool? value) {
-                      if (onCheckboxChanged != null) {
-                        onCheckboxChanged!();
-                      }
-                    },
-                  )
-                  : Icon(
-                    Icons.shopping_bag_outlined,
-                    color: _getCategoryColor(product.category),
-                    size: 28,
-                  ),
-          title: Text(
-            product.name,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _getCategoryColor(
-                      product.category,
-                    ).withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    product.category.displayName,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: _getCategoryColor(product.category),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    'Qtd: ${product.quantity}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                if (showPrice && product.price != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF3B82F6).withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      product.quantity > 1
-                          ? '${currency.format(product.price! / product.quantity)} un. • ${currency.format(product.price!)}'
-                          : currency.format(product.price!),
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF3B82F6),
-                    ),
-                  ),
-                  ),
-                if (product.purchasedAt != null)
-                  Text(
-                    DateFormat(
-                      'dd/MM/yyyy HH:mm',
-                      'pt_BR',
-                    ).format(product.purchasedAt!),
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-              ],
-            ),
-          ),
-          trailing:
-              onDelete != null
-                  ? IconButton(
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.redAccent,
-                    ),
-                    tooltip: 'Excluir',
-                    onPressed: () async {
-                      final confirmed = await showDialog<bool>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Confirmar'),
-                            content: const Text(
-                              'Deseja realmente excluir este produto?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(false),
-                                child: const Text('Cancelar'),
-                              ),
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.red,
-                                ),
-                                onPressed:
-                                    () => Navigator.of(context).pop(true),
-                                child: const Text('Excluir'),
-                              ),
-                            ],
-                          );
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              onTap: onTap,
+              contentPadding: const EdgeInsets.all(16),
+              leading:
+                  showCheckbox
+                      ? Checkbox(
+                        value: product.isPurchased,
+                        activeColor: const Color(0xFF3B82F6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        onChanged: (bool? value) {
+                          if (onCheckboxChanged != null) {
+                            onCheckboxChanged!();
+                          }
                         },
-                      );
-                      if (confirmed == true && onDelete != null) {
-                        onDelete!();
-                      }
-                    },
-                  )
-                  : null,
+                      )
+                      : Icon(
+                        Icons.shopping_bag_outlined,
+                        color: _getCategoryColor(product.category),
+                        size: 28,
+                      ),
+              title: Text(
+                product.name,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _getCategoryColor(
+                          product.category,
+                        ).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        product.category.displayName,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: _getCategoryColor(product.category),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Qtd: ${product.quantity}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    if (showPrice && product.price != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(
+                            0xFF3B82F6,
+                          ).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          product.quantity > 1
+                              ? '${currency.format(product.price! / product.quantity)} un. • ${currency.format(product.price!)}'
+                              : currency.format(product.price!),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF3B82F6),
+                          ),
+                        ),
+                      ),
+                    if (product.purchasedAt != null)
+                      Text(
+                        DateFormat(
+                          'dd/MM/yyyy HH:mm',
+                          'pt_BR',
+                        ).format(product.purchasedAt!),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                  ],
+                ),
+              ),
+              trailing:
+                  onDelete != null
+                      ? IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.redAccent,
+                        ),
+                        tooltip: 'Excluir',
+                        onPressed: () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Confirmar'),
+                                content: const Text(
+                                  'Deseja realmente excluir este produto?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.of(context).pop(false),
+                                    child: const Text('Cancelar'),
+                                  ),
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.red,
+                                    ),
+                                    onPressed:
+                                        () => Navigator.of(context).pop(true),
+                                    child: const Text('Excluir'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          if (confirmed == true && onDelete != null) {
+                            onDelete!();
+                          }
+                        },
+                      )
+                      : null,
+            ),
+            if (showConfirmButton)
+              SizedBox(
+                width: double.infinity,
+                child: InkWell(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                  onTap: onCheckboxChanged,
+                  child: Container(
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF2E7D32),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'Confirmar',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );

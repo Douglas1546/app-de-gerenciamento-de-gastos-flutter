@@ -52,7 +52,8 @@ class ToBuyTab extends StatelessWidget {
               final product = products[index];
               return ProductCard(
                 product: product,
-                showCheckbox: true,
+                showCheckbox: false,
+                showConfirmButton: true,
                 onCheckboxChanged: () async {
                   final price = await showDialog<double>(
                     context: context,
