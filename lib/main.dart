@@ -269,9 +269,11 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _initializeAndNavigate() async {
     final productProvider = context.read<ProductProvider>();
+    final themeProvider = context.read<ThemeProvider>();
     final loadFuture = productProvider.loadProducts();
+    final themeFuture = themeProvider.loadPersistedTheme();
     final animFuture = _controller.forward();
-    await Future.wait([loadFuture, animFuture]);
+    await Future.wait([loadFuture, themeFuture, animFuture]);
     if (!mounted) return;
     Navigator.of(
       context,
