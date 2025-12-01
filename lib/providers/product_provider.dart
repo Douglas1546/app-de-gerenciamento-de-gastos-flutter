@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
 import '../database/database_helper.dart';
 import '../models/product.dart';
 
@@ -101,6 +102,53 @@ class ProductProvider extends ChangeNotifier {
     _selectedDayFilter = day;
     _currentFilter = PurchasedFilter.specificDay;
     notifyListeners();
+  }
+
+  Future<String> exportToJson() async {
+    final products = await _dbHelper.getAllProducts();
+    final data =
+        products.map((p) {
+          final map = p.toMap();
+          map.remove('id');
+          return map;
+        }).toList();
+    return jsonEncode(data);
+  }
+
+  Future<int> importFromJsonString(String jsonString) async {
+    final decoded = jsonDecode(jsonString);
+    final List list =
+        decoded is Map<String, dynamic>
+            ? List.from(decoded['products'] ?? [])
+            : List.from(decoded as List);
+
+    int count = 0;
+    for (final item in list) {
+      final map = Map<String, dynamic>.from(item as Map);
+      final product = Product(
+        id: null,
+        name: map['name'] as String,
+        quantity: map['quantity'] as int,
+        category: ProductCategoryExtension.fromString(
+          map['category'] as String,
+        ),
+        price: (map['price'] as num?)?.toDouble(),
+        isPurchased:
+            map['isPurchased'] is int
+                ? (map['isPurchased'] == 1)
+                : (map['isPurchased'] as bool? ?? false),
+        createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
+        purchasedAt:
+            map['purchasedAt'] != null
+                ? DateTime.fromMillisecondsSinceEpoch(map['purchasedAt'] as int)
+                : null,
+      );
+      await _dbHelper.createProduct(product);
+      count++;
+    }
+
+    await loadProducts();
+    return count;
   }
 
   // Report data grouped by category for a specific month

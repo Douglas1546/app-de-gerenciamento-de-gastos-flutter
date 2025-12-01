@@ -1,10 +1,60 @@
 import 'package:flutter/material.dart';
 import '../widgets/shopping_background.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart' as p;
+import 'dart:io';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
+import 'dart:convert';
 import '../providers/theme_provider.dart';
+import '../providers/product_provider.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  String? _lastBackupPath;
+
+  Future<void> _openBackupLocation() async {
+    if (_lastBackupPath == null) return;
+    final dir = p.dirname(_lastBackupPath!);
+    try {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Abrindo pasta do backup...'),
+          duration: Duration(milliseconds: 800),
+        ),
+      );
+      if (Platform.isMacOS) {
+        final resOpen = await Process.run('open', [dir]);
+        if (resOpen.exitCode == 0) return;
+      }
+      if (Platform.isWindows) {
+        final resOpen = await Process.run('explorer', [dir]);
+        if (resOpen.exitCode == 0) return;
+      }
+      if (Platform.isLinux) {
+        final resOpen = await Process.run('xdg-open', [dir]);
+        if (resOpen.exitCode == 0) return;
+      }
+      final uri = Uri.file(dir);
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {}
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Não foi possível abrir a pasta do backup'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +112,178 @@ class SettingsScreen extends StatelessWidget {
                   Theme.of(context).brightness == Brightness.dark
                       ? Colors.white10
                       : Colors.black12,
+            ),
+            ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 4,
+              ),
+              leading: const Icon(Icons.backup_outlined),
+              title: const Text(
+                'Criar backup',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(
+                'Exporta os dados para um arquivo .json',
+                style: TextStyle(
+                  color:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white70
+                          : Colors.black54,
+                  fontSize: 13,
+                ),
+              ),
+              onTap: () async {
+                final provider = context.read<ProductProvider>();
+                final json = await provider.exportToJson();
+                final now = DateTime.now();
+                final ts =
+                    '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}-${now.minute.toString().padLeft(2, '0')}-${now.second.toString().padLeft(2, '0')}';
+                final fileName = 'shopping_list_backup_$ts.json';
+
+                String? savedPath;
+                if (Platform.isAndroid || Platform.isIOS) {
+                  try {
+                    savedPath = await FlutterFileDialog.saveFile(
+                      params: SaveFileDialogParams(
+                        data: utf8.encode(json),
+                        fileName: fileName,
+                      ),
+                    );
+                  } catch (_) {
+                    savedPath = null;
+                  }
+                }
+
+                if (savedPath == null) {
+                  String? targetPath;
+                  try {
+                    targetPath = await FilePicker.platform.saveFile(
+                      dialogTitle: 'Salvar backup',
+                      fileName: fileName,
+                      type: FileType.custom,
+                      allowedExtensions: const ['json'],
+                    );
+                  } catch (_) {
+                    targetPath = null;
+                  }
+
+                  if (targetPath == null) {
+                    String? dirPath;
+                    try {
+                      dirPath = await FilePicker.platform.getDirectoryPath();
+                    } catch (_) {
+                      dirPath = null;
+                    }
+                    if (dirPath != null) {
+                      targetPath = p.join(dirPath, fileName);
+                    }
+                  }
+
+                  if (targetPath == null) {
+                    final dbDir = await getDatabasesPath();
+                    final backupsPath = p.join(dbDir, 'shopping_list_backups');
+                    await Directory(backupsPath).create(recursive: true);
+                    targetPath = p.join(backupsPath, fileName);
+                  }
+
+                  final file = File(targetPath);
+                  await file.writeAsString(json);
+                  savedPath = targetPath;
+                }
+
+                if (!mounted) return;
+                setState(() {
+                  _lastBackupPath = savedPath;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Backup salvo em:\n$savedPath'),
+                    backgroundColor: const Color(0xFF2E7D32),
+                  ),
+                );
+              },
+            ),
+            if (_lastBackupPath != null) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Último backup salvo em:',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 6),
+                    SelectableText(
+                      _lastBackupPath!,
+                      style: TextStyle(
+                        color:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white70
+                                : Colors.black87,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
+              Divider(
+                thickness: 0.8,
+                color:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white10
+                        : Colors.black12,
+              ),
+            ],
+            Divider(
+              thickness: 0.8,
+              color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white10
+                      : Colors.black12,
+            ),
+            ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 4,
+              ),
+              leading: const Icon(Icons.upload_file_outlined),
+              title: const Text(
+                'Importar dados',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(
+                'Seleciona um arquivo .json para importar',
+                style: TextStyle(
+                  color:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white70
+                          : Colors.black54,
+                  fontSize: 13,
+                ),
+              ),
+              onTap: () async {
+                final result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: const ['json'],
+                );
+                final path = result?.files.single.path;
+                if (path == null) return;
+                final file = File(path);
+                final content = await file.readAsString();
+                final count = await context
+                    .read<ProductProvider>()
+                    .importFromJsonString(content);
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Importados $count itens'),
+                    backgroundColor: const Color(0xFF2E7D32),
+                  ),
+                );
+              },
             ),
           ],
         ),
