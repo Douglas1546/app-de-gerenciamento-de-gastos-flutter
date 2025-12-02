@@ -80,6 +80,15 @@ class _ReportsTabState extends State<ReportsTab> {
     }
   }
 
+  String _dateLocale() {
+    final name =
+        AppLocalizations.of(context)?.localeName ??
+        Localizations.localeOf(context).toLanguageTag();
+    if (name == 'zh_Hans' || name == 'zh-Hans') return 'zh_CN';
+    if (name == 'zh_Hant' || name == 'zh-Hant') return 'zh_TW';
+    return name.replaceAll('-', '_');
+  }
+
   Widget _buildEvolutionChart(ProductProvider provider, NumberFormat currency) {
     final evolution = provider.getSpendingEvolution(6);
 
@@ -121,7 +130,7 @@ class _ReportsTabState extends State<ReportsTab> {
                 return Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    DateFormat('MMM', 'pt_BR').format(date),
+                    DateFormat('MMM', _dateLocale()).format(date),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
@@ -169,7 +178,7 @@ class _ReportsTabState extends State<ReportsTab> {
                 final data = evolution[spot.x.toInt()];
                 final date = data['date'] as DateTime;
                 return LineTooltipItem(
-                  '${DateFormat('MMM/yy', 'pt_BR').format(date)}\n${currency.format(spot.y)}',
+                  '${DateFormat('MMM/yy', _dateLocale()).format(date)}\n${currency.format(spot.y)}',
                   const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -280,11 +289,11 @@ class _ReportsTabState extends State<ReportsTab> {
                           _isDaily
                               ? DateFormat(
                                 'dd/MM/yyyy',
-                                'pt_BR',
+                                _dateLocale(),
                               ).format(_selectedDate)
                               : DateFormat(
                                 'MMMM yyyy',
-                                'pt_BR',
+                                _dateLocale(),
                               ).format(DateTime(_selectedYear, _selectedMonth)),
                           style: TextStyle(
                             fontSize: 20,
@@ -327,7 +336,9 @@ class _ReportsTabState extends State<ReportsTab> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         FilterChip(
-                          label: Text(AppLocalizations.of(context)?.month ?? 'Mês'),
+                          label: Text(
+                            AppLocalizations.of(context)?.month ?? 'Mês',
+                          ),
                           selected: !_isDaily,
                           onSelected: (selected) {
                             setState(() {
@@ -352,7 +363,9 @@ class _ReportsTabState extends State<ReportsTab> {
                         ),
                         const SizedBox(width: 8),
                         FilterChip(
-                          label: Text(AppLocalizations.of(context)?.day ?? 'Dia'),
+                          label: Text(
+                            AppLocalizations.of(context)?.day ?? 'Dia',
+                          ),
                           selected: _isDaily,
                           onSelected: (selected) {
                             setState(() {
@@ -405,8 +418,12 @@ class _ReportsTabState extends State<ReportsTab> {
                       children: [
                         Text(
                           _isDaily
-                              ? (AppLocalizations.of(context)?.totalSpentDay ?? 'Total Gasto no Dia')
-                              : (AppLocalizations.of(context)?.totalSpentMonth ?? 'Total Gasto no Mês'),
+                              ? (AppLocalizations.of(context)?.totalSpentDay ??
+                                  'Total Gasto no Dia')
+                              : (AppLocalizations.of(
+                                    context,
+                                  )?.totalSpentMonth ??
+                                  'Total Gasto no Mês'),
                           style: TextStyle(
                             fontSize: 16,
                             color:
@@ -460,7 +477,8 @@ class _ReportsTabState extends State<ReportsTab> {
                       ),
                     ),
                     title: Text(
-                      AppLocalizations.of(context)?.spendingEvolutionTitle ?? 'Evolução dos Gastos',
+                      AppLocalizations.of(context)?.spendingEvolutionTitle ??
+                          'Evolução dos Gastos',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -469,7 +487,8 @@ class _ReportsTabState extends State<ReportsTab> {
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
-                        AppLocalizations.of(context)?.lastSixMonthsSubtitle ?? 'Últimos 6 meses',
+                        AppLocalizations.of(context)?.lastSixMonthsSubtitle ??
+                            'Últimos 6 meses',
                         style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
                     ),
@@ -499,8 +518,10 @@ class _ReportsTabState extends State<ReportsTab> {
                       const SizedBox(height: 16),
                       Text(
                         _isDaily
-                            ? (AppLocalizations.of(context)?.noSpendingDay ?? 'Nenhum gasto neste dia')
-                            : (AppLocalizations.of(context)?.noSpendingMonth ?? 'Nenhum gasto neste mês'),
+                            ? (AppLocalizations.of(context)?.noSpendingDay ??
+                                'Nenhum gasto neste dia')
+                            : (AppLocalizations.of(context)?.noSpendingMonth ??
+                                'Nenhum gasto neste mês'),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -542,7 +563,10 @@ class _ReportsTabState extends State<ReportsTab> {
                           ),
                         ),
                         title: Text(
-                          AppLocalizations.of(context)?.spendingByCategoryTitle ?? 'Gastos por Categoria',
+                          AppLocalizations.of(
+                                context,
+                              )?.spendingByCategoryTitle ??
+                              'Gastos por Categoria',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -552,8 +576,14 @@ class _ReportsTabState extends State<ReportsTab> {
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
                             _isDaily
-                                ? (AppLocalizations.of(context)?.distributionSelectedDay ?? 'Distribuição do dia selecionado')
-                                : (AppLocalizations.of(context)?.distributionSelectedMonth ?? 'Distribuição do mês selecionado'),
+                                ? (AppLocalizations.of(
+                                      context,
+                                    )?.distributionSelectedDay ??
+                                    'Distribuição do dia selecionado')
+                                : (AppLocalizations.of(
+                                      context,
+                                    )?.distributionSelectedMonth ??
+                                    'Distribuição do mês selecionado'),
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[600],
@@ -633,13 +663,16 @@ class _ReportsTabState extends State<ReportsTab> {
                                           }
                                           final category = report.keys
                                               .elementAt(value.toInt());
-                                          final label = _categoryName(category)
-                                              .substring(
-                                                0,
-                                                _categoryName(category).length > 10
-                                                    ? 10
-                                                    : _categoryName(category).length,
-                                              );
+                                          final label = _categoryName(
+                                            category,
+                                          ).substring(
+                                            0,
+                                            _categoryName(category).length > 10
+                                                ? 10
+                                                : _categoryName(
+                                                  category,
+                                                ).length,
+                                          );
                                           return Padding(
                                             padding: const EdgeInsets.only(
                                               top: 8,
