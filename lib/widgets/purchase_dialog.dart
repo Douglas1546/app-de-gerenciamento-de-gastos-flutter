@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../models/product.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PurchaseDialog extends StatefulWidget {
   final Product product;
@@ -44,8 +45,9 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
   @override
   Widget build(BuildContext context) {
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    final l = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('Confirmar Compra'),
+      title: Text(l?.confirmPurchaseTitle ?? 'Confirmar Compra'),
       content: Form(
         key: _formKey,
         child: Column(
@@ -53,12 +55,12 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Produto: ${widget.product.name}',
+              '${l?.productLabel ?? 'Produto:'} ${widget.product.name}',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             Text(
-              'Quantidade: ${widget.product.quantity}',
+              '${l?.quantityLabel ?? 'Quantidade'}: ${widget.product.quantity}',
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 16),
@@ -80,12 +82,12 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
               child: TextFormField(
                 controller: _priceController,
                 focusNode: _priceFocus,
-                decoration: const InputDecoration(
-                  labelText: 'Preço Unitário (R\$)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l?.unitPriceLabel ?? 'Preço Unitário (R\$)',
+                  border: const OutlineInputBorder(),
                   prefixText: 'R\$ ',
-                  prefixIcon: Icon(Icons.attach_money_outlined),
-                  hintText: 'Use vírgula para centavos',
+                  prefixIcon: const Icon(Icons.attach_money_outlined),
+                  hintText: l?.unitPriceHint ?? 'Use vírgula para centavos',
                 ),
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -97,10 +99,10 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, insira o preço';
+                    return l?.priceRequired ?? 'Por favor, insira o preço';
                   }
                   if (double.tryParse(value.replaceAll(',', '.')) == null) {
-                    return 'Preço inválido';
+                    return l?.priceInvalid ?? 'Preço inválido';
                   }
                   return null;
                 },
@@ -116,9 +118,9 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Total:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  Text(
+                    l?.totalLabel ?? 'Total:',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 180),
@@ -144,7 +146,7 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancelar'),
+          child: Text(l?.cancel ?? 'Cancelar'),
         ),
         ElevatedButton(
           onPressed: () {
@@ -155,7 +157,7 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
               Navigator.of(context).pop(unitPrice);
             }
           },
-          child: const Text('Confirmar'),
+          child: Text(l?.confirm ?? 'Confirmar'),
         ),
       ],
     );

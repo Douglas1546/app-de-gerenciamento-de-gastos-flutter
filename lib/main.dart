@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/settings_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'providers/theme_provider.dart';
 import 'providers/product_provider.dart';
 import 'screens/to_buy_tab.dart';
@@ -38,11 +39,13 @@ class MyApp extends StatelessWidget {
       child: Builder(
         builder:
             (context) => MaterialApp(
-              title: 'Lista de Compras',
+              title:
+                  AppLocalizations.of(context)?.appTitle ?? 'Lista de Compras',
               debugShowCheckedModeBanner: false,
-              locale: const Locale('pt', 'BR'),
-              supportedLocales: const [Locale('pt', 'BR'), Locale('en', '')],
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: context.watch<ThemeProvider>().locale,
               localizationsDelegates: const [
+                AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
@@ -294,7 +297,7 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            'DESPESAS',
+            AppLocalizations.of(context)?.expensesTitle ?? 'DESPESAS',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface,
@@ -336,21 +339,30 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           backgroundColor: Theme.of(context).colorScheme.surface,
           indicatorColor: const Color(0xFF2E7D32).withValues(alpha: 0.12),
-          destinations: const [
+          destinations: [
             NavigationDestination(
-              icon: Icon(Icons.shopping_cart_outlined),
-              selectedIcon: Icon(Icons.shopping_cart, color: Color(0xFF2E7D32)),
-              label: 'Comprar',
+              icon: const Icon(Icons.shopping_cart_outlined),
+              selectedIcon: const Icon(
+                Icons.shopping_cart,
+                color: Color(0xFF2E7D32),
+              ),
+              label: AppLocalizations.of(context)?.tabBuy ?? 'Comprar',
             ),
             NavigationDestination(
-              icon: Icon(Icons.shopping_bag_outlined),
-              selectedIcon: Icon(Icons.shopping_bag, color: Color(0xFF2E7D32)),
-              label: 'Comprados',
+              icon: const Icon(Icons.shopping_bag_outlined),
+              selectedIcon: const Icon(
+                Icons.shopping_bag,
+                color: Color(0xFF2E7D32),
+              ),
+              label: AppLocalizations.of(context)?.tabPurchased ?? 'Comprados',
             ),
             NavigationDestination(
-              icon: Icon(Icons.analytics_outlined),
-              selectedIcon: Icon(Icons.analytics, color: Color(0xFF2E7D32)),
-              label: 'Relatórios',
+              icon: const Icon(Icons.analytics_outlined),
+              selectedIcon: const Icon(
+                Icons.analytics,
+                color: Color(0xFF2E7D32),
+              ),
+              label: AppLocalizations.of(context)?.tabReports ?? 'Relatórios',
             ),
           ],
         ),

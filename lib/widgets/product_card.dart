@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/product.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -47,9 +48,36 @@ class ProductCard extends StatelessWidget {
     }
   }
 
+  String _categoryName(BuildContext context, ProductCategory category) {
+    final l = AppLocalizations.of(context);
+    switch (category) {
+      case ProductCategory.alimentos:
+        return l?.categoryAlimentos ?? 'Alimentos';
+      case ProductCategory.bebidas:
+        return l?.categoryBebidas ?? 'Bebidas';
+      case ProductCategory.tecnologia:
+        return l?.categoryTecnologia ?? 'Tecnologia';
+      case ProductCategory.contasDeCasa:
+        return l?.categoryContasDeCasa ?? 'Contas de Casa';
+      case ProductCategory.higienePessoal:
+        return l?.categoryHigienePessoal ?? 'Higiene Pessoal';
+      case ProductCategory.limpeza:
+        return l?.categoryLimpeza ?? 'Limpeza';
+      case ProductCategory.vestuario:
+        return l?.categoryVestuario ?? 'Vestuário';
+      case ProductCategory.saude:
+        return l?.categorySaude ?? 'Saúde';
+      case ProductCategory.entretenimento:
+        return l?.categoryEntretenimento ?? 'Entretenimento';
+      case ProductCategory.outros:
+        return l?.categoryOutros ?? 'Outros';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    final l = AppLocalizations.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
@@ -75,17 +103,20 @@ class ProductCard extends StatelessWidget {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: const Text('Confirmar'),
-                content: const Text('Deseja realmente excluir este produto?'),
+                title: Text(l?.confirm ?? 'Confirmar'),
+                content: Text(
+                  l?.deleteConfirmMessage ??
+                      'Deseja realmente excluir este produto?',
+                ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('Cancelar'),
+                    child: Text(l?.cancel ?? 'Cancelar'),
                   ),
                   TextButton(
                     style: TextButton.styleFrom(foregroundColor: Colors.red),
                     onPressed: () => Navigator.of(context).pop(true),
-                    child: const Text('Excluir'),
+                    child: Text(l?.delete ?? 'Excluir'),
                   ),
                 ],
               );
@@ -147,7 +178,7 @@ class ProductCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        product.category.displayName,
+                        _categoryName(context, product.category),
                         style: TextStyle(
                           fontSize: 12,
                           color: _getCategoryColor(product.category),
@@ -220,21 +251,22 @@ class ProductCard extends StatelessWidget {
                           Icons.delete_outline,
                           color: Colors.redAccent,
                         ),
-                        tooltip: 'Excluir',
+                        tooltip: l?.delete ?? 'Excluir',
                         onPressed: () async {
                           final confirmed = await showDialog<bool>(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: const Text('Confirmar'),
-                                content: const Text(
-                                  'Deseja realmente excluir este produto?',
+                                title: Text(l?.confirm ?? 'Confirmar'),
+                                content: Text(
+                                  l?.deleteConfirmMessage ??
+                                      'Deseja realmente excluir este produto?',
                                 ),
                                 actions: [
                                   TextButton(
                                     onPressed:
                                         () => Navigator.of(context).pop(false),
-                                    child: const Text('Cancelar'),
+                                    child: Text(l?.cancel ?? 'Cancelar'),
                                   ),
                                   TextButton(
                                     style: TextButton.styleFrom(
@@ -242,7 +274,7 @@ class ProductCard extends StatelessWidget {
                                     ),
                                     onPressed:
                                         () => Navigator.of(context).pop(true),
-                                    child: const Text('Excluir'),
+                                    child: Text(l?.delete ?? 'Excluir'),
                                   ),
                                 ],
                               );
@@ -274,9 +306,9 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                     alignment: Alignment.center,
-                    child: const Text(
-                      'Confirmar',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)?.confirm ?? 'Confirmar',
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),

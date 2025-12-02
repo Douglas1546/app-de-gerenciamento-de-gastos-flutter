@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'dart:convert';
 import '../providers/theme_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/product_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -28,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            'Configurações',
+            AppLocalizations.of(context)?.settingsTitle ?? 'Configurações',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface,
@@ -45,12 +46,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 vertical: 4,
               ),
               leading: const Icon(Icons.dark_mode_outlined),
-              title: const Text(
-                'Modo escuro',
-                style: TextStyle(fontWeight: FontWeight.w600),
+              title: Text(
+                AppLocalizations.of(context)?.darkMode ?? 'Modo escuro',
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: Text(
-                'Ativa/desativa o tema escuro do app',
+                AppLocalizations.of(context)?.darkModeSubtitle ??
+                    'Ativa/desativa o tema escuro do app',
                 style: TextStyle(
                   color:
                       Theme.of(context).brightness == Brightness.dark
@@ -82,13 +84,101 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 horizontal: 8,
                 vertical: 4,
               ),
-              leading: const Icon(Icons.backup_outlined),
-              title: const Text(
-                'Criar backup',
-                style: TextStyle(fontWeight: FontWeight.w600),
+              leading: const Icon(Icons.language_outlined),
+              title: Text(
+                AppLocalizations.of(context)?.language ?? 'Idioma',
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: Text(
-                'Exporta os dados para um arquivo .json',
+                AppLocalizations.of(context)?.languageSubtitle ??
+                    'Escolha o idioma do app',
+                style: TextStyle(
+                  color:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white70
+                          : Colors.black54,
+                  fontSize: 13,
+                ),
+              ),
+              onTap: () async {
+                final currentCode =
+                    context.read<ThemeProvider>().locale?.toLanguageTag();
+                String? selectedCode = currentCode;
+                await showDialog(
+                  context: context,
+                  builder: (ctx) {
+                    return AlertDialog(
+                      title: Text(
+                        AppLocalizations.of(ctx)?.chooseLanguageTitle ??
+                            'Idioma',
+                      ),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          RadioListTile<String?>(
+                            value: null,
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(ctx).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(ctx)?.languageSystem ??
+                                  'Usar idioma do sistema',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'pt_BR',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(ctx).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(ctx)?.languagePortuguese ??
+                                  'Português (Brasil)',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'en',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(ctx).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(ctx)?.languageEnglish ??
+                                  'Inglês',
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+                context.read<ThemeProvider>().setLocaleCode(selectedCode ?? '');
+              },
+            ),
+            Divider(
+              thickness: 0.8,
+              color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white10
+                      : Colors.black12,
+            ),
+            ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 4,
+              ),
+              leading: const Icon(Icons.backup_outlined),
+              title: Text(
+                AppLocalizations.of(context)?.createBackup ?? 'Criar backup',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(
+                AppLocalizations.of(context)?.createBackupSubtitle ??
+                    'Exporta os dados para um arquivo .json',
                 style: TextStyle(
                   color:
                       Theme.of(context).brightness == Brightness.dark
@@ -123,7 +213,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   String? targetPath;
                   try {
                     targetPath = await FilePicker.platform.saveFile(
-                      dialogTitle: 'Salvar backup',
+                      dialogTitle:
+                          AppLocalizations.of(context)?.saveBackupDialogTitle ??
+                          'Salvar backup',
                       fileName: fileName,
                       type: FileType.custom,
                       allowedExtensions: const ['json'],
@@ -162,7 +254,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 });
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Backup salvo em:\n$savedPath'),
+                    content: Text(
+                      (AppLocalizations.of(
+                            context,
+                          )?.backupSavedAt(savedPath ?? '') ??
+                          'Backup salvo em:\n$savedPath'),
+                    ),
                     backgroundColor: const Color(0xFF2E7D32),
                   ),
                 );
@@ -174,9 +271,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Último backup salvo em:',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                    Text(
+                      AppLocalizations.of(context)?.lastBackupSavedAt ??
+                          'Último backup salvo em:',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 6),
                     SelectableText(
@@ -214,12 +312,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 vertical: 4,
               ),
               leading: const Icon(Icons.upload_file_outlined),
-              title: const Text(
-                'Importar dados',
-                style: TextStyle(fontWeight: FontWeight.w600),
+              title: Text(
+                AppLocalizations.of(context)?.importData ?? 'Importar dados',
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: Text(
-                'Seleciona um arquivo .json para importar',
+                AppLocalizations.of(context)?.importDataSubtitle ??
+                    'Seleciona um arquivo .json para importar',
                 style: TextStyle(
                   color:
                       Theme.of(context).brightness == Brightness.dark
@@ -243,7 +342,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Importados $count itens'),
+                    content: Text(
+                      AppLocalizations.of(context)?.importedItems(count) ??
+                          'Importados $count itens',
+                    ),
                     backgroundColor: const Color(0xFF2E7D32),
                   ),
                 );

@@ -5,6 +5,7 @@ import '../widgets/add_product_dialog.dart';
 import '../widgets/purchase_dialog.dart';
 import '../widgets/product_card.dart';
 import '../models/product.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ToBuyTab extends StatelessWidget {
   const ToBuyTab({Key? key}) : super(key: key);
@@ -29,7 +30,7 @@ class ToBuyTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Nenhum produto adicionado',
+                    AppLocalizations.of(context)?.noProductsAdded ?? 'Nenhum produto adicionado',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -38,7 +39,7 @@ class ToBuyTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Adicione produtos usando o botão +',
+                    AppLocalizations.of(context)?.addProductsUsingPlus ?? 'Adicione produtos usando o botão +',
                     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
@@ -74,10 +75,11 @@ class ToBuyTab extends StatelessWidget {
                     listen: false,
                   ).deleteProduct(product.id!);
                   if (context.mounted) {
+                    final l = AppLocalizations.of(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Produto removido!'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text(l?.productRemoved ?? 'Produto removido!'),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   }
@@ -94,11 +96,12 @@ class ToBuyTab extends StatelessWidget {
                       listen: false,
                     ).updateProduct(updatedProduct);
                     if (context.mounted) {
+                      final l = AppLocalizations.of(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Produto atualizado!'),
-                          duration: Duration(seconds: 2),
-                          backgroundColor: Color(0xFF2E7D32),
+                        SnackBar(
+                          content: Text(l?.productUpdated ?? 'Produto atualizado!'),
+                          duration: const Duration(seconds: 2),
+                          backgroundColor: const Color(0xFF2E7D32),
                         ),
                       );
                     }
@@ -123,11 +126,12 @@ class ToBuyTab extends StatelessWidget {
               listen: false,
             ).addProduct(product);
             if (context.mounted) {
+              final l = AppLocalizations.of(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Produto adicionado!'),
-                  duration: Duration(seconds: 2),
-                  backgroundColor: Color(0xFF2E7D32),
+                SnackBar(
+                  content: Text(l?.productAdded ?? 'Produto adicionado!'),
+                  duration: const Duration(seconds: 2),
+                  backgroundColor: const Color(0xFF2E7D32),
                 ),
               );
             }

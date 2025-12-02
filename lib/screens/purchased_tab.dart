@@ -4,22 +4,24 @@ import '../providers/product_provider.dart';
 import '../widgets/product_card.dart';
 import '../models/product.dart';
 import '../widgets/add_product_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PurchasedTab extends StatelessWidget {
   const PurchasedTab({Key? key}) : super(key: key);
 
-  String _getFilterLabel(PurchasedFilter filter) {
+  String _getFilterLabel(BuildContext context, PurchasedFilter filter) {
+    final l = AppLocalizations.of(context);
     switch (filter) {
       case PurchasedFilter.all:
-        return 'Todos';
+        return l?.filterAll ?? 'Todos';
       case PurchasedFilter.today:
-        return 'Hoje';
+        return l?.filterToday ?? 'Hoje';
       case PurchasedFilter.thisMonth:
-        return 'Este Mês';
+        return l?.filterThisMonth ?? 'Este Mês';
       case PurchasedFilter.thisYear:
-        return 'Este Ano';
+        return l?.filterThisYear ?? 'Este Ano';
       case PurchasedFilter.specificDay:
-        return 'Dia';
+        return l?.filterSpecificDay ?? 'Dia';
     }
   }
 
@@ -53,7 +55,7 @@ class PurchasedTab extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: FilterChip(
-                            label: Text(_getFilterLabel(filter)),
+                            label: Text(_getFilterLabel(context, filter)),
                             selected: isSelected,
                             onSelected: (_) async {
                               if (filter == PurchasedFilter.specificDay) {
@@ -113,7 +115,7 @@ class PurchasedTab extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'Nenhum produto comprado',
+                              AppLocalizations.of(context)?.noPurchasedProducts ?? 'Nenhum produto comprado',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -122,7 +124,7 @@ class PurchasedTab extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Produtos comprados aparecerão aqui',
+                              AppLocalizations.of(context)?.purchasedProductsAppearHere ?? 'Produtos comprados aparecerão aqui',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[600],
@@ -145,10 +147,11 @@ class PurchasedTab extends StatelessWidget {
                                 listen: false,
                               ).deleteProduct(product.id!);
                               if (context.mounted) {
+                                final l = AppLocalizations.of(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Produto removido!'),
-                                    duration: Duration(seconds: 2),
+                                  SnackBar(
+                                    content: Text(l?.productRemoved ?? 'Produto removido!'),
+                                    duration: const Duration(seconds: 2),
                                   ),
                                 );
                               }
@@ -167,11 +170,12 @@ class PurchasedTab extends StatelessWidget {
                                   listen: false,
                                 ).updateProduct(updatedProduct);
                                 if (context.mounted) {
+                                  final l = AppLocalizations.of(context);
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Produto atualizado!'),
-                                      duration: Duration(seconds: 2),
-                                      backgroundColor: Color(0xFF2E7D32),
+                                    SnackBar(
+                                      content: Text(l?.productUpdated ?? 'Produto atualizado!'),
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor: const Color(0xFF2E7D32),
                                     ),
                                   );
                                 }

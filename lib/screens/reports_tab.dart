@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'dart:math' as math;
 import '../providers/product_provider.dart';
 import '../models/product.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ReportsTab extends StatefulWidget {
   const ReportsTab({Key? key}) : super(key: key);
@@ -53,13 +54,39 @@ class _ReportsTabState extends State<ReportsTab> {
     }
   }
 
+  String _categoryName(ProductCategory category) {
+    final l = AppLocalizations.of(context);
+    switch (category) {
+      case ProductCategory.alimentos:
+        return l?.categoryAlimentos ?? 'Alimentos';
+      case ProductCategory.bebidas:
+        return l?.categoryBebidas ?? 'Bebidas';
+      case ProductCategory.tecnologia:
+        return l?.categoryTecnologia ?? 'Tecnologia';
+      case ProductCategory.contasDeCasa:
+        return l?.categoryContasDeCasa ?? 'Contas de Casa';
+      case ProductCategory.higienePessoal:
+        return l?.categoryHigienePessoal ?? 'Higiene Pessoal';
+      case ProductCategory.limpeza:
+        return l?.categoryLimpeza ?? 'Limpeza';
+      case ProductCategory.vestuario:
+        return l?.categoryVestuario ?? 'Vestuário';
+      case ProductCategory.saude:
+        return l?.categorySaude ?? 'Saúde';
+      case ProductCategory.entretenimento:
+        return l?.categoryEntretenimento ?? 'Entretenimento';
+      case ProductCategory.outros:
+        return l?.categoryOutros ?? 'Outros';
+    }
+  }
+
   Widget _buildEvolutionChart(ProductProvider provider, NumberFormat currency) {
     final evolution = provider.getSpendingEvolution(6);
 
     if (evolution.isEmpty || evolution.every((e) => e['total'] == 0.0)) {
       return Center(
         child: Text(
-          'Sem dados para exibir',
+          AppLocalizations.of(context)?.noDataToShow ?? 'Sem dados para exibir',
           style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
       );
@@ -300,7 +327,7 @@ class _ReportsTabState extends State<ReportsTab> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         FilterChip(
-                          label: const Text('Mês'),
+                          label: Text(AppLocalizations.of(context)?.month ?? 'Mês'),
                           selected: !_isDaily,
                           onSelected: (selected) {
                             setState(() {
@@ -325,7 +352,7 @@ class _ReportsTabState extends State<ReportsTab> {
                         ),
                         const SizedBox(width: 8),
                         FilterChip(
-                          label: const Text('Dia'),
+                          label: Text(AppLocalizations.of(context)?.day ?? 'Dia'),
                           selected: _isDaily,
                           onSelected: (selected) {
                             setState(() {
@@ -378,8 +405,8 @@ class _ReportsTabState extends State<ReportsTab> {
                       children: [
                         Text(
                           _isDaily
-                              ? 'Total Gasto no Dia'
-                              : 'Total Gasto no Mês',
+                              ? (AppLocalizations.of(context)?.totalSpentDay ?? 'Total Gasto no Dia')
+                              : (AppLocalizations.of(context)?.totalSpentMonth ?? 'Total Gasto no Mês'),
                           style: TextStyle(
                             fontSize: 16,
                             color:
@@ -432,8 +459,8 @@ class _ReportsTabState extends State<ReportsTab> {
                         size: 20,
                       ),
                     ),
-                    title: const Text(
-                      'Evolução dos Gastos',
+                    title: Text(
+                      AppLocalizations.of(context)?.spendingEvolutionTitle ?? 'Evolução dos Gastos',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -442,7 +469,7 @@ class _ReportsTabState extends State<ReportsTab> {
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
-                        'Últimos 6 meses',
+                        AppLocalizations.of(context)?.lastSixMonthsSubtitle ?? 'Últimos 6 meses',
                         style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
                     ),
@@ -472,8 +499,8 @@ class _ReportsTabState extends State<ReportsTab> {
                       const SizedBox(height: 16),
                       Text(
                         _isDaily
-                            ? 'Nenhum gasto neste dia'
-                            : 'Nenhum gasto neste mês',
+                            ? (AppLocalizations.of(context)?.noSpendingDay ?? 'Nenhum gasto neste dia')
+                            : (AppLocalizations.of(context)?.noSpendingMonth ?? 'Nenhum gasto neste mês'),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -514,8 +541,8 @@ class _ReportsTabState extends State<ReportsTab> {
                             size: 20,
                           ),
                         ),
-                        title: const Text(
-                          'Gastos por Categoria',
+                        title: Text(
+                          AppLocalizations.of(context)?.spendingByCategoryTitle ?? 'Gastos por Categoria',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -524,7 +551,9 @@ class _ReportsTabState extends State<ReportsTab> {
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
-                            'Distribuição do ${_isDaily ? 'dia' : 'mês'} selecionado',
+                            _isDaily
+                                ? (AppLocalizations.of(context)?.distributionSelectedDay ?? 'Distribuição do dia selecionado')
+                                : (AppLocalizations.of(context)?.distributionSelectedMonth ?? 'Distribuição do mês selecionado'),
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[600],
@@ -557,7 +586,7 @@ class _ReportsTabState extends State<ReportsTab> {
                                           groupIndex,
                                         );
                                         return BarTooltipItem(
-                                          '${category.displayName}\n',
+                                          '${_categoryName(category)}\n',
                                           const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -604,14 +633,12 @@ class _ReportsTabState extends State<ReportsTab> {
                                           }
                                           final category = report.keys
                                               .elementAt(value.toInt());
-                                          final label = category.displayName
+                                          final label = _categoryName(category)
                                               .substring(
                                                 0,
-                                                category.displayName.length > 10
+                                                _categoryName(category).length > 10
                                                     ? 10
-                                                    : category
-                                                        .displayName
-                                                        .length,
+                                                    : _categoryName(category).length,
                                               );
                                           return Padding(
                                             padding: const EdgeInsets.only(
@@ -738,7 +765,7 @@ class _ReportsTabState extends State<ReportsTab> {
                             ),
                           ),
                           title: Text(
-                            category.displayName,
+                            _categoryName(category),
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
@@ -747,7 +774,7 @@ class _ReportsTabState extends State<ReportsTab> {
                           subtitle: Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
-                              '${currency.format(totalSpent)} • $quantity ${quantity == 1 ? 'item' : 'itens'}',
+                              '${currency.format(totalSpent)} • $quantity ${quantity == 1 ? (AppLocalizations.of(context)?.itemSingular ?? 'item') : (AppLocalizations.of(context)?.itemPlural ?? 'itens')}',
                               style: TextStyle(
                                 color: Colors.grey[700],
                                 fontSize: 13,

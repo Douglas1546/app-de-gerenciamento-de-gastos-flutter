@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/product.dart';
 
 class AddProductDialog extends StatefulWidget {
@@ -61,8 +62,9 @@ class _AddProductDialogState extends State<AddProductDialog> {
     final isEditing = widget.product != null;
     final isPurchased = widget.product?.isPurchased ?? false;
 
+    final l = AppLocalizations.of(context);
     return AlertDialog(
-      title: Text(isEditing ? 'Editar Produto' : 'Adicionar Produto'),
+      title: Text(isEditing ? (l?.editProductTitle ?? 'Editar Produto') : (l?.addProductTitle ?? 'Adicionar Produto')),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -88,9 +90,9 @@ class _AddProductDialogState extends State<AddProductDialog> {
                   controller: _nameController,
                   focusNode: _nameFocus,
                   decoration: InputDecoration(
-                    labelText: 'Nome do Produto',
+                    labelText: l?.productNameLabel ?? 'Nome do Produto',
                     border: const OutlineInputBorder(),
-                    hintText: 'Ex.: Arroz, Feijão',
+                    hintText: l?.productNameHint ?? 'Ex.: Arroz, Feijão',
                     suffixIcon:
                         _nameController.text.isNotEmpty
                             ? IconButton(
@@ -103,7 +105,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, insira o nome do produto';
+                      return l?.productNameRequired ?? 'Por favor, insira o nome do produto';
                     }
                     return null;
                   },
@@ -129,7 +131,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                   controller: _quantityController,
                   focusNode: _quantityFocus,
                   decoration: InputDecoration(
-                    labelText: 'Quantidade',
+                    labelText: l?.quantityLabel ?? 'Quantidade',
                     border: const OutlineInputBorder(),
                     suffixIcon: SizedBox(
                       width: 96,
@@ -161,10 +163,10 @@ class _AddProductDialogState extends State<AddProductDialog> {
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, insira a quantidade';
+                      return l?.quantityRequired ?? 'Por favor, insira a quantidade';
                     }
                     if (int.tryParse(value) == null || int.parse(value) <= 0) {
-                      return 'Quantidade deve ser um número válido';
+                      return l?.quantityInvalid ?? 'Quantidade deve ser um número válido';
                     }
                     return null;
                   },
@@ -193,10 +195,10 @@ class _AddProductDialogState extends State<AddProductDialog> {
                     controller: _priceController,
                     focusNode: _priceFocus,
                     decoration: InputDecoration(
-                      labelText: 'Preço Unitário (R\$)',
+                      labelText: l?.unitPriceLabel ?? 'Preço Unitário (R\$)',
                       border: const OutlineInputBorder(),
                       prefixText: 'R\$ ',
-                      hintText: 'Use vírgula para centavos',
+                      hintText: l?.unitPriceHint ?? 'Use vírgula para centavos',
                       suffixIcon:
                           _priceController.text.isNotEmpty
                               ? IconButton(
@@ -212,10 +214,10 @@ class _AddProductDialogState extends State<AddProductDialog> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, insira o preço';
+                        return l?.priceRequired ?? 'Por favor, insira o preço';
                       }
                       if (double.tryParse(value.replaceAll(',', '.')) == null) {
-                        return 'Preço inválido';
+                        return l?.priceInvalid ?? 'Preço inválido';
                       }
                       return null;
                     },
@@ -225,9 +227,9 @@ class _AddProductDialogState extends State<AddProductDialog> {
               const SizedBox(height: 16),
               DropdownButtonFormField<ProductCategory>(
                 value: _selectedCategory,
-                decoration: const InputDecoration(
-                  labelText: 'Categoria',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l?.categoryLabel ?? 'Categoria',
+                  border: const OutlineInputBorder(),
                 ),
                 isExpanded: true,
                 menuMaxHeight: 300,
@@ -235,7 +237,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                     ProductCategory.values.map((category) {
                       return DropdownMenuItem(
                         value: category,
-                        child: Text(category.displayName),
+                        child: Text(_localizedCategoryName(context, category)),
                       );
                     }).toList(),
                 onChanged: (value) {
@@ -253,7 +255,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancelar'),
+          child: Text(l?.cancel ?? 'Cancelar'),
         ),
         ElevatedButton(
           onPressed: () {
@@ -288,9 +290,34 @@ class _AddProductDialogState extends State<AddProductDialog> {
               Navigator.of(context).pop(product);
             }
           },
-          child: Text(isEditing ? 'Salvar' : 'Adicionar'),
+          child: Text(isEditing ? (l?.save ?? 'Salvar') : (l?.add ?? 'Adicionar')),
         ),
       ],
     );
+  }
+  String _localizedCategoryName(BuildContext context, ProductCategory category) {
+    final l = AppLocalizations.of(context);
+    switch (category) {
+      case ProductCategory.alimentos:
+        return l?.categoryAlimentos ?? 'Alimentos';
+      case ProductCategory.bebidas:
+        return l?.categoryBebidas ?? 'Bebidas';
+      case ProductCategory.tecnologia:
+        return l?.categoryTecnologia ?? 'Tecnologia';
+      case ProductCategory.contasDeCasa:
+        return l?.categoryContasDeCasa ?? 'Contas de Casa';
+      case ProductCategory.higienePessoal:
+        return l?.categoryHigienePessoal ?? 'Higiene Pessoal';
+      case ProductCategory.limpeza:
+        return l?.categoryLimpeza ?? 'Limpeza';
+      case ProductCategory.vestuario:
+        return l?.categoryVestuario ?? 'Vestuário';
+      case ProductCategory.saude:
+        return l?.categorySaude ?? 'Saúde';
+      case ProductCategory.entretenimento:
+        return l?.categoryEntretenimento ?? 'Entretenimento';
+      case ProductCategory.outros:
+        return l?.categoryOutros ?? 'Outros';
+    }
   }
 }
