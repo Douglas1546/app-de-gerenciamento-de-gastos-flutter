@@ -151,6 +151,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   'Inglês',
                             ),
                           ),
+                          RadioListTile<String?>(
+                            value: 'es',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(ctx).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(ctx)?.languageSpanish ??
+                                  'Espanhol',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'fr',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(ctx).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(ctx)?.languageFrench ??
+                                  'Francês',
+                            ),
+                          ),
                         ],
                       ),
                     );
