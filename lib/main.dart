@@ -301,8 +301,21 @@ class _SplashScreenState extends State<SplashScreen>
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
+  late final PageController _pageController;
 
   final List<Widget> _pages = const [ToBuyTab(), PurchasedTab(), ReportsTab()];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -345,15 +358,25 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
           elevation: 0,
         ),
-        body: _pages[_currentIndex],
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          children: _pages,
+        ),
         bottomNavigationBar: NavigationBar(
           height: 60,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           selectedIndex: _currentIndex,
           onDestinationSelected: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
+            _pageController.animateToPage(
+              index,
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeOut,
+            );
           },
           backgroundColor: Theme.of(context).colorScheme.surface,
           indicatorColor: const Color(0xFF2E7D32).withValues(alpha: 0.12),
