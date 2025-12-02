@@ -166,7 +166,11 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color:
+                    Theme.of(context).inputDecorationTheme.fillColor ??
+                    (Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF1E1E1E)
+                        : Colors.white),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
