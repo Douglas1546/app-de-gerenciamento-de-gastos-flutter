@@ -39,7 +39,7 @@
   "quantityLabel": "Quantité",
   "quantityRequired": "Veuillez saisir la quantité",
   "quantityInvalid": "La quantité doit être un nombre valide",
-  "unitPriceLabel": "Prix Unitaire (R$)",
+  "unitPriceLabel": "Prix Unitaire",
   "unitPriceHint": "Utilisez la virgule pour les centimes",
   "priceRequired": "Veuillez saisir le prix",
   "priceInvalid": "Prix invalide",

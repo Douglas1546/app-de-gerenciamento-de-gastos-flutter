@@ -39,7 +39,7 @@
   "quantityLabel": "Quantity",
   "quantityRequired": "Please enter the quantity",
   "quantityInvalid": "Quantity must be a valid number",
-  "unitPriceLabel": "Unit Price (R$)",
+  "unitPriceLabel": "Unit Price",
   "unitPriceHint": "Use comma for cents",
   "priceRequired": "Please enter the price",
   "priceInvalid": "Invalid price",

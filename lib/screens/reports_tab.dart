@@ -89,6 +89,46 @@ class _ReportsTabState extends State<ReportsTab> {
     return name.replaceAll('-', '_');
   }
 
+  String _currencySymbol() {
+    final name =
+        AppLocalizations.of(context)?.localeName ??
+        Localizations.localeOf(context).toLanguageTag();
+    final loc =
+        (name == 'zh_Hans' || name == 'zh-Hans')
+            ? 'zh_CN'
+            : (name == 'zh_Hant' || name == 'zh-Hant')
+            ? 'zh_TW'
+            : name.replaceAll('-', '_');
+    switch (loc) {
+      case 'pt_BR':
+        return 'R\$';
+      case 'pt':
+        return '€';
+      case 'en':
+      case 'en_US':
+        return '\$';
+      case 'es':
+      case 'fr':
+      case 'de':
+      case 'it':
+        return '€';
+      case 'ja':
+        return '¥';
+      case 'ko':
+        return '₩';
+      case 'pl':
+        return 'zł';
+      case 'ru':
+        return '₽';
+      case 'zh_CN':
+        return '¥';
+      case 'zh_TW':
+        return 'NT\$';
+      default:
+        return NumberFormat.simpleCurrency(locale: loc).currencySymbol;
+    }
+  }
+
   Widget _buildEvolutionChart(ProductProvider provider, NumberFormat currency) {
     final evolution = provider.getSpendingEvolution(6);
 
@@ -145,8 +185,13 @@ class _ReportsTabState extends State<ReportsTab> {
               showTitles: true,
               reservedSize: 50,
               getTitlesWidget: (value, meta) {
+                final currency0 = NumberFormat.currency(
+                  locale: _dateLocale(),
+                  symbol: _currencySymbol(),
+                  decimalDigits: 0,
+                );
                 return Text(
-                  'R\$${value.toInt()}',
+                  currency0.format(value),
                   style: const TextStyle(fontSize: 10, color: Colors.grey),
                 );
               },
@@ -225,7 +270,10 @@ class _ReportsTabState extends State<ReportsTab> {
 
   @override
   Widget build(BuildContext context) {
-    final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    final currency = NumberFormat.currency(
+      locale: _dateLocale(),
+      symbol: _currencySymbol(),
+    );
     return Consumer<ProductProvider>(
       builder: (context, provider, child) {
         final report =
@@ -696,8 +744,14 @@ class _ReportsTabState extends State<ReportsTab> {
                                         showTitles: true,
                                         reservedSize: 50,
                                         getTitlesWidget: (value, meta) {
+                                          final currency0 =
+                                              NumberFormat.currency(
+                                                locale: _dateLocale(),
+                                                symbol: _currencySymbol(),
+                                                decimalDigits: 0,
+                                              );
                                           return Text(
-                                            'R\$${value.toInt()}',
+                                            currency0.format(value),
                                             style: const TextStyle(
                                               fontSize: 10,
                                               color: Colors.grey,
@@ -820,7 +874,7 @@ class _ReportsTabState extends State<ReportsTab> {
                                   dense: true,
                                   title: Text(product.name),
                                   subtitle: Text(
-                                    'Qtd: ${product.quantity} • ${DateFormat('dd/MM/yyyy', 'pt_BR').format(product.purchasedAt!)}',
+                                    'Qtd: ${product.quantity} • ${DateFormat('dd/MM/yyyy', _dateLocale()).format(product.purchasedAt!)}',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey[600],

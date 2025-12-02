@@ -317,10 +317,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
               },
               itemBuilder:
-                  (context) => const [
+                  (context) => [
                     PopupMenuItem<String>(
                       value: 'settings',
-                      child: Text('Configurações'),
+                      child: Text(
+                        AppLocalizations.of(context)?.settingsTitle ??
+                            'Configurações',
+                      ),
                     ),
                   ],
             ),

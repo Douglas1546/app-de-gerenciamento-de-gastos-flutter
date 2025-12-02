@@ -39,7 +39,7 @@
   "quantityLabel": "Menge",
   "quantityRequired": "Bitte gib die Menge ein",
   "quantityInvalid": "Menge muss eine gültige Zahl sein",
-  "unitPriceLabel": "Stückpreis (R$)",
+  "unitPriceLabel": "Stückpreis",
   "unitPriceHint": "Komma für Cent verwenden",
   "priceRequired": "Bitte gib den Preis ein",
   "priceInvalid": "Ungültiger Preis",

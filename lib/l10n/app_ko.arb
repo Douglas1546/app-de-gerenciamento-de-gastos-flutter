@@ -39,7 +39,7 @@
   "quantityLabel": "수량",
   "quantityRequired": "수량을 입력하세요",
   "quantityInvalid": "수량은 유효한 숫자여야 합니다",
-  "unitPriceLabel": "단가 (R$)",
+  "unitPriceLabel": "단가",
   "unitPriceHint": "소수점은 쉼표 사용",
   "priceRequired": "가격을 입력하세요",
   "priceInvalid": "유효하지 않은 가격",

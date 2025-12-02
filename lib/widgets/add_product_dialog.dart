@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/product.dart';
 
@@ -64,7 +65,11 @@ class _AddProductDialogState extends State<AddProductDialog> {
 
     final l = AppLocalizations.of(context);
     return AlertDialog(
-      title: Text(isEditing ? (l?.editProductTitle ?? 'Editar Produto') : (l?.addProductTitle ?? 'Adicionar Produto')),
+      title: Text(
+        isEditing
+            ? (l?.editProductTitle ?? 'Editar Produto')
+            : (l?.addProductTitle ?? 'Adicionar Produto'),
+      ),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -105,7 +110,8 @@ class _AddProductDialogState extends State<AddProductDialog> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return l?.productNameRequired ?? 'Por favor, insira o nome do produto';
+                      return l?.productNameRequired ??
+                          'Por favor, insira o nome do produto';
                     }
                     return null;
                   },
@@ -163,10 +169,12 @@ class _AddProductDialogState extends State<AddProductDialog> {
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return l?.quantityRequired ?? 'Por favor, insira a quantidade';
+                      return l?.quantityRequired ??
+                          'Por favor, insira a quantidade';
                     }
                     if (int.tryParse(value) == null || int.parse(value) <= 0) {
-                      return l?.quantityInvalid ?? 'Quantidade deve ser um número válido';
+                      return l?.quantityInvalid ??
+                          'Quantidade deve ser um número válido';
                     }
                     return null;
                   },
@@ -195,9 +203,18 @@ class _AddProductDialogState extends State<AddProductDialog> {
                     controller: _priceController,
                     focusNode: _priceFocus,
                     decoration: InputDecoration(
-                      labelText: l?.unitPriceLabel ?? 'Preço Unitário (R\$)',
+                      labelText: l?.unitPriceLabel ?? 'Preço Unitário',
                       border: const OutlineInputBorder(),
-                      prefixText: 'R\$ ',
+                      prefixText:
+                          _isCurrencyPrefix(context)
+                              ? _currencySymbol(context)
+                              : null,
+                      suffixText:
+                          _isCurrencyPrefix(context)
+                              ? null
+                              : _currencySymbol(context).trim().isEmpty
+                              ? null
+                              : ' ${_currencySymbol(context).trim()}',
                       hintText: l?.unitPriceHint ?? 'Use vírgula para centavos',
                       suffixIcon:
                           _priceController.text.isNotEmpty
@@ -290,12 +307,18 @@ class _AddProductDialogState extends State<AddProductDialog> {
               Navigator.of(context).pop(product);
             }
           },
-          child: Text(isEditing ? (l?.save ?? 'Salvar') : (l?.add ?? 'Adicionar')),
+          child: Text(
+            isEditing ? (l?.save ?? 'Salvar') : (l?.add ?? 'Adicionar'),
+          ),
         ),
       ],
     );
   }
-  String _localizedCategoryName(BuildContext context, ProductCategory category) {
+
+  String _localizedCategoryName(
+    BuildContext context,
+    ProductCategory category,
+  ) {
     final l = AppLocalizations.of(context);
     switch (category) {
       case ProductCategory.alimentos:
@@ -319,5 +342,63 @@ class _AddProductDialogState extends State<AddProductDialog> {
       case ProductCategory.outros:
         return l?.categoryOutros ?? 'Outros';
     }
+  }
+
+  String _currencySymbol(BuildContext context) {
+    final name =
+        AppLocalizations.of(context)?.localeName ??
+        Localizations.localeOf(context).toLanguageTag();
+    final locale =
+        (name == 'zh_Hans' || name == 'zh-Hans')
+            ? 'zh_CN'
+            : (name == 'zh_Hant' || name == 'zh-Hant')
+            ? 'zh_TW'
+            : name.replaceAll('-', '_');
+    switch (locale) {
+      case 'pt_BR':
+        return 'R\$';
+      case 'pt':
+        return '€';
+      case 'en':
+      case 'en_US':
+        return '\$';
+      case 'es':
+      case 'fr':
+      case 'de':
+      case 'it':
+        return '€';
+      case 'ja':
+        return '¥';
+      case 'ko':
+        return '₩';
+      case 'pl':
+        return 'zł';
+      case 'ru':
+        return '₽';
+      case 'zh_CN':
+        return '¥';
+      case 'zh_TW':
+        return 'NT\$';
+      default:
+        return NumberFormat.simpleCurrency(locale: locale).currencySymbol;
+    }
+  }
+
+  bool _isCurrencyPrefix(BuildContext context) {
+    final name =
+        AppLocalizations.of(context)?.localeName ??
+        Localizations.localeOf(context).toLanguageTag();
+    final locale =
+        (name == 'zh_Hans' || name == 'zh-Hans')
+            ? 'zh_CN'
+            : (name == 'zh_Hant' || name == 'zh-Hant')
+            ? 'zh_TW'
+            : name.replaceAll('-', '_');
+    final symbol = _currencySymbol(context);
+    final sample = NumberFormat.currency(
+      locale: locale,
+      symbol: symbol,
+    ).format(1);
+    return sample.trim().startsWith(symbol);
   }
 }

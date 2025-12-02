@@ -39,7 +39,7 @@
   "quantityLabel": "Ilość",
   "quantityRequired": "Wprowadź ilość",
   "quantityInvalid": "Ilość musi być prawidłową liczbą",
-  "unitPriceLabel": "Cena jednostkowa (R$)",
+  "unitPriceLabel": "Cena jednostkowa",
   "unitPriceHint": "Użyj przecinka dla groszy",
   "priceRequired": "Wprowadź cenę",
   "priceInvalid": "Nieprawidłowa cena",

@@ -44,7 +44,60 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    String _currentLocale() {
+      final name =
+          AppLocalizations.of(context)?.localeName ??
+          Localizations.localeOf(context).toLanguageTag();
+      if (name == 'zh_Hans' || name == 'zh-Hans') return 'zh_CN';
+      if (name == 'zh_Hant' || name == 'zh-Hant') return 'zh_TW';
+      return name.replaceAll('-', '_');
+    }
+
+    String _symbolForLocale(String loc) {
+      switch (loc) {
+        case 'pt_BR':
+          return 'R\$';
+        case 'pt':
+          return '€';
+        case 'en':
+        case 'en_US':
+          return '\$';
+        case 'es':
+        case 'fr':
+        case 'de':
+        case 'it':
+          return '€';
+        case 'ja':
+          return '¥';
+        case 'ko':
+          return '₩';
+        case 'pl':
+          return 'zł';
+        case 'ru':
+          return '₽';
+        case 'zh_CN':
+          return '¥';
+        case 'zh_TW':
+          return 'NT\$';
+        default:
+          return NumberFormat.simpleCurrency(locale: loc).currencySymbol;
+      }
+    }
+
+    final currLocale = _currentLocale();
+    final currencySymbol = _symbolForLocale(currLocale);
+    final currency = NumberFormat.currency(
+      locale: currLocale,
+      symbol: currencySymbol,
+    );
+    bool _symbolIsPrefix() {
+      final sample = NumberFormat.currency(
+        locale: currLocale,
+        symbol: currencySymbol,
+      ).format(1);
+      return sample.trim().startsWith(currencySymbol);
+    }
+
     final l = AppLocalizations.of(context);
     return AlertDialog(
       title: Text(l?.confirmPurchaseTitle ?? 'Confirmar Compra'),
@@ -83,10 +136,11 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
                 controller: _priceController,
                 focusNode: _priceFocus,
                 decoration: InputDecoration(
-                  labelText: l?.unitPriceLabel ?? 'Preço Unitário (R\$)',
+                  labelText: l?.unitPriceLabel ?? 'Preço Unitário',
                   border: const OutlineInputBorder(),
-                  prefixText: 'R\$ ',
-                  prefixIcon: const Icon(Icons.attach_money_outlined),
+                  prefixText: _symbolIsPrefix() ? '$currencySymbol ' : null,
+                  suffixText: _symbolIsPrefix() ? null : ' $currencySymbol',
+                  // prefixIcon: const Icon(Icons.attach_money_outlined),
                   hintText: l?.unitPriceHint ?? 'Use vírgula para centavos',
                 ),
                 keyboardType: const TextInputType.numberWithOptions(
@@ -120,7 +174,10 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
                 children: [
                   Text(
                     l?.totalLabel ?? 'Total:',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 180),

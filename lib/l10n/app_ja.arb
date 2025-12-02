@@ -39,7 +39,7 @@
   "quantityLabel": "数量",
   "quantityRequired": "数量を入力してください",
   "quantityInvalid": "数量は有効な数値である必要があります",
-  "unitPriceLabel": "単価 (R$)",
+  "unitPriceLabel": "単価",
   "unitPriceHint": "小数はカンマを使用",
   "priceRequired": "価格を入力してください",
   "priceInvalid": "無効な価格です",

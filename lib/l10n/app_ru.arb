@@ -39,7 +39,7 @@
   "quantityLabel": "Количество",
   "quantityRequired": "Введите количество",
   "quantityInvalid": "Количество должно быть числом",
-  "unitPriceLabel": "Цена за единицу (R$)",
+  "unitPriceLabel": "Цена за единицу",
   "unitPriceHint": "Используйте запятую для копеек",
   "priceRequired": "Введите цену",
   "priceInvalid": "Неверная цена",

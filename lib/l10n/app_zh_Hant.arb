@@ -39,7 +39,7 @@
   "quantityLabel": "數量",
   "quantityRequired": "請輸入數量",
   "quantityInvalid": "數量必須為有效數字",
-  "unitPriceLabel": "單價 (R$)",
+  "unitPriceLabel": "單價",
   "unitPriceHint": "小數請使用逗號",
   "priceRequired": "請輸入價格",
   "priceInvalid": "價格無效",

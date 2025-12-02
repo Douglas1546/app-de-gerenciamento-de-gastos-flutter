@@ -76,7 +76,48 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    String _locale(BuildContext context) {
+      final name =
+          AppLocalizations.of(context)?.localeName ??
+          Localizations.localeOf(context).toLanguageTag();
+      if (name == 'zh_Hans' || name == 'zh-Hans') return 'zh_CN';
+      if (name == 'zh_Hant' || name == 'zh-Hant') return 'zh_TW';
+      return name.replaceAll('-', '_');
+    }
+
+    String _symbol(String loc) {
+      switch (loc) {
+        case 'pt_BR':
+          return 'R\$';
+        case 'pt':
+          return '€';
+        case 'en':
+        case 'en_US':
+          return '\$';
+        case 'es':
+        case 'fr':
+        case 'de':
+        case 'it':
+          return '€';
+        case 'ja':
+          return '¥';
+        case 'ko':
+          return '₩';
+        case 'pl':
+          return 'zł';
+        case 'ru':
+          return '₽';
+        case 'zh_CN':
+          return '¥';
+        case 'zh_TW':
+          return 'NT\$';
+        default:
+          return NumberFormat.simpleCurrency(locale: loc).currencySymbol;
+      }
+    }
+
+    final _loc = _locale(context);
+    final currency = NumberFormat.currency(locale: _loc, symbol: _symbol(_loc));
     final l = AppLocalizations.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -237,7 +278,7 @@ class ProductCard extends StatelessWidget {
                       Text(
                         DateFormat(
                           'dd/MM/yyyy HH:mm',
-                          'pt_BR',
+                          _locale(context),
                         ).format(product.purchasedAt!),
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),

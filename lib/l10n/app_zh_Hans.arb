@@ -39,7 +39,7 @@
   "quantityLabel": "数量",
   "quantityRequired": "请输入数量",
   "quantityInvalid": "数量必须是有效数字",
-  "unitPriceLabel": "单价 (R$)",
+  "unitPriceLabel": "单价",
   "unitPriceHint": "小数使用逗号",
   "priceRequired": "请输入价格",
   "priceInvalid": "价格无效",
