@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:ui';
+import 'dart:ui' show Locale;
 
 class ThemeProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light;
@@ -8,13 +8,26 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeMode get themeMode => _themeMode;
   bool get isDark => _themeMode == ThemeMode.dark;
-  Locale? get locale =>
-      _localeCode == null || _localeCode!.isEmpty
-          ? null
-          : Locale(
-            _localeCode!.split('_').first,
-            _localeCode!.contains('_') ? _localeCode!.split('_')[1] : '',
-          );
+  Locale? get locale {
+    if (_localeCode == null || _localeCode!.isEmpty) return null;
+    final code = _localeCode!;
+    if (!code.contains('_')) {
+      return Locale(code);
+    }
+    final parts = code.split('_');
+    final lang = parts[0];
+    final second = parts.length > 1 ? parts[1] : null;
+    final third = parts.length > 2 ? parts[2] : null;
+    if (second == 'Hans' || second == 'Hant') {
+      // Chinese with script code
+      return Locale.fromSubtags(
+        languageCode: lang,
+        scriptCode: second,
+        countryCode: third,
+      );
+    }
+    return Locale(lang, second);
+  }
 
   void setDark(bool value) {
     _themeMode = value ? ThemeMode.dark : ThemeMode.light;
