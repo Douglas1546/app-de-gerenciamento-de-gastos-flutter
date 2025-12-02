@@ -115,7 +115,10 @@ class PurchasedTab extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              AppLocalizations.of(context)?.noPurchasedProducts ?? 'Nenhum produto comprado',
+                              AppLocalizations.of(
+                                    context,
+                                  )?.noPurchasedProducts ??
+                                  'Nenhum produto comprado',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -124,7 +127,10 @@ class PurchasedTab extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              AppLocalizations.of(context)?.purchasedProductsAppearHere ?? 'Produtos comprados aparecerão aqui',
+                              AppLocalizations.of(
+                                    context,
+                                  )?.purchasedProductsAppearHere ??
+                                  'Produtos comprados aparecerão aqui',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[600],
@@ -150,19 +156,20 @@ class PurchasedTab extends StatelessWidget {
                                 final l = AppLocalizations.of(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(l?.productRemoved ?? 'Produto removido!'),
+                                    content: Text(
+                                      l?.productRemoved ?? 'Produto removido!',
+                                    ),
                                     duration: const Duration(seconds: 2),
                                   ),
                                 );
                               }
                             },
                             onTap: () async {
-                              final updatedProduct = await showDialog<Product>(
-                                context: context,
-                                builder:
-                                    (context) =>
-                                        AddProductDialog(product: product),
-                              );
+                              final updatedProduct =
+                                  await _showSmoothDialog<Product>(
+                                    context,
+                                    AddProductDialog(product: product),
+                                  );
 
                               if (updatedProduct != null && context.mounted) {
                                 await Provider.of<ProductProvider>(
@@ -173,7 +180,10 @@ class PurchasedTab extends StatelessWidget {
                                   final l = AppLocalizations.of(context);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(l?.productUpdated ?? 'Produto atualizado!'),
+                                      content: Text(
+                                        l?.productUpdated ??
+                                            'Produto atualizado!',
+                                      ),
                                       duration: const Duration(seconds: 2),
                                       backgroundColor: const Color(0xFF2E7D32),
                                     ),
@@ -186,6 +196,32 @@ class PurchasedTab extends StatelessWidget {
                       ),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Future<T?> _showSmoothDialog<T>(BuildContext context, Widget child) {
+    return showGeneralDialog<T>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return child;
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOut,
+        );
+        return FadeTransition(
+          opacity: curved,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.96, end: 1.0).animate(curved),
+            child: child,
+          ),
         );
       },
     );

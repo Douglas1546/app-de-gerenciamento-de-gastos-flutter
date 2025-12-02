@@ -140,28 +140,26 @@ class ProductCard extends StatelessWidget {
           child: const Icon(Icons.delete, color: Colors.white, size: 28),
         ),
         confirmDismiss: (direction) async {
-          return await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text(l?.confirm ?? 'Confirmar'),
-                content: Text(
-                  l?.deleteConfirmMessage ??
-                      'Deseja realmente excluir este produto?',
+          return await _showSmoothDialog<bool>(
+            context,
+            AlertDialog(
+              title: Text(l?.confirm ?? 'Confirmar'),
+              content: Text(
+                l?.deleteConfirmMessage ??
+                    'Deseja realmente excluir este produto?',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(l?.cancel ?? 'Cancelar'),
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: Text(l?.cancel ?? 'Cancelar'),
-                  ),
-                  TextButton(
-                    style: TextButton.styleFrom(foregroundColor: Colors.red),
-                    onPressed: () => Navigator.of(context).pop(true),
-                    child: Text(l?.delete ?? 'Excluir'),
-                  ),
-                ],
-              );
-            },
+                TextButton(
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text(l?.delete ?? 'Excluir'),
+                ),
+              ],
+            ),
           );
         },
         onDismissed: (direction) {
@@ -294,32 +292,30 @@ class ProductCard extends StatelessWidget {
                         ),
                         tooltip: l?.delete ?? 'Excluir',
                         onPressed: () async {
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(l?.confirm ?? 'Confirmar'),
-                                content: Text(
-                                  l?.deleteConfirmMessage ??
-                                      'Deseja realmente excluir este produto?',
+                          final confirmed = await _showSmoothDialog<bool>(
+                            context,
+                            AlertDialog(
+                              title: Text(l?.confirm ?? 'Confirmar'),
+                              content: Text(
+                                l?.deleteConfirmMessage ??
+                                    'Deseja realmente excluir este produto?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.of(context).pop(false),
+                                  child: Text(l?.cancel ?? 'Cancelar'),
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed:
-                                        () => Navigator.of(context).pop(false),
-                                    child: Text(l?.cancel ?? 'Cancelar'),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red,
                                   ),
-                                  TextButton(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: Colors.red,
-                                    ),
-                                    onPressed:
-                                        () => Navigator.of(context).pop(true),
-                                    child: Text(l?.delete ?? 'Excluir'),
-                                  ),
-                                ],
-                              );
-                            },
+                                  onPressed:
+                                      () => Navigator.of(context).pop(true),
+                                  child: Text(l?.delete ?? 'Excluir'),
+                                ),
+                              ],
+                            ),
                           );
                           if (confirmed == true && onDelete != null) {
                             onDelete!();
@@ -360,6 +356,32 @@ class ProductCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Future<T?> _showSmoothDialog<T>(BuildContext context, Widget child) {
+    return showGeneralDialog<T>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return child;
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOut,
+        );
+        return FadeTransition(
+          opacity: curved,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.96, end: 1.0).animate(curved),
+            child: child,
+          ),
+        );
+      },
     );
   }
 }

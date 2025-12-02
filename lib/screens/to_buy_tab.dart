@@ -30,7 +30,8 @@ class ToBuyTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    AppLocalizations.of(context)?.noProductsAdded ?? 'Nenhum produto adicionado',
+                    AppLocalizations.of(context)?.noProductsAdded ??
+                        'Nenhum produto adicionado',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -39,7 +40,8 @@ class ToBuyTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    AppLocalizations.of(context)?.addProductsUsingPlus ?? 'Adicione produtos usando o botão +',
+                    AppLocalizations.of(context)?.addProductsUsingPlus ??
+                        'Adicione produtos usando o botão +',
                     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
@@ -56,9 +58,9 @@ class ToBuyTab extends StatelessWidget {
                 showCheckbox: false,
                 showConfirmButton: true,
                 onCheckboxChanged: () async {
-                  final price = await showDialog<double>(
-                    context: context,
-                    builder: (context) => PurchaseDialog(product: product),
+                  final price = await _showSmoothDialog<double>(
+                    context,
+                    PurchaseDialog(product: product),
                   );
 
                   if (price != null && context.mounted) {
@@ -85,9 +87,9 @@ class ToBuyTab extends StatelessWidget {
                   }
                 },
                 onTap: () async {
-                  final updatedProduct = await showDialog<Product>(
-                    context: context,
-                    builder: (context) => AddProductDialog(product: product),
+                  final updatedProduct = await _showSmoothDialog<Product>(
+                    context,
+                    AddProductDialog(product: product),
                   );
 
                   if (updatedProduct != null && context.mounted) {
@@ -99,7 +101,9 @@ class ToBuyTab extends StatelessWidget {
                       final l = AppLocalizations.of(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(l?.productUpdated ?? 'Produto atualizado!'),
+                          content: Text(
+                            l?.productUpdated ?? 'Produto atualizado!',
+                          ),
                           duration: const Duration(seconds: 2),
                           backgroundColor: const Color(0xFF2E7D32),
                         ),
@@ -115,9 +119,9 @@ class ToBuyTab extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF2E7D32),
         onPressed: () async {
-          final product = await showDialog(
-            context: context,
-            builder: (context) => const AddProductDialog(),
+          final product = await _showSmoothDialog<Product>(
+            context,
+            const AddProductDialog(),
           );
 
           if (product != null && context.mounted) {
@@ -139,6 +143,32 @@ class ToBuyTab extends StatelessWidget {
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
+    );
+  }
+
+  Future<T?> _showSmoothDialog<T>(BuildContext context, Widget child) {
+    return showGeneralDialog<T>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return child;
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOut,
+        );
+        return FadeTransition(
+          opacity: curved,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.96, end: 1.0).animate(curved),
+            child: child,
+          ),
+        );
+      },
     );
   }
 }

@@ -104,183 +104,183 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 final currentCode =
                     context.read<ThemeProvider>().locale?.toLanguageTag();
                 String? selectedCode = currentCode;
-                await showDialog(
-                  context: context,
-                  builder: (ctx) {
-                    return AlertDialog(
-                      title: Text(
-                        AppLocalizations.of(ctx)?.chooseLanguageTitle ??
-                            'Idioma',
+                await _showSmoothDialog<void>(
+                  context,
+                  AlertDialog(
+                    title: Text(
+                      AppLocalizations.of(context)?.chooseLanguageTitle ??
+                          'Idioma',
+                    ),
+                    content: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          RadioListTile<String?>(
+                            value: null,
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(context)?.languageSystem ??
+                                  'Usar idioma do sistema',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'pt_BR',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(
+                                    context,
+                                  )?.languagePortuguese ??
+                                  'Português (Brasil)',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'en',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(context)?.languageEnglish ??
+                                  'Inglês',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'es',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(context)?.languageSpanish ??
+                                  'Espanhol',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'fr',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(context)?.languageFrench ??
+                                  'Francês',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'de',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(context)?.languageGerman ??
+                                  'Alemão',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'it',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(context)?.languageItalian ??
+                                  'Italiano',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'ja',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(context)?.languageJapanese ??
+                                  'Japonês',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'ko',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(context)?.languageKorean ??
+                                  'Coreano',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'pl',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(context)?.languagePolish ??
+                                  'Polonês',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'ru',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(context)?.languageRussian ??
+                                  'Russo',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'zh_Hans',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(
+                                    context,
+                                  )?.languageChineseSimplified ??
+                                  'Chinês Simplificado',
+                            ),
+                          ),
+                          RadioListTile<String?>(
+                            value: 'zh_Hant',
+                            groupValue: selectedCode,
+                            onChanged: (val) {
+                              selectedCode = val;
+                              Navigator.of(context).pop();
+                            },
+                            title: Text(
+                              AppLocalizations.of(
+                                    context,
+                                  )?.languageChineseTraditional ??
+                                  'Chinês Tradicional',
+                            ),
+                          ),
+                        ],
                       ),
-                      content: SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            RadioListTile<String?>(
-                              value: null,
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languageSystem ??
-                                    'Usar idioma do sistema',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'pt_BR',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languagePortuguese ??
-                                    'Português (Brasil)',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'en',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languageEnglish ??
-                                    'Inglês',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'es',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languageSpanish ??
-                                    'Espanhol',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'fr',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languageFrench ??
-                                    'Francês',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'de',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languageGerman ??
-                                    'Alemão',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'it',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languageItalian ??
-                                    'Italiano',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'ja',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languageJapanese ??
-                                    'Japonês',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'ko',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languageKorean ??
-                                    'Coreano',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'pl',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languagePolish ??
-                                    'Polonês',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'ru',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(ctx)?.languageRussian ??
-                                    'Russo',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'zh_Hans',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(
-                                      ctx,
-                                    )?.languageChineseSimplified ??
-                                    'Chinês Simplificado',
-                              ),
-                            ),
-                            RadioListTile<String?>(
-                              value: 'zh_Hant',
-                              groupValue: selectedCode,
-                              onChanged: (val) {
-                                selectedCode = val;
-                                Navigator.of(ctx).pop();
-                              },
-                              title: Text(
-                                AppLocalizations.of(
-                                      ctx,
-                                    )?.languageChineseTraditional ??
-                                    'Chinês Tradicional',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                    ),
+                  ),
                 );
                 context.read<ThemeProvider>().setLocaleCode(selectedCode ?? '');
               },
@@ -480,6 +480,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<T?> _showSmoothDialog<T>(BuildContext context, Widget child) {
+    return showGeneralDialog<T>(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return child;
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOut,
+        );
+        return FadeTransition(
+          opacity: curved,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.96, end: 1.0).animate(curved),
+            child: child,
+          ),
+        );
+      },
     );
   }
 }
