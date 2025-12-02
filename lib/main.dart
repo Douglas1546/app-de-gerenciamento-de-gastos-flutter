@@ -200,6 +200,8 @@ class _SplashScreenState extends State<SplashScreen>
   late final AnimationController _controller;
   late final Animation<double> _scale;
   late final Animation<double> _rotate;
+  bool _overlayGone = false;
+  bool _fadingOut = false;
 
   @override
   void initState() {
@@ -226,47 +228,55 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return ShoppingBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ScaleTransition(
-                scale: _scale,
-                child: RotationTransition(
-                  turns: _rotate,
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.12),
-                      shape: BoxShape.circle,
+    return Stack(
+      children: [
+        const MyHomePage(),
+        if (!_overlayGone)
+          AnimatedOpacity(
+            opacity: _fadingOut ? 0 : 1,
+            duration: const Duration(milliseconds: 420),
+            child: Container(
+              color: Theme.of(context).colorScheme.surface,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ScaleTransition(
+                      scale: _scale,
+                      child: RotationTransition(
+                        turns: _rotate,
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.attach_money,
+                            size: 64,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
                     ),
-                    child: Icon(
-                      Icons.attach_money,
-                      size: 64,
-                      color: Theme.of(context).colorScheme.primary,
+                    const SizedBox(height: 18),
+                    SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.4,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 18),
-              SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.4,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+      ],
     );
   }
 
@@ -278,9 +288,14 @@ class _SplashScreenState extends State<SplashScreen>
     final animFuture = _controller.forward();
     await Future.wait([loadFuture, themeFuture, animFuture]);
     if (!mounted) return;
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => const MyHomePage()));
+    setState(() {
+      _fadingOut = true;
+    });
+    await Future.delayed(const Duration(milliseconds: 420));
+    if (!mounted) return;
+    setState(() {
+      _overlayGone = true;
+    });
   }
 }
 
