@@ -5,6 +5,7 @@ App para gerenciar seus gastos mensais
 # comandos apos clonar o repositorio
 
 - flutter pub get
+- flutter gen-l10n
 - flutter run
 
 ## Mudanças recentes
