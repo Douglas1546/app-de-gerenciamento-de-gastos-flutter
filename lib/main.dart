@@ -8,6 +8,7 @@ import 'screens/settings_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'providers/theme_provider.dart';
 import 'providers/product_provider.dart';
+import 'providers/selection_provider.dart';
 import 'screens/to_buy_tab.dart';
 import 'screens/purchased_tab.dart';
 import 'screens/reports_tab.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => SelectionProvider()),
       ],
       child: Builder(
         builder:
@@ -319,42 +321,79 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final selectionProvider = context.watch<SelectionProvider>();
+    final isSelectionMode = selectionProvider.isSelectionMode;
+
     return ShoppingBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor:
+              isSelectionMode
+                  ? const Color(0xFF2E7D32)
+                  : Theme.of(context).colorScheme.surface,
+          leading:
+              isSelectionMode
+                  ? IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: selectionProvider.onCancel,
+                  )
+                  : null,
           title: Text(
-            AppLocalizations.of(context)?.expensesTitle ?? 'DESPESAS',
+            isSelectionMode
+                ? '${selectionProvider.selectedCount} ${AppLocalizations.of(context)?.selected ?? 'selecionados'}'
+                : AppLocalizations.of(context)?.expensesTitle ?? 'DESPESAS',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
+              color:
+                  isSelectionMode
+                      ? Colors.white
+                      : Theme.of(context).colorScheme.onSurface,
             ),
           ),
           actions: [
-            PopupMenuButton<String>(
-              icon: Icon(
-                Icons.more_vert,
-                color: Theme.of(context).colorScheme.onSurface,
+            if (isSelectionMode) ...[
+              IconButton(
+                icon: const Icon(Icons.select_all, color: Colors.white),
+                tooltip:
+                    AppLocalizations.of(context)?.selectAll ??
+                    'Selecionar Todos',
+                onPressed: () {
+                  // Callback será definido pelas tabs
+                  if (selectionProvider.onSelectAll != null) {
+                    selectionProvider.onSelectAll!();
+                  }
+                },
               ),
-              onSelected: (value) {
-                if (value == 'settings') {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  );
-                }
-              },
-              itemBuilder:
-                  (context) => [
-                    PopupMenuItem<String>(
-                      value: 'settings',
-                      child: Text(
-                        AppLocalizations.of(context)?.settingsTitle ??
-                            'Configurações',
+              if (selectionProvider.selectedCount > 0)
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.white),
+                  onPressed: selectionProvider.onDelete,
+                ),
+            ] else
+              PopupMenuButton<String>(
+                icon: Icon(
+                  Icons.more_vert,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                onSelected: (value) {
+                  if (value == 'settings') {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                    );
+                  }
+                },
+                itemBuilder:
+                    (context) => [
+                      PopupMenuItem<String>(
+                        value: 'settings',
+                        child: Text(
+                          AppLocalizations.of(context)?.settingsTitle ??
+                              'Configurações',
+                        ),
                       ),
-                    ),
-                  ],
-            ),
+                    ],
+              ),
           ],
           elevation: 0,
         ),

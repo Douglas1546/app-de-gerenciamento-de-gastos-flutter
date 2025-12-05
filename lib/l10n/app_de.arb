@@ -107,6 +107,11 @@
   "close": "Schließen",
   "selectAll": "Alle auswählen",
   "productsImported": "Produkte importiert",
+  "selectItemsToDelete": "Elemente zum Löschen auswählen",
+  "selected": "ausgewählt",
+  "deleteConfirmTitle": "Löschung bestätigen",
+  "deleteMultipleConfirmMessage": "Möchten Sie löschen",
+  "itemsDeleted": "Elemente gelöscht!",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

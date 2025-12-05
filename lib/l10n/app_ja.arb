@@ -107,6 +107,11 @@
   "close": "閉じる",
   "selectAll": "すべて選択",
   "productsImported": "商品がインポートされました",
+  "selectItemsToDelete": "削除するアイテムを選択",
+  "selected": "選択済み",
+  "deleteConfirmTitle": "削除の確認",
+  "deleteMultipleConfirmMessage": "削除しますか",
+  "itemsDeleted": "アイテムが削除されました！",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

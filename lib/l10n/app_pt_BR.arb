@@ -107,6 +107,11 @@
   "close": "Fechar",
   "selectAll": "Selecionar Todos",
   "productsImported": "Produtos importados",
+  "selectItemsToDelete": "Selecionar itens para exclusão",
+  "selected": "selecionados",
+  "deleteConfirmTitle": "Confirmar exclusão",
+  "deleteMultipleConfirmMessage": "Deseja excluir",
+  "itemsDeleted": "Itens excluídos!",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

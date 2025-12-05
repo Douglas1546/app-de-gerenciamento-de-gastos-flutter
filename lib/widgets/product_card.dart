@@ -11,6 +11,10 @@ class ProductCard extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onTap;
   final bool showConfirmButton;
+  final bool isSelectionMode;
+  final bool isSelected;
+  final VoidCallback? onSelectionToggle;
+  final VoidCallback? onLongPress;
 
   const ProductCard({
     Key? key,
@@ -21,6 +25,10 @@ class ProductCard extends StatelessWidget {
     this.onDelete,
     this.onTap,
     this.showConfirmButton = false,
+    this.isSelectionMode = false,
+    this.isSelected = false,
+    this.onSelectionToggle,
+    this.onLongPress,
   }) : super(key: key);
 
   Color _getCategoryColor(ProductCategory category) {
@@ -171,10 +179,24 @@ class ProductCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              onTap: onTap,
+              onTap: isSelectionMode ? onSelectionToggle : onTap,
+              onLongPress: onLongPress,
               contentPadding: const EdgeInsets.all(16),
               leading:
-                  showCheckbox
+                  isSelectionMode
+                      ? Checkbox(
+                        value: isSelected,
+                        activeColor: const Color(0xFF2E7D32),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        onChanged: (bool? value) {
+                          if (onSelectionToggle != null) {
+                            onSelectionToggle!();
+                          }
+                        },
+                      )
+                      : showCheckbox
                       ? Checkbox(
                         value: product.isPurchased,
                         activeColor: const Color(0xFF2E7D32),

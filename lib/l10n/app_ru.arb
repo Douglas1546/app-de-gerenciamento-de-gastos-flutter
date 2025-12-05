@@ -107,6 +107,11 @@
   "close": "Закрыть",
   "selectAll": "Выбрать все",
   "productsImported": "Товары импортированы",
+  "selectItemsToDelete": "Выбрать элементы для удаления",
+  "selected": "выбрано",
+  "deleteConfirmTitle": "Подтвердить удаление",
+  "deleteMultipleConfirmMessage": "Вы хотите удалить",
+  "itemsDeleted": "Элементы удалены!",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

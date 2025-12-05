@@ -107,6 +107,11 @@
   "close": "关闭",
   "selectAll": "全选",
   "productsImported": "产品已导入",
+  "selectItemsToDelete": "选择要删除的项目",
+  "selected": "已选",
+  "deleteConfirmTitle": "确认删除",
+  "deleteMultipleConfirmMessage": "您要删除",
+  "itemsDeleted": "项目已删除！",
   "@backupSavedAt": {
     "placeholders": {
       "path": {
