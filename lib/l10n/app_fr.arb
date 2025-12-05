@@ -88,7 +88,19 @@
   "filterThisYear": "Cette année",
   "filterSpecificDay": "Jour",
   "noPurchasedProducts": "Aucun produit acheté",
-  "purchasedProductsAppearHere": "Les produits achetés s’afficheront ici",
+  "purchasedProductsAppearHere": "Les produits achetés apparaîtront ici",
+  "salaryDistributionTitle": "Répartition du Salaire",
+  "salaryDistributionSubtitle": "Comment votre salaire a été dépensé",
+  "setSalaryButton": "Définir le Salaire Mensuel",
+  "salaryLabel": "Salaire",
+  "remainingLabel": "Restant",
+  "percentageSpentLabel": "Pourcentage Dépensé",
+  "setSalaryDialogTitle": "Définir le Salaire Mensuel",
+  "salaryInputLabel": "Salaire",
+  "salaryInputHelper": "Entrez le montant de votre salaire mensuel",
+  "salaryInputRequired": "Veuillez entrer une valeur",
+  "salaryInputInvalid": "Veuillez entrer une valeur valide",
+  "salarySaved": "Salaire enregistré!",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

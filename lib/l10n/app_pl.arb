@@ -89,6 +89,18 @@
   "filterSpecificDay": "Dzień",
   "noPurchasedProducts": "Brak zakupionych produktów",
   "purchasedProductsAppearHere": "Zakupione produkty pojawią się tutaj",
+  "salaryDistributionTitle": "Podział Wynagrodzenia",
+  "salaryDistributionSubtitle": "Jak zostało wydane Twoje wynagrodzenie",
+  "setSalaryButton": "Ustaw Miesięczne Wynagrodzenie",
+  "salaryLabel": "Wynagrodzenie",
+  "remainingLabel": "Pozostało",
+  "percentageSpentLabel": "Procent Wydany",
+  "setSalaryDialogTitle": "Ustaw Miesięczne Wynagrodzenie",
+  "salaryInputLabel": "Wynagrodzenie",
+  "salaryInputHelper": "Wprowadź kwotę miesięcznego wynagrodzenia",
+  "salaryInputRequired": "Proszę wprowadzić wartość",
+  "salaryInputInvalid": "Proszę wprowadzić poprawną wartość",
+  "salarySaved": "Wynagrodzenie zapisane!",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

@@ -87,8 +87,20 @@
   "filterThisMonth": "이번 달",
   "filterThisYear": "올해",
   "filterSpecificDay": "일",
-  "noPurchasedProducts": "구매된 상품이 없습니다",
-  "purchasedProductsAppearHere": "구매된 상품이 여기에 표시됩니다",
+  "noPurchasedProducts": "구매한 제품이 없습니다",
+  "purchasedProductsAppearHere": "구매한 제품이 여기에 표시됩니다",
+  "salaryDistributionTitle": "급여 분배",
+  "salaryDistributionSubtitle": "급여 사용 내역",
+  "setSalaryButton": "월급 설정",
+  "salaryLabel": "급여",
+  "remainingLabel": "남은 금액",
+  "percentageSpentLabel": "사용률",
+  "setSalaryDialogTitle": "월급 설정",
+  "salaryInputLabel": "급여",
+  "salaryInputHelper": "월급을 입력하세요",
+  "salaryInputRequired": "값을 입력하세요",
+  "salaryInputInvalid": "유효한 값을 입력하세요",
+  "salarySaved": "급여가 저장되었습니다!",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

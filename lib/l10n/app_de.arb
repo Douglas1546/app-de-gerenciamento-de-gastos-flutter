@@ -88,7 +88,19 @@
   "filterThisYear": "Dieses Jahr",
   "filterSpecificDay": "Tag",
   "noPurchasedProducts": "Keine gekauften Produkte",
-  "purchasedProductsAppearHere": "Gekaufte Produkte erscheinen hier",
+  "purchasedProductsAppearHere": "Gekaufte Produkte werden hier angezeigt",
+  "salaryDistributionTitle": "Gehaltsverteilung",
+  "salaryDistributionSubtitle": "Wie Ihr Gehalt ausgegeben wurde",
+  "setSalaryButton": "Monatsgehalt festlegen",
+  "salaryLabel": "Gehalt",
+  "remainingLabel": "Übrig",
+  "percentageSpentLabel": "Prozentsatz ausgegeben",
+  "setSalaryDialogTitle": "Monatsgehalt festlegen",
+  "salaryInputLabel": "Gehalt",
+  "salaryInputHelper": "Geben Sie Ihr monatliches Gehalt ein",
+  "salaryInputRequired": "Bitte geben Sie einen Wert ein",
+  "salaryInputInvalid": "Bitte geben Sie einen gültigen Wert ein",
+  "salarySaved": "Gehalt gespeichert!",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

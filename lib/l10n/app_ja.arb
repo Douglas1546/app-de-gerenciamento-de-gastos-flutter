@@ -87,8 +87,20 @@
   "filterThisMonth": "今月",
   "filterThisYear": "今年",
   "filterSpecificDay": "日",
-  "noPurchasedProducts": "購入済みの商品はありません",
-  "purchasedProductsAppearHere": "購入済みの商品がここに表示されます",
+  "noPurchasedProducts": "購入した商品はありません",
+  "purchasedProductsAppearHere": "購入した商品がここに表示されます",
+  "salaryDistributionTitle": "給与の分配",
+  "salaryDistributionSubtitle": "給与の使い道",
+  "setSalaryButton": "月給を設定",
+  "salaryLabel": "給与",
+  "remainingLabel": "残り",
+  "percentageSpentLabel": "使用率",
+  "setSalaryDialogTitle": "月給を設定",
+  "salaryInputLabel": "給与",
+  "salaryInputHelper": "月給を入力してください",
+  "salaryInputRequired": "値を入力してください",
+  "salaryInputInvalid": "有効な値を入力してください",
+  "salarySaved": "給与が保存されました！",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

@@ -20,8 +20,9 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: _upgradeDB,
     );
   }
 
@@ -38,6 +39,32 @@ class DatabaseHelper {
         purchasedAt INTEGER
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE monthly_salaries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        year INTEGER NOT NULL,
+        month INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        createdAt INTEGER NOT NULL,
+        UNIQUE(year, month)
+      )
+    ''');
+  }
+
+  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE monthly_salaries (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          year INTEGER NOT NULL,
+          month INTEGER NOT NULL,
+          amount REAL NOT NULL,
+          createdAt INTEGER NOT NULL,
+          UNIQUE(year, month)
+        )
+      ''');
+    }
   }
 
   Future<int> createProduct(Product product) async {
@@ -74,7 +101,9 @@ class DatabaseHelper {
   }
 
   Future<List<Product>> getPurchasedProductsByDateRange(
-      DateTime start, DateTime end) async {
+    DateTime start,
+    DateTime end,
+  ) async {
     final db = await database;
     final result = await db.query(
       'products',
@@ -97,15 +126,47 @@ class DatabaseHelper {
 
   Future<int> deleteProduct(int id) async {
     final db = await database;
-    return await db.delete(
-      'products',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('products', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<void> close() async {
     final db = await database;
     await db.close();
+  }
+
+  // Salary methods
+  Future<int> setSalary(int year, int month, double amount) async {
+    final db = await database;
+    return await db.insert('monthly_salaries', {
+      'year': year,
+      'month': month,
+      'amount': amount,
+      'createdAt': DateTime.now().millisecondsSinceEpoch,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<double?> getSalary(int year, int month) async {
+    final db = await database;
+    final result = await db.query(
+      'monthly_salaries',
+      where: 'year = ? AND month = ?',
+      whereArgs: [year, month],
+    );
+    if (result.isEmpty) return null;
+    return result.first['amount'] as double;
+  }
+
+  Future<Map<String, double>> getAllSalaries() async {
+    final db = await database;
+    final result = await db.query(
+      'monthly_salaries',
+      orderBy: 'year DESC, month DESC',
+    );
+    final Map<String, double> salaries = {};
+    for (var row in result) {
+      final key = '${row['year']}-${row['month']}';
+      salaries[key] = row['amount'] as double;
+    }
+    return salaries;
   }
 }

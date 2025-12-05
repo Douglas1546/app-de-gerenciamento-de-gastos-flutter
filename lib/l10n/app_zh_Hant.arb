@@ -87,8 +87,20 @@
   "filterThisMonth": "本月",
   "filterThisYear": "今年",
   "filterSpecificDay": "日",
-  "noPurchasedProducts": "沒有已購買的商品",
-  "purchasedProductsAppearHere": "已購買的商品將顯示在此",
+  "noPurchasedProducts": "沒有購買的產品",
+  "purchasedProductsAppearHere": "已購買的產品將顯示在這裡",
+  "salaryDistributionTitle": "薪資分配",
+  "salaryDistributionSubtitle": "薪資的使用情況",
+  "setSalaryButton": "設置月薪資",
+  "salaryLabel": "薪資",
+  "remainingLabel": "剩餘",
+  "percentageSpentLabel": "支出百分比",
+  "setSalaryDialogTitle": "設置月薪資",
+  "salaryInputLabel": "薪資",
+  "salaryInputHelper": "請輸入您的月薪資",
+  "salaryInputRequired": "請輸入一個值",
+  "salaryInputInvalid": "請輸入有效的值",
+  "salarySaved": "薪資已保存！",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

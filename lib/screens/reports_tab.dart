@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import '../providers/product_provider.dart';
 import '../models/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../widgets/salary_dialog.dart';
 
 class ReportsTab extends StatefulWidget {
   const ReportsTab({Key? key}) : super(key: key);
@@ -268,6 +269,139 @@ class _ReportsTabState extends State<ReportsTab> {
     );
   }
 
+  Widget _buildPieChart(
+    ProductProvider provider,
+    NumberFormat currency,
+    int year,
+    int month,
+  ) {
+    return FutureBuilder<Map<dynamic, double>>(
+      future: provider.getSpendingDistribution(year, month),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: Text(
+              AppLocalizations.of(context)?.noDataToShow ??
+                  'Sem dados para exibir',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          );
+        }
+
+        final distribution = snapshot.data!;
+        final colors = [
+          Colors.green,
+          Colors.blue,
+          Colors.purple,
+          Colors.orange,
+          Colors.pink,
+          Colors.teal,
+          Colors.indigo,
+          Colors.red,
+          Colors.amber,
+          Colors.grey,
+          const Color(0xFF4CAF50),
+        ];
+
+        int colorIndex = 0;
+        final total = distribution.values.reduce((a, b) => a + b);
+        final sections =
+            distribution.entries.map((entry) {
+              final color = colors[colorIndex % colors.length];
+              colorIndex++;
+
+              final percentage = (entry.value / total * 100);
+
+              return PieChartSectionData(
+                value: entry.value,
+                title: '',
+                color: color,
+                radius: 80,
+                badgeWidget: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    '${percentage.toStringAsFixed(1)}%',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                ),
+                badgePositionPercentageOffset: 1.3,
+              );
+            }).toList();
+
+        return Column(
+          children: [
+            SizedBox(
+              height: 280,
+              child: PieChart(
+                PieChartData(
+                  sections: sections,
+                  sectionsSpace: 2,
+                  centerSpaceRadius: 40,
+                  pieTouchData: PieTouchData(
+                    touchCallback: (FlTouchEvent event, pieTouchResponse) {},
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children:
+                  distribution.entries.map((entry) {
+                    final index = distribution.keys.toList().indexOf(entry.key);
+                    final color = colors[index % colors.length];
+
+                    String label;
+                    if (entry.key is ProductCategory) {
+                      label = _categoryName(entry.key as ProductCategory);
+                    } else if (entry.key == 'remaining') {
+                      label = 'Restante';
+                    } else {
+                      label = entry.key.toString();
+                    }
+
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '$label: ${currency.format(entry.value)}',
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final currency = NumberFormat.currency(
@@ -448,56 +582,229 @@ class _ReportsTabState extends State<ReportsTab> {
                 ),
               ),
 
-              // Total Spent
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: Card(
-                  elevation: 3,
-                  color:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? const Color(0xFF1E1E1E)
-                          : Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              // Salary Button
+              if (!_isDaily)
+                Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Text(
-                          _isDaily
-                              ? (AppLocalizations.of(context)?.totalSpentDay ??
-                                  'Total Gasto no Dia')
-                              : (AppLocalizations.of(
+                  child: FutureBuilder<double?>(
+                    future: provider.getSalary(_selectedYear, _selectedMonth),
+                    builder: (context, salarySnapshot) {
+                      final salary = salarySnapshot.data;
+                      return ElevatedButton.icon(
+                        onPressed: () async {
+                          final result = await showDialog<bool>(
+                            context: context,
+                            builder:
+                                (context) => SalaryDialog(
+                                  year: _selectedYear,
+                                  month: _selectedMonth,
+                                  currentSalary: salary,
+                                ),
+                          );
+                          if (result == true && mounted) {
+                            setState(() {});
+                          }
+                        },
+                        icon: const Icon(Icons.account_balance_wallet),
+                        label: Text(
+                          salary == null
+                              ? (AppLocalizations.of(
                                     context,
-                                  )?.totalSpentMonth ??
-                                  'Total Gasto no Mês'),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white70
-                                    : Colors.grey[700],
-                            fontWeight: FontWeight.w500,
+                                  )?.setSalaryButton ??
+                                  'Definir Salário do Mês')
+                              : '${AppLocalizations.of(context)?.salaryLabel ?? 'Salário'}: ${currency.format(salary)}',
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2E7D32),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          minimumSize: const Size(double.infinity, 50),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+              // Total Spent and Salary
+              if (!_isDaily)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: FutureBuilder<double?>(
+                    future: provider.getSalary(_selectedYear, _selectedMonth),
+                    builder: (context, salarySnapshot) {
+                      final salary = salarySnapshot.data;
+                      return Card(
+                        elevation: 3,
+                        color:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF1E1E1E)
+                                : Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)?.totalSpentMonth ??
+                                    'Total Gasto no Mês',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color:
+                                      Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white70
+                                          : Colors.grey[700],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                currency.format(totalSpent),
+                                style: TextStyle(
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : const Color.fromARGB(255, 0, 0, 0),
+                                ),
+                              ),
+                              if (salary != null) ...[
+                                const Divider(height: 24),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Text(
+                                          AppLocalizations.of(
+                                                context,
+                                              )?.remainingLabel ??
+                                              'Restante',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          currency.format(salary - totalSpent),
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                salary - totalSpent >= 0
+                                                    ? const Color(0xFF2E7D32)
+                                                    : Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      height: 40,
+                                      width: 1,
+                                      color: Colors.grey[300],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Text(
+                                          AppLocalizations.of(
+                                                context,
+                                              )?.percentageSpentLabel ??
+                                              'Percentual Gasto',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${((totalSpent / salary) * 100).toStringAsFixed(1)}%',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                (totalSpent / salary) <= 0.8
+                                                    ? const Color(0xFF2E7D32)
+                                                    : (totalSpent / salary) <=
+                                                        1.0
+                                                    ? Colors.orange
+                                                    : Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        Text(
-                          currency.format(totalSpent),
-                          style: TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : const Color.fromARGB(255, 0, 0, 0),
+                      );
+                    },
+                  ),
+                )
+              else
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Card(
+                    elevation: 3,
+                    color:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF1E1E1E)
+                            : Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)?.totalSpentDay ??
+                                'Total Gasto no Dia',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color:
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white70
+                                      : Colors.grey[700],
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 12),
+                          Text(
+                            currency.format(totalSpent),
+                            style: TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                              color:
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : const Color.fromARGB(255, 0, 0, 0),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
 
               Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -552,6 +859,82 @@ class _ReportsTabState extends State<ReportsTab> {
                   ),
                 ),
               ),
+
+              // Pie Chart - Salary Distribution
+              if (!_isDaily)
+                FutureBuilder<double?>(
+                  future: provider.getSalary(_selectedYear, _selectedMonth),
+                  builder: (context, salarySnapshot) {
+                    if (salarySnapshot.data == null || report.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          dividerColor: const Color(0xFF2E7D32),
+                          dividerTheme: const DividerThemeData(
+                            color: Color(0xFF2E7D32),
+                            thickness: 1,
+                          ),
+                        ),
+                        child: ExpansionTile(
+                          initiallyExpanded: true,
+                          leading: const CircleAvatar(
+                            backgroundColor: Color(0xFF2E7D32),
+                            child: Icon(
+                              Icons.pie_chart,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                          title: Text(
+                            AppLocalizations.of(
+                                  context,
+                                )?.salaryDistributionTitle ??
+                                'Distribuição do Salário',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              AppLocalizations.of(
+                                    context,
+                                  )?.salaryDistributionSubtitle ??
+                                  'Como seu salário foi gasto',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: _buildPieChart(
+                                provider,
+                                currency,
+                                _selectedYear,
+                                _selectedMonth,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
 
               if (report.isEmpty)
                 Padding(

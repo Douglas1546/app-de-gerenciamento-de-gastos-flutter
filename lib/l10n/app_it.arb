@@ -89,6 +89,18 @@
   "filterSpecificDay": "Giorno",
   "noPurchasedProducts": "Nessun prodotto acquistato",
   "purchasedProductsAppearHere": "I prodotti acquistati appariranno qui",
+  "salaryDistributionTitle": "Distribuzione dello Stipendio",
+  "salaryDistributionSubtitle": "Come è stato speso il tuo stipendio",
+  "setSalaryButton": "Imposta Stipendio Mensile",
+  "salaryLabel": "Stipendio",
+  "remainingLabel": "Rimanente",
+  "percentageSpentLabel": "Percentuale Spesa",
+  "setSalaryDialogTitle": "Imposta Stipendio Mensile",
+  "salaryInputLabel": "Stipendio",
+  "salaryInputHelper": "Inserisci l'importo del tuo stipendio mensile",
+  "salaryInputRequired": "Per favore, inserisci un valore",
+  "salaryInputInvalid": "Per favore, inserisci un valore valido",
+  "salarySaved": "Stipendio salvato!",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

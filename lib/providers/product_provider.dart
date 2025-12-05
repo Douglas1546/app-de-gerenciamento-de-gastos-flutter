@@ -256,4 +256,48 @@ class ProductProvider extends ChangeNotifier {
 
     return evolution;
   }
+
+  // Salary methods
+  Future<void> setSalary(int year, int month, double amount) async {
+    await _dbHelper.setSalary(year, month, amount);
+    notifyListeners();
+  }
+
+  Future<double?> getSalary(int year, int month) async {
+    return await _dbHelper.getSalary(year, month);
+  }
+
+  Future<Map<String, double>> getAllSalaries() async {
+    return await _dbHelper.getAllSalaries();
+  }
+
+  // Get spending distribution for pie chart (including remaining salary)
+  // Returns a map with category enum as key for proper localization in UI
+  Future<Map<dynamic, double>> getSpendingDistribution(
+    int year,
+    int month,
+  ) async {
+    final report = getMonthlyReport(year, month);
+    final salary = await getSalary(year, month);
+    final Map<dynamic, double> distribution = {};
+
+    double totalSpent = 0.0;
+
+    // Add each category spending (using enum as key)
+    report.forEach((category, data) {
+      final amount = data['totalSpent'] as double;
+      distribution[category] = amount;
+      totalSpent += amount;
+    });
+
+    // Add remaining salary if salary is set
+    if (salary != null && salary > 0) {
+      final remaining = salary - totalSpent;
+      if (remaining > 0) {
+        distribution['remaining'] = remaining; // String key for remaining
+      }
+    }
+
+    return distribution;
+  }
 }

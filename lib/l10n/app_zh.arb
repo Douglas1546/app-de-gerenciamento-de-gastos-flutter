@@ -89,6 +89,18 @@
   "filterSpecificDay": "日",
   "noPurchasedProducts": "暂无已购商品",
   "purchasedProductsAppearHere": "已购商品会显示在此处",
+  "salaryDistributionTitle": "工资分配",
+  "salaryDistributionSubtitle": "工资的使用情况",
+  "setSalaryButton": "设置月工资",
+  "salaryLabel": "工资",
+  "remainingLabel": "剩余",
+  "percentageSpentLabel": "支出百分比",
+  "setSalaryDialogTitle": "设置月工资",
+  "salaryInputLabel": "工资",
+  "salaryInputHelper": "请输入您的月工资",
+  "salaryInputRequired": "请输入一个值",
+  "salaryInputInvalid": "请输入有效的值",
+  "salarySaved": "工资已保存！",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

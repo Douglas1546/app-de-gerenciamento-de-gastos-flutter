@@ -89,6 +89,18 @@
   "filterSpecificDay": "Day",
   "noPurchasedProducts": "No purchased products",
   "purchasedProductsAppearHere": "Purchased products will appear here",
+  "salaryDistributionTitle": "Salary Distribution",
+  "salaryDistributionSubtitle": "How your salary was spent",
+  "setSalaryButton": "Set Monthly Salary",
+  "salaryLabel": "Salary",
+  "remainingLabel": "Remaining",
+  "percentageSpentLabel": "Percentage Spent",
+  "setSalaryDialogTitle": "Set Monthly Salary",
+  "salaryInputLabel": "Salary",
+  "salaryInputHelper": "Enter your monthly salary amount",
+  "salaryInputRequired": "Please enter a value",
+  "salaryInputInvalid": "Please enter a valid value",
+  "salarySaved": "Salary saved!",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

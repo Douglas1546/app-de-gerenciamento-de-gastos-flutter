@@ -88,7 +88,19 @@
   "filterThisYear": "Этот год",
   "filterSpecificDay": "День",
   "noPurchasedProducts": "Нет купленных товаров",
-  "purchasedProductsAppearHere": "Купленные товары будут отображаться здесь",
+  "purchasedProductsAppearHere": "Купленные товары появятся здесь",
+  "salaryDistributionTitle": "Распределение Зарплаты",
+  "salaryDistributionSubtitle": "Как была потрачена ваша зарплата",
+  "setSalaryButton": "Установить Месячную Зарплату",
+  "salaryLabel": "Зарплата",
+  "remainingLabel": "Осталось",
+  "percentageSpentLabel": "Процент Потрачено",
+  "setSalaryDialogTitle": "Установить Месячную Зарплату",
+  "salaryInputLabel": "Зарплата",
+  "salaryInputHelper": "Введите сумму месячной зарплаты",
+  "salaryInputRequired": "Пожалуйста, введите значение",
+  "salaryInputInvalid": "Пожалуйста, введите правильное значение",
+  "salarySaved": "Зарплата сохранена!",
   "@backupSavedAt": {
     "placeholders": {
       "path": {
