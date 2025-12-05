@@ -4,6 +4,7 @@ import '../providers/product_provider.dart';
 import '../widgets/add_product_dialog.dart';
 import '../widgets/purchase_dialog.dart';
 import '../widgets/product_card.dart';
+import '../widgets/import_previous_month_dialog.dart';
 import '../models/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -116,32 +117,86 @@ class ToBuyTab extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF2E7D32),
-        onPressed: () async {
-          final product = await _showSmoothDialog<Product>(
-            context,
-            const AddProductDialog(),
-          );
+      floatingActionButton: Consumer<ProductProvider>(
+        builder: (context, provider, child) {
+          final previousMonthProducts = provider.getPreviousMonthProducts();
 
-          if (product != null && context.mounted) {
-            await Provider.of<ProductProvider>(
-              context,
-              listen: false,
-            ).addProduct(product);
-            if (context.mounted) {
-              final l = AppLocalizations.of(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l?.productAdded ?? 'Produto adicionado!'),
-                  duration: const Duration(seconds: 2),
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Import from previous month button
+              if (previousMonthProducts.isNotEmpty)
+                FloatingActionButton(
+                  heroTag: 'import_button',
                   backgroundColor: const Color(0xFF2E7D32),
+                  onPressed: () async {
+                    final selectedProducts =
+                        await _showSmoothDialog<List<Product>>(
+                          context,
+                          ImportPreviousMonthDialog(
+                            previousMonthProducts: previousMonthProducts,
+                          ),
+                        );
+
+                    if (selectedProducts != null &&
+                        selectedProducts.isNotEmpty &&
+                        context.mounted) {
+                      await Provider.of<ProductProvider>(
+                        context,
+                        listen: false,
+                      ).addProductsFromPreviousMonth(selectedProducts);
+
+                      if (context.mounted) {
+                        final l = AppLocalizations.of(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '${l?.productsImported ?? 'Produtos importados'}: ${selectedProducts.length}',
+                            ),
+                            duration: const Duration(seconds: 2),
+                            backgroundColor: const Color(0xFF2E7D32),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  child: const Icon(Icons.history, color: Colors.white),
                 ),
-              );
-            }
-          }
+              if (previousMonthProducts.isNotEmpty) const SizedBox(height: 16),
+              // Add product button
+              FloatingActionButton(
+                heroTag: 'add_button',
+                backgroundColor: const Color(0xFF2E7D32),
+                onPressed: () async {
+                  final product = await _showSmoothDialog<Product>(
+                    context,
+                    const AddProductDialog(),
+                  );
+
+                  if (product != null && context.mounted) {
+                    await Provider.of<ProductProvider>(
+                      context,
+                      listen: false,
+                    ).addProduct(product);
+                    if (context.mounted) {
+                      final l = AppLocalizations.of(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            l?.productAdded ?? 'Produto adicionado!',
+                          ),
+                          duration: const Duration(seconds: 2),
+                          backgroundColor: const Color(0xFF2E7D32),
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: const Icon(Icons.add, color: Colors.white),
+              ),
+            ],
+          );
         },
-        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

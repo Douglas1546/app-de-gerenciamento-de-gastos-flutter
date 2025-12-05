@@ -300,4 +300,31 @@ class ProductProvider extends ChangeNotifier {
 
     return distribution;
   }
+
+  // Get products purchased in the previous month
+  List<Product> getPreviousMonthProducts() {
+    final now = DateTime.now();
+    final previousMonth = DateTime(now.year, now.month - 1);
+
+    return _purchasedProducts.where((product) {
+      if (product.purchasedAt == null) return false;
+      return product.purchasedAt!.year == previousMonth.year &&
+          product.purchasedAt!.month == previousMonth.month;
+    }).toList();
+  }
+
+  // Add multiple products from previous month
+  Future<void> addProductsFromPreviousMonth(List<Product> products) async {
+    for (final product in products) {
+      final newProduct = Product(
+        name: product.name,
+        quantity: product.quantity,
+        category: product.category,
+        isPurchased: false,
+        createdAt: DateTime.now(),
+      );
+      await _dbHelper.createProduct(newProduct);
+    }
+    await loadProducts();
+  }
 }

@@ -101,6 +101,12 @@
   "salaryInputRequired": "请输入一个值",
   "salaryInputInvalid": "请输入有效的值",
   "salarySaved": "工资已保存！",
+  "importPreviousMonthTitle": "从上月导入",
+  "importPreviousMonthTooltip": "从上月导入产品",
+  "noPreviousMonthProducts": "上月没有找到产品",
+  "close": "关闭",
+  "selectAll": "全选",
+  "productsImported": "产品已导入",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

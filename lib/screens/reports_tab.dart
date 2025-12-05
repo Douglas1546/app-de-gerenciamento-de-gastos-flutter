@@ -1257,7 +1257,7 @@ class _ReportsTabState extends State<ReportsTab> {
                                   dense: true,
                                   title: Text(product.name),
                                   subtitle: Text(
-                                    'Qtd: ${product.quantity} • ${DateFormat('dd/MM/yyyy', _dateLocale()).format(product.purchasedAt!)}',
+                                    '${AppLocalizations.of(context)?.quantityLabel ?? 'Quantidade'}: ${product.quantity} • ${DateFormat('dd/MM/yyyy', _dateLocale()).format(product.purchasedAt!)}',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey[600],

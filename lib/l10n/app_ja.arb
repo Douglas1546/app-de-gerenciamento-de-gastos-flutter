@@ -101,6 +101,12 @@
   "salaryInputRequired": "値を入力してください",
   "salaryInputInvalid": "有効な値を入力してください",
   "salarySaved": "給与が保存されました！",
+  "importPreviousMonthTitle": "先月からインポート",
+  "importPreviousMonthTooltip": "先月の商品をインポート",
+  "noPreviousMonthProducts": "先月に商品が見つかりませんでした",
+  "close": "閉じる",
+  "selectAll": "すべて選択",
+  "productsImported": "商品がインポートされました",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

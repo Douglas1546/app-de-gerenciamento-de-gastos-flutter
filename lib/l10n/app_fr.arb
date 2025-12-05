@@ -101,6 +101,12 @@
   "salaryInputRequired": "Veuillez entrer une valeur",
   "salaryInputInvalid": "Veuillez entrer une valeur valide",
   "salarySaved": "Salaire enregistré!",
+  "importPreviousMonthTitle": "Importer du Mois Précédent",
+  "importPreviousMonthTooltip": "Importer les produits du mois précédent",
+  "noPreviousMonthProducts": "Aucun produit trouvé le mois précédent",
+  "close": "Fermer",
+  "selectAll": "Tout sélectionner",
+  "productsImported": "Produits importés",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

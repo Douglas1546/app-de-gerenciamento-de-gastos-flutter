@@ -101,6 +101,12 @@
   "salaryInputRequired": "請輸入一個值",
   "salaryInputInvalid": "請輸入有效的值",
   "salarySaved": "薪資已保存！",
+  "importPreviousMonthTitle": "從上月導入",
+  "importPreviousMonthTooltip": "從上月導入產品",
+  "noPreviousMonthProducts": "上月沒有找到產品",
+  "close": "關閉",
+  "selectAll": "全選",
+  "productsImported": "產品已導入",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

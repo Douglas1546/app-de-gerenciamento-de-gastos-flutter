@@ -101,9 +101,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               onTap: () async {
-                final currentCode =
-                    context.read<ThemeProvider>().locale?.toLanguageTag();
-                String? selectedCode = currentCode;
+                final currentCode = context.read<ThemeProvider>().localeCode;
+                String? selectedCode =
+                    (currentCode == null || currentCode.isEmpty)
+                        ? null
+                        : currentCode;
                 await _showSmoothDialog<void>(
                   context,
                   AlertDialog(

@@ -8,6 +8,7 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeMode get themeMode => _themeMode;
   bool get isDark => _themeMode == ThemeMode.dark;
+  String? get localeCode => _localeCode;
   Locale? get locale {
     if (_localeCode == null || _localeCode!.isEmpty) return null;
     final code = _localeCode!;

@@ -101,6 +101,12 @@
   "salaryInputRequired": "값을 입력하세요",
   "salaryInputInvalid": "유효한 값을 입력하세요",
   "salarySaved": "급여가 저장되었습니다!",
+  "importPreviousMonthTitle": "지난달에서 가져오기",
+  "importPreviousMonthTooltip": "지난달 제품 가져오기",
+  "noPreviousMonthProducts": "지난달에 제품이 없습니다",
+  "close": "닫기",
+  "selectAll": "모두 선택",
+  "productsImported": "제품이 가져와졌습니다",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

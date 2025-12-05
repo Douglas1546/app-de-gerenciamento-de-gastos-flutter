@@ -238,7 +238,7 @@ class ProductCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'Qtd: ${product.quantity}',
+                        '${AppLocalizations.of(context)?.quantityLabel ?? 'Quantidade'}: ${product.quantity}',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
