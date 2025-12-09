@@ -78,10 +78,15 @@ class ProductProvider extends ChangeNotifier {
     await loadProducts();
   }
 
-  Future<void> purchaseProduct(Product product, double price) async {
+  Future<void> purchaseProduct(
+    Product product,
+    double price,
+    String? store,
+  ) async {
     final updatedProduct = product.copyWith(
       isPurchased: true,
       price: price,
+      store: store,
       purchasedAt: DateTime.now(),
     );
     await _dbHelper.updateProduct(updatedProduct);
@@ -326,5 +331,82 @@ class ProductProvider extends ChangeNotifier {
       await _dbHelper.createProduct(newProduct);
     }
     await loadProducts();
+  }
+
+  // Store analytics methods
+
+  // Get spending by store for a specific month
+  Map<String, Map<String, dynamic>> getStoreReport(int year, int month) {
+    final monthProducts =
+        _purchasedProducts.where((product) {
+          if (product.purchasedAt == null) return false;
+          return product.purchasedAt!.year == year &&
+              product.purchasedAt!.month == month;
+        }).toList();
+
+    final Map<String, Map<String, dynamic>> report = {};
+
+    for (var product in monthProducts) {
+      final storeName = product.store ?? 'Sem loja informada';
+
+      if (!report.containsKey(storeName)) {
+        report[storeName] = {
+          'totalSpent': 0.0,
+          'itemCount': 0,
+          'items': <Product>[],
+        };
+      }
+
+      report[storeName]!['totalSpent'] += product.price ?? 0.0;
+      report[storeName]!['itemCount'] += 1;
+      (report[storeName]!['items'] as List<Product>).add(product);
+    }
+
+    return report;
+  }
+
+  // Get top stores by spending for a specific month
+  List<MapEntry<String, double>> getTopStores(
+    int year,
+    int month, {
+    int limit = 5,
+  }) {
+    final storeReport = getStoreReport(year, month);
+    final storeSpending = <String, double>{};
+
+    storeReport.forEach((store, data) {
+      storeSpending[store] = data['totalSpent'] as double;
+    });
+
+    final sortedStores =
+        storeSpending.entries.toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
+
+    return sortedStores.take(limit).toList();
+  }
+
+  // Get average spending per store for a specific month
+  Map<String, double> getAverageSpendingPerStore(int year, int month) {
+    final storeReport = getStoreReport(year, month);
+    final averages = <String, double>{};
+
+    storeReport.forEach((store, data) {
+      final total = data['totalSpent'] as double;
+      final count = data['itemCount'] as int;
+      averages[store] = count > 0 ? total / count : 0.0;
+    });
+
+    return averages;
+  }
+
+  // Get all unique stores from purchased products
+  List<String> getAllStores() {
+    final stores = <String>{};
+    for (var product in _purchasedProducts) {
+      if (product.store != null && product.store!.isNotEmpty) {
+        stores.add(product.store!);
+      }
+    }
+    return stores.toList()..sort();
   }
 }

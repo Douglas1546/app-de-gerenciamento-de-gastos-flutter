@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../models/product.dart';
+import '../providers/product_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PurchaseDialog extends StatefulWidget {
@@ -16,8 +18,10 @@ class PurchaseDialog extends StatefulWidget {
 class _PurchaseDialogState extends State<PurchaseDialog> {
   final _formKey = GlobalKey<FormState>();
   final _priceController = TextEditingController();
+  final _storeController = TextEditingController();
   double _totalPrice = 0.0;
   final _priceFocus = FocusNode();
+  final _storeFocus = FocusNode();
 
   @override
   void initState() {
@@ -30,7 +34,9 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
   void dispose() {
     _priceController.removeListener(_updateTotal);
     _priceController.dispose();
+    _storeController.dispose();
     _priceFocus.dispose();
+    _storeFocus.dispose();
     super.dispose();
   }
 
@@ -101,107 +107,236 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
     final l = AppLocalizations.of(context);
     return AlertDialog(
       title: Text(l?.confirmPurchaseTitle ?? 'Confirmar Compra'),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${l?.productLabel ?? 'Produto:'} ${widget.product.name}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${l?.quantityLabel ?? 'Quantidade'}: ${widget.product.quantity}',
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 16),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                boxShadow:
-                    _priceFocus.hasFocus
-                        ? [
-                          BoxShadow(
-                            color: const Color(0xFF2E7D32).withOpacity(0.12),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                        : [],
+      content: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${l?.productLabel ?? 'Produto:'} ${widget.product.name}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-              child: TextFormField(
-                controller: _priceController,
-                focusNode: _priceFocus,
-                decoration: InputDecoration(
-                  labelText: l?.unitPriceLabel ?? 'Preço Unitário',
-                  border: const OutlineInputBorder(),
-                  prefixText: _symbolIsPrefix() ? '$currencySymbol ' : null,
-                  suffixText: _symbolIsPrefix() ? null : ' $currencySymbol',
-                  // prefixIcon: const Icon(Icons.attach_money_outlined),
-                  hintText: l?.unitPriceHint ?? 'Use vírgula para centavos',
-                ),
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'^\d+([.,]\d{0,2})?'),
-                  ),
-                ],
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return l?.priceRequired ?? 'Por favor, insira o preço';
+              const SizedBox(height: 8),
+              Text(
+                '${l?.quantityLabel ?? 'Quantidade'}: ${widget.product.quantity}',
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 16),
+              Consumer<ProductProvider>(
+                builder: (context, provider, child) {
+                  final allStores = provider.getAllStores();
+
+                  if (allStores.isEmpty) {
+                    return TextFormField(
+                      controller: _storeController,
+                      focusNode: _storeFocus,
+                      decoration: const InputDecoration(
+                        labelText: 'Loja (opcional)',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.store_outlined),
+                        hintText: 'Ex: Mercado X, Farmácia Y',
+                      ),
+                      textCapitalization: TextCapitalization.words,
+                    );
                   }
-                  if (double.tryParse(value.replaceAll(',', '.')) == null) {
-                    return l?.priceInvalid ?? 'Preço inválido';
-                  }
-                  return null;
+
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Autocomplete<String>(
+                        initialValue: TextEditingValue(
+                          text: _storeController.text,
+                        ),
+                        optionsBuilder: (TextEditingValue textEditingValue) {
+                          if (textEditingValue.text.isEmpty) {
+                            return allStores;
+                          }
+                          return allStores.where((String store) {
+                            return store.toLowerCase().contains(
+                              textEditingValue.text.toLowerCase(),
+                            );
+                          });
+                        },
+                        onSelected: (String selection) {
+                          _storeController.text = selection;
+                        },
+                        fieldViewBuilder: (
+                          BuildContext context,
+                          TextEditingController fieldTextEditingController,
+                          FocusNode fieldFocusNode,
+                          VoidCallback onFieldSubmitted,
+                        ) {
+                          // Sync with our controller
+                          if (_storeController.text.isNotEmpty &&
+                              fieldTextEditingController.text.isEmpty) {
+                            fieldTextEditingController.text =
+                                _storeController.text;
+                          }
+
+                          fieldTextEditingController.addListener(() {
+                            _storeController.text =
+                                fieldTextEditingController.text;
+                          });
+
+                          return TextFormField(
+                            controller: fieldTextEditingController,
+                            focusNode: fieldFocusNode,
+                            decoration: const InputDecoration(
+                              labelText: 'Loja (opcional)',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.store_outlined),
+                              hintText: 'Ex: Mercado X, Farmácia Y',
+                              suffixIcon: Icon(Icons.arrow_drop_down),
+                            ),
+                            textCapitalization: TextCapitalization.words,
+                            onFieldSubmitted: (String value) {
+                              onFieldSubmitted();
+                            },
+                          );
+                        },
+                        optionsViewBuilder: (
+                          BuildContext context,
+                          AutocompleteOnSelected<String> onSelected,
+                          Iterable<String> options,
+                        ) {
+                          return Align(
+                            alignment: Alignment.topLeft,
+                            child: Material(
+                              elevation: 4.0,
+                              borderRadius: BorderRadius.circular(8),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxHeight: 200,
+                                  maxWidth: constraints.maxWidth,
+                                ),
+                                child: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: true,
+                                  itemCount: options.length,
+                                  itemBuilder: (
+                                    BuildContext context,
+                                    int index,
+                                  ) {
+                                    final String option = options.elementAt(
+                                      index,
+                                    );
+                                    return ListTile(
+                                      dense: true,
+                                      leading: const Icon(
+                                        Icons.store,
+                                        size: 18,
+                                        color: Colors.blue,
+                                      ),
+                                      title: Text(
+                                        option,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      onTap: () {
+                                        onSelected(option);
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
                 },
               ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color:
-                    Theme.of(context).inputDecorationTheme.fillColor ??
-                    (Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF1E1E1E)
-                        : Colors.white),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    l?.totalLabel ?? 'Total:',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+              const SizedBox(height: 16),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow:
+                      _priceFocus.hasFocus
+                          ? [
+                            BoxShadow(
+                              color: const Color(0xFF2E7D32).withOpacity(0.12),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                          : [],
+                ),
+                child: TextFormField(
+                  controller: _priceController,
+                  focusNode: _priceFocus,
+                  decoration: InputDecoration(
+                    labelText: l?.unitPriceLabel ?? 'Preço Unitário',
+                    border: const OutlineInputBorder(),
+                    prefixText: _symbolIsPrefix() ? '$currencySymbol ' : null,
+                    suffixText: _symbolIsPrefix() ? null : ' $currencySymbol',
+                    // prefixIcon: const Icon(Icons.attach_money_outlined),
+                    hintText: l?.unitPriceHint ?? 'Use vírgula para centavos',
                   ),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 180),
-                    transitionBuilder:
-                        (child, anim) =>
-                            FadeTransition(opacity: anim, child: child),
-                    child: Text(
-                      currency.format(_totalPrice),
-                      key: ValueKey(_totalPrice.toStringAsFixed(2)),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d+([.,]\d{0,2})?'),
+                    ),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return l?.priceRequired ?? 'Por favor, insira o preço';
+                    }
+                    if (double.tryParse(value.replaceAll(',', '.')) == null) {
+                      return l?.priceInvalid ?? 'Preço inválido';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color:
+                      Theme.of(context).inputDecorationTheme.fillColor ??
+                      (Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF1E1E1E)
+                          : Colors.white),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      l?.totalLabel ?? 'Total:',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFF2E7D32),
+                        fontSize: 16,
                       ),
                     ),
-                  ),
-                ],
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 180),
+                      transitionBuilder:
+                          (child, anim) =>
+                              FadeTransition(opacity: anim, child: child),
+                      child: Text(
+                        currency.format(_totalPrice),
+                        key: ValueKey(_totalPrice.toStringAsFixed(2)),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Color(0xFF2E7D32),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       actions: [
@@ -215,7 +350,11 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
               final unitPrice = double.parse(
                 _priceController.text.replaceAll(',', '.'),
               );
-              Navigator.of(context).pop(unitPrice);
+              final store =
+                  _storeController.text.trim().isEmpty
+                      ? null
+                      : _storeController.text.trim();
+              Navigator.of(context).pop({'price': unitPrice, 'store': store});
             }
           },
           child: Text(l?.confirm ?? 'Confirmar'),

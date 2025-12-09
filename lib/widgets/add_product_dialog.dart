@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/product.dart';
+import '../providers/product_provider.dart';
 
 class AddProductDialog extends StatefulWidget {
   final Product? product;
@@ -17,10 +19,12 @@ class _AddProductDialogState extends State<AddProductDialog> {
   late TextEditingController _nameController;
   late TextEditingController _quantityController;
   late TextEditingController _priceController;
+  late TextEditingController _storeController;
   late ProductCategory _selectedCategory;
   late FocusNode _nameFocus;
   late FocusNode _quantityFocus;
   late FocusNode _priceFocus;
+  late FocusNode _storeFocus;
 
   @override
   void initState() {
@@ -38,13 +42,16 @@ class _AddProductDialogState extends State<AddProductDialog> {
     }
 
     _priceController = TextEditingController(text: initialPrice);
+    _storeController = TextEditingController(text: widget.product?.store ?? '');
     _selectedCategory = widget.product?.category ?? ProductCategory.alimentos;
     _nameFocus = FocusNode()..addListener(() => setState(() {}));
     _quantityFocus = FocusNode()..addListener(() => setState(() {}));
     _priceFocus = FocusNode()..addListener(() => setState(() {}));
+    _storeFocus = FocusNode()..addListener(() => setState(() {}));
     _nameController.addListener(() => setState(() {}));
     _quantityController.addListener(() => setState(() {}));
     _priceController.addListener(() => setState(() {}));
+    _storeController.addListener(() => setState(() {}));
   }
 
   @override
@@ -52,9 +59,11 @@ class _AddProductDialogState extends State<AddProductDialog> {
     _nameFocus.dispose();
     _quantityFocus.dispose();
     _priceFocus.dispose();
+    _storeFocus.dispose();
     _nameController.dispose();
     _quantityController.dispose();
     _priceController.dispose();
+    _storeController.dispose();
     super.dispose();
   }
 
@@ -240,6 +249,129 @@ class _AddProductDialogState extends State<AddProductDialog> {
                     },
                   ),
                 ),
+                const SizedBox(height: 16),
+                Consumer<ProductProvider>(
+                  builder: (context, provider, child) {
+                    final allStores = provider.getAllStores();
+
+                    if (allStores.isEmpty) {
+                      return TextFormField(
+                        controller: _storeController,
+                        focusNode: _storeFocus,
+                        decoration: const InputDecoration(
+                          labelText: 'Loja (opcional)',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.store_outlined),
+                          hintText: 'Ex: Mercado X, Farmácia Y',
+                        ),
+                        textCapitalization: TextCapitalization.words,
+                      );
+                    }
+
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Autocomplete<String>(
+                          initialValue: TextEditingValue(
+                            text: _storeController.text,
+                          ),
+                          optionsBuilder: (TextEditingValue textEditingValue) {
+                            if (textEditingValue.text.isEmpty) {
+                              return allStores;
+                            }
+                            return allStores.where((String store) {
+                              return store.toLowerCase().contains(
+                                textEditingValue.text.toLowerCase(),
+                              );
+                            });
+                          },
+                          onSelected: (String selection) {
+                            _storeController.text = selection;
+                          },
+                          fieldViewBuilder: (
+                            BuildContext context,
+                            TextEditingController fieldTextEditingController,
+                            FocusNode fieldFocusNode,
+                            VoidCallback onFieldSubmitted,
+                          ) {
+                            if (_storeController.text.isNotEmpty &&
+                                fieldTextEditingController.text.isEmpty) {
+                              fieldTextEditingController.text =
+                                  _storeController.text;
+                            }
+
+                            fieldTextEditingController.addListener(() {
+                              _storeController.text =
+                                  fieldTextEditingController.text;
+                            });
+
+                            return TextFormField(
+                              controller: fieldTextEditingController,
+                              focusNode: fieldFocusNode,
+                              decoration: const InputDecoration(
+                                labelText: 'Loja (opcional)',
+                                border: OutlineInputBorder(),
+                                prefixIcon: Icon(Icons.store_outlined),
+                                hintText: 'Ex: Mercado X, Farmácia Y',
+                                suffixIcon: Icon(Icons.arrow_drop_down),
+                              ),
+                              textCapitalization: TextCapitalization.words,
+                              onFieldSubmitted: (String value) {
+                                onFieldSubmitted();
+                              },
+                            );
+                          },
+                          optionsViewBuilder: (
+                            BuildContext context,
+                            AutocompleteOnSelected<String> onSelected,
+                            Iterable<String> options,
+                          ) {
+                            return Align(
+                              alignment: Alignment.topLeft,
+                              child: Material(
+                                elevation: 4.0,
+                                borderRadius: BorderRadius.circular(8),
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxHeight: 200,
+                                    maxWidth: constraints.maxWidth,
+                                  ),
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    shrinkWrap: true,
+                                    itemCount: options.length,
+                                    itemBuilder: (
+                                      BuildContext context,
+                                      int index,
+                                    ) {
+                                      final String option = options.elementAt(
+                                        index,
+                                      );
+                                      return ListTile(
+                                        dense: true,
+                                        leading: const Icon(
+                                          Icons.store,
+                                          size: 18,
+                                          color: Colors.blue,
+                                        ),
+                                        title: Text(
+                                          option,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                        onTap: () {
+                                          onSelected(option);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
               ],
               const SizedBox(height: 16),
               DropdownButtonFormField<ProductCategory>(
@@ -290,6 +422,11 @@ class _AddProductDialogState extends State<AddProductDialog> {
                 price = widget.product?.price;
               }
 
+              final store =
+                  _storeController.text.trim().isEmpty
+                      ? null
+                      : _storeController.text.trim();
+
               final product =
                   isEditing
                       ? widget.product!.copyWith(
@@ -297,11 +434,13 @@ class _AddProductDialogState extends State<AddProductDialog> {
                         quantity: quantity,
                         category: _selectedCategory,
                         price: price,
+                        store: store,
                       )
                       : Product(
                         name: name,
                         quantity: quantity,
                         category: _selectedCategory,
+                        store: store,
                         createdAt: DateTime.now(),
                       );
               Navigator.of(context).pop(product);

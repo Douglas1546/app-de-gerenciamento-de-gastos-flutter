@@ -180,17 +180,19 @@ class _ToBuyTabState extends State<ToBuyTab> {
                   }
                 },
                 onCheckboxChanged: () async {
-                  final price = await _showSmoothDialog<double>(
+                  final result = await _showSmoothDialog<Map<String, dynamic>>(
                     context,
                     PurchaseDialog(product: product),
                   );
 
-                  if (price != null && context.mounted) {
-                    final totalPrice = price * product.quantity;
+                  if (result != null && context.mounted) {
+                    final unitPrice = result['price'] as double;
+                    final store = result['store'] as String?;
+                    final totalPrice = unitPrice * product.quantity;
                     await Provider.of<ProductProvider>(
                       context,
                       listen: false,
-                    ).purchaseProduct(product, totalPrice);
+                    ).purchaseProduct(product, totalPrice, store);
                   }
                 },
                 onDelete: () async {

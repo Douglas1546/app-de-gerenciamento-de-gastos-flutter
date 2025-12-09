@@ -51,6 +51,7 @@ class Product {
   final int quantity;
   final ProductCategory category;
   final double? price;
+  final String? store;
   final bool isPurchased;
   final DateTime createdAt;
   final DateTime? purchasedAt;
@@ -61,6 +62,7 @@ class Product {
     required this.quantity,
     required this.category,
     this.price,
+    this.store,
     this.isPurchased = false,
     required this.createdAt,
     this.purchasedAt,
@@ -73,6 +75,7 @@ class Product {
       'quantity': quantity,
       'category': category.toString().split('.').last,
       'price': price,
+      'store': store,
       'isPurchased': isPurchased ? 1 : 0,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'purchasedAt': purchasedAt?.millisecondsSinceEpoch,
@@ -86,11 +89,13 @@ class Product {
       quantity: map['quantity'] as int,
       category: ProductCategoryExtension.fromString(map['category'] as String),
       price: map['price'] as double?,
+      store: map['store'] as String?,
       isPurchased: map['isPurchased'] == 1,
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
-      purchasedAt: map['purchasedAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['purchasedAt'] as int)
-          : null,
+      purchasedAt:
+          map['purchasedAt'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(map['purchasedAt'] as int)
+              : null,
     );
   }
 
@@ -100,6 +105,7 @@ class Product {
     int? quantity,
     ProductCategory? category,
     double? price,
+    String? store,
     bool? isPurchased,
     DateTime? createdAt,
     DateTime? purchasedAt,
@@ -110,6 +116,7 @@ class Product {
       quantity: quantity ?? this.quantity,
       category: category ?? this.category,
       price: price ?? this.price,
+      store: store ?? this.store,
       isPurchased: isPurchased ?? this.isPurchased,
       createdAt: createdAt ?? this.createdAt,
       purchasedAt: purchasedAt ?? this.purchasedAt,

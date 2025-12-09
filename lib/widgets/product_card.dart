@@ -294,6 +294,36 @@ class ProductCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                    if (product.store != null && product.store!.isNotEmpty)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.store,
+                              size: 12,
+                              color: Colors.blue,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              product.store!,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     if (product.purchasedAt != null)
                       Text(
                         DateFormat(

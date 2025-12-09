@@ -936,6 +936,199 @@ class _ReportsTabState extends State<ReportsTab> {
                   },
                 ),
 
+              // Store Analytics
+              if (!_isDaily)
+                Builder(
+                  builder: (context) {
+                    final storeReport = provider.getStoreReport(
+                      _selectedYear,
+                      _selectedMonth,
+                    );
+                    if (storeReport.isEmpty) return const SizedBox.shrink();
+
+                    final topStores = provider.getTopStores(
+                      _selectedYear,
+                      _selectedMonth,
+                      limit: 5,
+                    );
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          dividerColor: const Color(0xFF2E7D32),
+                          dividerTheme: const DividerThemeData(
+                            color: Color(0xFF2E7D32),
+                            thickness: 1,
+                          ),
+                        ),
+                        child: ExpansionTile(
+                          initiallyExpanded: true,
+                          leading: const CircleAvatar(
+                            backgroundColor: Color(0xFF2E7D32),
+                            child: Icon(
+                              Icons.store,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                          title: const Text(
+                            'Onde Você Gastou Mais',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              'Análise de gastos por loja',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ),
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(0),
+                              itemCount: topStores.length,
+                              itemBuilder: (context, index) {
+                                final storeEntry = topStores[index];
+                                final storeName = storeEntry.key;
+                                final totalSpent = storeEntry.value;
+                                final storeData = storeReport[storeName]!;
+                                final itemCount = storeData['itemCount'] as int;
+                                final items =
+                                    storeData['items'] as List<Product>;
+                                final avgSpending =
+                                    itemCount > 0
+                                        ? totalSpent / itemCount
+                                        : 0.0;
+
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    dividerColor: Colors.blue,
+                                    dividerTheme: const DividerThemeData(
+                                      color: Colors.blue,
+                                      thickness: 1,
+                                    ),
+                                  ),
+                                  child: ExpansionTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor:
+                                          index == 0
+                                              ? const Color(0xFF2E7D32)
+                                              : Colors.blue,
+                                      child: Text(
+                                        '${index + 1}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      storeName,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                        color:
+                                            index == 0
+                                                ? const Color(0xFF2E7D32)
+                                                : null,
+                                      ),
+                                    ),
+                                    subtitle: Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: Text(
+                                        '${currency.format(totalSpent)} • $itemCount ${itemCount == 1 ? 'item' : 'itens'} • Média: ${currency.format(avgSpending)}',
+                                        style: TextStyle(
+                                          color: Colors.grey[700],
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                    children:
+                                        items.map((product) {
+                                          return ListTile(
+                                            dense: true,
+                                            leading: CircleAvatar(
+                                              backgroundColor:
+                                                  _getCategoryColor(
+                                                    product.category,
+                                                  ).withOpacity(0.2),
+                                              radius: 16,
+                                              child: Icon(
+                                                Icons.shopping_basket,
+                                                size: 16,
+                                                color: _getCategoryColor(
+                                                  product.category,
+                                                ),
+                                              ),
+                                            ),
+                                            title: Text(product.name),
+                                            subtitle: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '${_categoryName(product.category)} • Quantidade: ${product.quantity}',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                                if (product.purchasedAt != null)
+                                                  Text(
+                                                    DateFormat(
+                                                      'dd/MM/yyyy',
+                                                      _dateLocale(),
+                                                    ).format(
+                                                      product.purchasedAt!,
+                                                    ),
+                                                    style: TextStyle(
+                                                      fontSize: 11,
+                                                      color: Colors.grey[500],
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                            trailing: Text(
+                                              product.price != null
+                                                  ? currency.format(
+                                                    product.price!,
+                                                  )
+                                                  : currency.format(0),
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF2E7D32),
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
               if (report.isEmpty)
                 Padding(
                   padding: const EdgeInsets.all(32),
@@ -1253,15 +1446,45 @@ class _ReportsTabState extends State<ReportsTab> {
                           ),
                           children:
                               items.map((product) {
+                                final hasStore =
+                                    product.store != null &&
+                                    product.store!.isNotEmpty;
                                 return ListTile(
                                   dense: true,
                                   title: Text(product.name),
-                                  subtitle: Text(
-                                    '${AppLocalizations.of(context)?.quantityLabel ?? 'Quantidade'}: ${product.quantity} • ${DateFormat('dd/MM/yyyy', _dateLocale()).format(product.purchasedAt!)}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                    ),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${AppLocalizations.of(context)?.quantityLabel ?? 'Quantidade'}: ${product.quantity} • ${DateFormat('dd/MM/yyyy', _dateLocale()).format(product.purchasedAt!)}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      if (hasStore) ...[
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.store,
+                                              size: 12,
+                                              color: Colors.blue[700],
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              product.store!,
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                color: Colors.blue[700],
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ],
                                   ),
                                   trailing: Text(
                                     product.price != null
