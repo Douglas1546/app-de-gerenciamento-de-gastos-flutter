@@ -138,6 +138,7 @@ class ProductProvider extends ChangeNotifier {
           map['category'] as String,
         ),
         price: (map['price'] as num?)?.toDouble(),
+        store: map['store'] as String?,
         isPurchased:
             map['isPurchased'] is int
                 ? (map['isPurchased'] == 1)
