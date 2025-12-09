@@ -111,7 +111,12 @@
   "selected": "selezionati",
   "deleteConfirmTitle": "Conferma eliminazione",
   "deleteMultipleConfirmMessage": "Vuoi eliminare",
-  "itemsDeleted": "Elementi eliminati!",
+  "itemsDeleted": "Articoli eliminati!",
+  "storeLabel": "Negozio (opzionale)",
+  "storeHint": "Es.: Mercato X, Farmacia Y",
+  "storeAnalyticsTitle": "Dove Hai Speso Di Più",
+  "storeAnalyticsSubtitle": "Analisi delle spese per negozio",
+  "averageLabel": "Media",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

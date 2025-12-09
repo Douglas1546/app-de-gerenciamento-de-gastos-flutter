@@ -135,11 +135,11 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
                     return TextFormField(
                       controller: _storeController,
                       focusNode: _storeFocus,
-                      decoration: const InputDecoration(
-                        labelText: 'Loja (opcional)',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.store_outlined),
-                        hintText: 'Ex: Mercado X, Farmácia Y',
+                      decoration: InputDecoration(
+                        labelText: l?.storeLabel ?? 'Loja (opcional)',
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.store_outlined),
+                        hintText: l?.storeHint ?? 'Ex: Mercado X, Farmácia Y',
                       ),
                       textCapitalization: TextCapitalization.words,
                     );
@@ -185,12 +185,13 @@ class _PurchaseDialogState extends State<PurchaseDialog> {
                           return TextFormField(
                             controller: fieldTextEditingController,
                             focusNode: fieldFocusNode,
-                            decoration: const InputDecoration(
-                              labelText: 'Loja (opcional)',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.store_outlined),
-                              hintText: 'Ex: Mercado X, Farmácia Y',
-                              suffixIcon: Icon(Icons.arrow_drop_down),
+                            decoration: InputDecoration(
+                              labelText: l?.storeLabel ?? 'Loja (opcional)',
+                              border: const OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.store_outlined),
+                              hintText:
+                                  l?.storeHint ?? 'Ex: Mercado X, Farmácia Y',
+                              suffixIcon: const Icon(Icons.arrow_drop_down),
                             ),
                             textCapitalization: TextCapitalization.words,
                             onFieldSubmitted: (String value) {

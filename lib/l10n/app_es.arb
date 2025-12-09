@@ -112,6 +112,11 @@
   "deleteConfirmTitle": "Confirmar eliminación",
   "deleteMultipleConfirmMessage": "¿Desea eliminar",
   "itemsDeleted": "¡Artículos eliminados!",
+  "storeLabel": "Tienda (opcional)",
+  "storeHint": "Ej.: Mercado X, Farmacia Y",
+  "storeAnalyticsTitle": "Dónde Gastaste Más",
+  "storeAnalyticsSubtitle": "Análisis de gastos por tienda",
+  "averageLabel": "Promedio",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

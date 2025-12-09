@@ -112,6 +112,11 @@
   "deleteConfirmTitle": "Подтвердить удаление",
   "deleteMultipleConfirmMessage": "Вы хотите удалить",
   "itemsDeleted": "Элементы удалены!",
+  "storeLabel": "Магазин (необязательно)",
+  "storeHint": "Напр.: Рынок X, Аптека Y",
+  "storeAnalyticsTitle": "Где Вы Потратили Больше Всего",
+  "storeAnalyticsSubtitle": "Анализ расходов по магазинам",
+  "averageLabel": "Среднее",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

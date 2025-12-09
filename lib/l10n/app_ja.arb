@@ -112,6 +112,11 @@
   "deleteConfirmTitle": "削除の確認",
   "deleteMultipleConfirmMessage": "削除しますか",
   "itemsDeleted": "アイテムが削除されました！",
+  "storeLabel": "店舗（任意）",
+  "storeHint": "例：マーケットX、薬局Y",
+  "storeAnalyticsTitle": "最も支出した場所",
+  "storeAnalyticsSubtitle": "店舗別支出分析",
+  "averageLabel": "平均",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

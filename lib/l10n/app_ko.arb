@@ -112,6 +112,11 @@
   "deleteConfirmTitle": "삭제 확인",
   "deleteMultipleConfirmMessage": "삭제하시겠습니까",
   "itemsDeleted": "항목이 삭제되었습니다!",
+  "storeLabel": "매장 (선택 사항)",
+  "storeHint": "예: 마켓 X, 약국 Y",
+  "storeAnalyticsTitle": "가장 많이 지출한 곳",
+  "storeAnalyticsSubtitle": "매장별 지출 분석",
+  "averageLabel": "평균",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

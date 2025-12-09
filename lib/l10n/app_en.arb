@@ -112,6 +112,11 @@
   "deleteConfirmTitle": "Confirm deletion",
   "deleteMultipleConfirmMessage": "Do you want to delete",
   "itemsDeleted": "Items deleted!",
+  "storeLabel": "Store (optional)",
+  "storeHint": "E.g.: Market X, Pharmacy Y",
+  "storeAnalyticsTitle": "Where You Spent Most",
+  "storeAnalyticsSubtitle": "Spending analysis by store",
+  "averageLabel": "Average",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

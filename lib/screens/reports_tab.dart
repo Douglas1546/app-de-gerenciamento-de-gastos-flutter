@@ -940,6 +940,7 @@ class _ReportsTabState extends State<ReportsTab> {
               if (!_isDaily)
                 Builder(
                   builder: (context) {
+                    final l = AppLocalizations.of(context);
                     final storeReport = provider.getStoreReport(
                       _selectedYear,
                       _selectedMonth,
@@ -980,9 +981,9 @@ class _ReportsTabState extends State<ReportsTab> {
                               size: 20,
                             ),
                           ),
-                          title: const Text(
-                            'Onde Você Gastou Mais',
-                            style: TextStyle(
+                          title: Text(
+                            l?.storeAnalyticsTitle ?? 'Onde Você Gastou Mais',
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -990,7 +991,8 @@ class _ReportsTabState extends State<ReportsTab> {
                           subtitle: Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
-                              'Análise de gastos por loja',
+                              l?.storeAnalyticsSubtitle ??
+                                  'Análise de gastos por loja',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[600],
@@ -1052,7 +1054,7 @@ class _ReportsTabState extends State<ReportsTab> {
                                     subtitle: Padding(
                                       padding: const EdgeInsets.only(top: 4),
                                       child: Text(
-                                        '${currency.format(totalSpent)} • $itemCount ${itemCount == 1 ? 'item' : 'itens'} • Média: ${currency.format(avgSpending)}',
+                                        '${currency.format(totalSpent)} • $itemCount ${itemCount == 1 ? (l?.itemSingular ?? 'item') : (l?.itemPlural ?? 'itens')} • ${l?.averageLabel ?? 'Média'}: ${currency.format(avgSpending)}',
                                         style: TextStyle(
                                           color: Colors.grey[700],
                                           fontSize: 13,

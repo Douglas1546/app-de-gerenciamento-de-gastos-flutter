@@ -111,7 +111,12 @@
   "selected": "ausgewählt",
   "deleteConfirmTitle": "Löschung bestätigen",
   "deleteMultipleConfirmMessage": "Möchten Sie löschen",
-  "itemsDeleted": "Elemente gelöscht!",
+  "itemsDeleted": "Artikel gelöscht!",
+  "storeLabel": "Geschäft (optional)",
+  "storeHint": "Z.B.: Markt X, Apotheke Y",
+  "storeAnalyticsTitle": "Wo Sie Am Meisten Ausgegeben Haben",
+  "storeAnalyticsSubtitle": "Ausgabenanalyse nach Geschäft",
+  "averageLabel": "Durchschnitt",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

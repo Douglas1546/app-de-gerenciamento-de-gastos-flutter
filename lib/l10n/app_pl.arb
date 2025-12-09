@@ -112,6 +112,11 @@
   "deleteConfirmTitle": "Potwierdź usunięcie",
   "deleteMultipleConfirmMessage": "Czy chcesz usunąć",
   "itemsDeleted": "Elementy usunięte!",
+  "storeLabel": "Sklep (opcjonalnie)",
+  "storeHint": "Np.: Market X, Apteka Y",
+  "storeAnalyticsTitle": "Gdzie Wydano Najwięcej",
+  "storeAnalyticsSubtitle": "Analiza wydatków według sklepu",
+  "averageLabel": "Średnia",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

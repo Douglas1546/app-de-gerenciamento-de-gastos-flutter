@@ -112,6 +112,11 @@
   "deleteConfirmTitle": "確認刪除",
   "deleteMultipleConfirmMessage": "您要刪除",
   "itemsDeleted": "項目已刪除！",
+  "storeLabel": "商店（可選）",
+  "storeHint": "例如：市場 X、藥店 Y",
+  "storeAnalyticsTitle": "您花費最多的地方",
+  "storeAnalyticsSubtitle": "按商店分析支出",
+  "averageLabel": "平均",
   "@backupSavedAt": {
     "placeholders": {
       "path": {
