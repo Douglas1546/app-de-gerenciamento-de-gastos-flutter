@@ -397,9 +397,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      (AppLocalizations.of(
-                            context,
-                          )?.backupSavedAt(savedPath ?? '') ??
+                      (AppLocalizations.of(context)?.backupSavedAt(savedPath) ??
                           'Backup salvo em:\n$savedPath'),
                     ),
                     backgroundColor: const Color(0xFF2E7D32),

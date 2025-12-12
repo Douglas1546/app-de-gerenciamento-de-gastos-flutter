@@ -33,13 +33,6 @@ class _ToBuyTabState extends State<ToBuyTab>
     );
   }
 
-  void _closeMenu() {
-    setState(() {
-      _isFabExpanded = false;
-    });
-    _menuAnimationController.reverse();
-  }
-
   @override
   void dispose() {
     _menuAnimationController.dispose();
