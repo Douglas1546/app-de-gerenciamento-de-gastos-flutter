@@ -18,6 +18,7 @@
   "language": "言語",
   "languageSubtitle": "アプリの言語を選択",
   "languagePortuguese": "ポルトガル語（ブラジル）",
+  "languagePortuguesePortugal": "ポルトガル語（ポルトガル）",
   "languageEnglish": "英語",
   "languageSpanish": "スペイン語",
   "languageFrench": "フランス語",
@@ -127,7 +128,19 @@
   "budgetExceeded": "予算超過",
   "totalLimitsLabel": "予算合計:",
   "limitsExceedSalaryWarning": "予算が給与を超えています！",
-  "limitsWithinSalary": "給与内の予算",
+  "limitsWithinSalary": "給与内の制限",
+  "addFromFavorites": "お気に入りから追加",
+  "favorites": "お気に入り",
+  "mostPurchased": "最も購入された",
+  "noFavorites": "まだお気に入りがありません",
+  "noFavoritesHint": "クイックアクセスのために製品をお気に入りとしてマーク",
+  "noMostPurchased": "まだ履歴がありません",
+  "timesSingular": "回",
+  "timesPlural": "回",
+  "addToFavorites": "お気に入りに追加",
+  "removeFromFavorites": "お気に入りから削除",
+  "deleteSelection": "複数選択",
+  "importFromPreviousMonth": "前月からインポート",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

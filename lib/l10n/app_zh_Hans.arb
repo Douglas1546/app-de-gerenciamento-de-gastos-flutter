@@ -18,6 +18,7 @@
   "language": "语言",
   "languageSubtitle": "选择应用语言",
   "languagePortuguese": "葡萄牙语（巴西）",
+  "languagePortuguesePortugal": "葡萄牙语（葡萄牙）",
   "languageEnglish": "英语",
   "languageSpanish": "西班牙语",
   "languageFrench": "法语",
@@ -127,7 +128,19 @@
   "budgetExceeded": "超出限额",
   "totalLimitsLabel": "总限额:",
   "limitsExceedSalaryWarning": "限额超过工资！",
-  "limitsWithinSalary": "在工资范围内",
+  "limitsWithinSalary": "工资内的限制",
+  "addFromFavorites": "从收藏中添加",
+  "favorites": "收藏",
+  "mostPurchased": "最常购买",
+  "noFavorites": "尚无收藏",
+  "noFavoritesHint": "将产品标记为收藏以快速访问",
+  "noMostPurchased": "尚无历史记录",
+  "timesSingular": "次",
+  "timesPlural": "次",
+  "addToFavorites": "添加到收藏",
+  "removeFromFavorites": "从收藏中移除",
+  "deleteSelection": "多选",
+  "importFromPreviousMonth": "从上月导入",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

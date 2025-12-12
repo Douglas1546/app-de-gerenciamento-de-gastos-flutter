@@ -18,6 +18,7 @@
   "language": "언어",
   "languageSubtitle": "앱 언어 선택",
   "languagePortuguese": "포르투갈어(브라질)",
+  "languagePortuguesePortugal": "포르투갈어(포르투갈)",
   "languageEnglish": "영어",
   "languageSpanish": "스페인어",
   "languageFrench": "프랑스어",
@@ -128,6 +129,18 @@
   "totalLimitsLabel": "총 한도:",
   "limitsExceedSalaryWarning": "한도가 급여를 초과합니다!",
   "limitsWithinSalary": "급여 내 한도",
+  "addFromFavorites": "즐겨찾기에서 추가",
+  "favorites": "즐겨찾기",
+  "mostPurchased": "가장 많이 구매한 항목",
+  "noFavorites": "아직 즐겨찾기가 없습니다",
+  "noFavoritesHint": "빠른 액세스를 위해 제품을 즐겨찾기로 표시하세요",
+  "noMostPurchased": "아직 기록이 없습니다",
+  "timesSingular": "번",
+  "timesPlural": "번",
+  "addToFavorites": "즐겨찾기에 추가",
+  "removeFromFavorites": "즐겨찾기에서 제거",
+  "deleteSelection": "다중 선택",
+  "importFromPreviousMonth": "이전 달에서 가져오기",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

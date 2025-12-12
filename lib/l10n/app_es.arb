@@ -18,6 +18,7 @@
   "language": "Idioma",
   "languageSubtitle": "Elige el idioma de la app",
   "languagePortuguese": "Portugués (Brasil)",
+  "languagePortuguesePortugal": "Portugués (Portugal)",
   "languageEnglish": "Inglés",
   "languageSpanish": "Español",
   "languageFrench": "Francés",
@@ -128,6 +129,18 @@
   "totalLimitsLabel": "Total de Límites:",
   "limitsExceedSalaryWarning": "¡Los límites exceden el salario!",
   "limitsWithinSalary": "Límites dentro del salario",
+  "addFromFavorites": "Agregar desde Favoritos",
+  "favorites": "Favoritos",
+  "mostPurchased": "Más Comprados",
+  "noFavorites": "Aún no hay favoritos",
+  "noFavoritesHint": "Marca productos como favoritos para acceso rápido",
+  "noMostPurchased": "Aún no hay historial",
+  "timesSingular": "vez",
+  "timesPlural": "veces",
+  "addToFavorites": "Agregar a favoritos",
+  "removeFromFavorites": "Quitar de favoritos",
+  "deleteSelection": "Selección múltiple",
+  "importFromPreviousMonth": "Importar del mes anterior",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

@@ -18,6 +18,7 @@
   "language": "Язык",
   "languageSubtitle": "Выберите язык приложения",
   "languagePortuguese": "Португальский (Бразилия)",
+  "languagePortuguesePortugal": "Португальский (Португалия)",
   "languageEnglish": "Английский",
   "languageSpanish": "Испанский",
   "languageFrench": "Французский",
@@ -128,6 +129,18 @@
   "totalLimitsLabel": "Общие Лимиты:",
   "limitsExceedSalaryWarning": "Лимиты превышают зарплату!",
   "limitsWithinSalary": "Лимиты в пределах зарплаты",
+  "addFromFavorites": "Добавить из Избранного",
+  "favorites": "Избранное",
+  "mostPurchased": "Чаще всего покупаемые",
+  "noFavorites": "Пока нет избранного",
+  "noFavoritesHint": "Отметьте товары как избранные для быстрого доступа",
+  "noMostPurchased": "Пока нет истории",
+  "timesSingular": "раз",
+  "timesPlural": "раз",
+  "addToFavorites": "Добавить в избранное",
+  "removeFromFavorites": "Удалить из избранного",
+  "deleteSelection": "Множественный выбор",
+  "importFromPreviousMonth": "Импортировать из предыдущего месяца",
   "@backupSavedAt": {
     "placeholders": {
       "path": {
