@@ -117,6 +117,17 @@
   "storeAnalyticsTitle": "Где Вы Потратили Больше Всего",
   "storeAnalyticsSubtitle": "Анализ расходов по магазинам",
   "averageLabel": "Среднее",
+  "categoryLimitsTitle": "Лимиты по Категориям",
+  "categoryLimitsButton": "Установить Лимиты",
+  "categoryLimitHelper": "Оставьте пустым для отсутствия лимита",
+  "categoryLimitsSaved": "Лимиты сохранены!",
+  "budgetStatus": "Бюджет",
+  "budgetOk": "В пределах лимита",
+  "budgetWarning": "Предупреждение",
+  "budgetExceeded": "Лимит превышен",
+  "totalLimitsLabel": "Общие Лимиты:",
+  "limitsExceedSalaryWarning": "Лимиты превышают зарплату!",
+  "limitsWithinSalary": "Лимиты в пределах зарплаты",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

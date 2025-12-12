@@ -117,6 +117,17 @@
   "storeAnalyticsTitle": "您花费最多的地方",
   "storeAnalyticsSubtitle": "按商店分析支出",
   "averageLabel": "平均",
+  "categoryLimitsTitle": "类别限额",
+  "categoryLimitsButton": "设置限额",
+  "categoryLimitHelper": "留空表示无限制",
+  "categoryLimitsSaved": "限额已保存！",
+  "budgetStatus": "预算",
+  "budgetOk": "在限额内",
+  "budgetWarning": "警告",
+  "budgetExceeded": "超出限额",
+  "totalLimitsLabel": "总限额:",
+  "limitsExceedSalaryWarning": "限额超过工资！",
+  "limitsWithinSalary": "在工资范围内",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

@@ -117,6 +117,17 @@
   "storeAnalyticsTitle": "最も支出した場所",
   "storeAnalyticsSubtitle": "店舗別支出分析",
   "averageLabel": "平均",
+  "categoryLimitsTitle": "カテゴリー別予算",
+  "categoryLimitsButton": "予算を設定",
+  "categoryLimitHelper": "制限なしの場合は空白のまま",
+  "categoryLimitsSaved": "予算が保存されました！",
+  "budgetStatus": "予算",
+  "budgetOk": "予算内",
+  "budgetWarning": "注意",
+  "budgetExceeded": "予算超過",
+  "totalLimitsLabel": "予算合計:",
+  "limitsExceedSalaryWarning": "予算が給与を超えています！",
+  "limitsWithinSalary": "給与内の予算",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

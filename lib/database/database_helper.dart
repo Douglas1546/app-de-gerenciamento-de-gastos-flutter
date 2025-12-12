@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -51,6 +51,18 @@ class DatabaseHelper {
         UNIQUE(year, month)
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE category_limits (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        year INTEGER NOT NULL,
+        month INTEGER NOT NULL,
+        category TEXT NOT NULL,
+        limitAmount REAL NOT NULL,
+        createdAt INTEGER NOT NULL,
+        UNIQUE(year, month, category)
+      )
+    ''');
   }
 
   Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -69,6 +81,19 @@ class DatabaseHelper {
     if (oldVersion < 3) {
       await db.execute('''
         ALTER TABLE products ADD COLUMN store TEXT
+      ''');
+    }
+    if (oldVersion < 4) {
+      await db.execute('''
+        CREATE TABLE category_limits (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          year INTEGER NOT NULL,
+          month INTEGER NOT NULL,
+          category TEXT NOT NULL,
+          limitAmount REAL NOT NULL,
+          createdAt INTEGER NOT NULL,
+          UNIQUE(year, month, category)
+        )
       ''');
     }
   }
@@ -174,5 +199,56 @@ class DatabaseHelper {
       salaries[key] = row['amount'] as double;
     }
     return salaries;
+  }
+
+  // Category Limits methods
+  Future<int> setCategoryLimit(
+    int year,
+    int month,
+    String category,
+    double limitAmount,
+  ) async {
+    final db = await database;
+    return await db.insert('category_limits', {
+      'year': year,
+      'month': month,
+      'category': category,
+      'limitAmount': limitAmount,
+      'createdAt': DateTime.now().millisecondsSinceEpoch,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<double?> getCategoryLimit(int year, int month, String category) async {
+    final db = await database;
+    final result = await db.query(
+      'category_limits',
+      where: 'year = ? AND month = ? AND category = ?',
+      whereArgs: [year, month, category],
+    );
+    if (result.isEmpty) return null;
+    return result.first['limitAmount'] as double;
+  }
+
+  Future<Map<String, double>> getCategoryLimits(int year, int month) async {
+    final db = await database;
+    final result = await db.query(
+      'category_limits',
+      where: 'year = ? AND month = ?',
+      whereArgs: [year, month],
+    );
+    final Map<String, double> limits = {};
+    for (var row in result) {
+      limits[row['category'] as String] = row['limitAmount'] as double;
+    }
+    return limits;
+  }
+
+  Future<int> deleteCategoryLimit(int year, int month, String category) async {
+    final db = await database;
+    return await db.delete(
+      'category_limits',
+      where: 'year = ? AND month = ? AND category = ?',
+      whereArgs: [year, month, category],
+    );
   }
 }

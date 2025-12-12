@@ -117,6 +117,17 @@
   "storeAnalyticsTitle": "Dove Hai Speso Di Più",
   "storeAnalyticsSubtitle": "Analisi delle spese per negozio",
   "averageLabel": "Media",
+  "categoryLimitsTitle": "Limiti per Categoria",
+  "categoryLimitsButton": "Imposta Limiti",
+  "categoryLimitHelper": "Lasciare vuoto per nessun limite",
+  "categoryLimitsSaved": "Limiti salvati!",
+  "budgetStatus": "Budget",
+  "budgetOk": "Entro il limite",
+  "budgetWarning": "Attenzione",
+  "budgetExceeded": "Limite superato",
+  "totalLimitsLabel": "Totale Limiti:",
+  "limitsExceedSalaryWarning": "I limiti superano lo stipendio!",
+  "limitsWithinSalary": "Limiti entro lo stipendio",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

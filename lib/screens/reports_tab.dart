@@ -7,6 +7,7 @@ import '../providers/product_provider.dart';
 import '../models/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/salary_dialog.dart';
+import '../widgets/category_limits_dialog.dart';
 
 class ReportsTab extends StatefulWidget {
   const ReportsTab({Key? key}) : super(key: key);
@@ -634,6 +635,45 @@ class _ReportsTabState extends State<ReportsTab> {
                     },
                   ),
                 ),
+
+              // Category Limits Button
+              if (!_isDaily)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      await showDialog(
+                        context: context,
+                        builder:
+                            (context) => CategoryLimitsDialog(
+                              year: _selectedYear,
+                              month: _selectedMonth,
+                            ),
+                      );
+                      if (mounted) {
+                        setState(() {});
+                      }
+                    },
+                    icon: const Icon(Icons.pie_chart_outline),
+                    label: Text(
+                      AppLocalizations.of(context)?.categoryLimitsButton ??
+                          'Definir Limites',
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 8),
 
               // Total Spent and Salary
               if (!_isDaily)
@@ -1436,15 +1476,88 @@ class _ReportsTabState extends State<ReportsTab> {
                               fontSize: 16,
                             ),
                           ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Text(
-                              '${currency.format(totalSpent)} • $quantity ${quantity == 1 ? (AppLocalizations.of(context)?.itemSingular ?? 'item') : (AppLocalizations.of(context)?.itemPlural ?? 'itens')}',
-                              style: TextStyle(
-                                color: Colors.grey[700],
-                                fontSize: 13,
-                              ),
+                          subtitle: FutureBuilder<double?>(
+                            future: provider.getCategoryLimit(
+                              _selectedYear,
+                              _selectedMonth,
+                              category.toString().split('.').last,
                             ),
+                            builder: (context, limitSnapshot) {
+                              final limit = limitSnapshot.data;
+                              final hasLimit = limit != null && limit > 0;
+                              final percentage =
+                                  hasLimit ? (totalSpent / limit) : 0.0;
+
+                              Color progressColor;
+                              if (!hasLimit) {
+                                progressColor = Colors.grey;
+                              } else if (percentage >= 1.0) {
+                                progressColor = Colors.red;
+                              } else if (percentage >= 0.8) {
+                                progressColor = Colors.orange;
+                              } else {
+                                progressColor = Colors.green;
+                              }
+
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${currency.format(totalSpent)} • $quantity ${quantity == 1 ? (AppLocalizations.of(context)?.itemSingular ?? 'item') : (AppLocalizations.of(context)?.itemPlural ?? 'itens')}',
+                                      style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                    if (hasLimit) ...[
+                                      const SizedBox(height: 6),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                              child: LinearProgressIndicator(
+                                                value:
+                                                    percentage > 1.0
+                                                        ? 1.0
+                                                        : percentage,
+                                                backgroundColor:
+                                                    Colors.grey[300],
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(progressColor),
+                                                minHeight: 6,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            '${(percentage * 100).toStringAsFixed(0)}%',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w600,
+                                              color: progressColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        'Limite: ${currency.format(limit)}',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                           children:
                               items.map((product) {

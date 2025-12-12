@@ -117,6 +117,17 @@
   "storeAnalyticsTitle": "가장 많이 지출한 곳",
   "storeAnalyticsSubtitle": "매장별 지출 분석",
   "averageLabel": "평균",
+  "categoryLimitsTitle": "카테고리별 한도",
+  "categoryLimitsButton": "한도 설정",
+  "categoryLimitHelper": "제한 없음으로 비워두기",
+  "categoryLimitsSaved": "한도가 저장되었습니다!",
+  "budgetStatus": "예산",
+  "budgetOk": "한도 내",
+  "budgetWarning": "경고",
+  "budgetExceeded": "한도 초과",
+  "totalLimitsLabel": "총 한도:",
+  "limitsExceedSalaryWarning": "한도가 급여를 초과합니다!",
+  "limitsWithinSalary": "급여 내 한도",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

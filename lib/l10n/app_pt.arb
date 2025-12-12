@@ -117,6 +117,17 @@
   "storeAnalyticsTitle": "Onde Gastou Mais",
   "storeAnalyticsSubtitle": "Análise de gastos por loja",
   "averageLabel": "Média",
+  "categoryLimitsTitle": "Limites por Categoria",
+  "categoryLimitsButton": "Definir Limites",
+  "categoryLimitHelper": "Deixar vazio para sem limite",
+  "categoryLimitsSaved": "Limites guardados!",
+  "budgetStatus": "Orçamento",
+  "budgetOk": "Dentro do limite",
+  "budgetWarning": "Atenção",
+  "budgetExceeded": "Limite excedido",
+  "totalLimitsLabel": "Total dos Limites:",
+  "limitsExceedSalaryWarning": "Os limites excedem o salário!",
+  "limitsWithinSalary": "Limites dentro do salário",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

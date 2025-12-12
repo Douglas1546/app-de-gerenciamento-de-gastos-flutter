@@ -117,6 +117,17 @@
   "storeAnalyticsTitle": "Wo Sie Am Meisten Ausgegeben Haben",
   "storeAnalyticsSubtitle": "Ausgabenanalyse nach Geschäft",
   "averageLabel": "Durchschnitt",
+  "categoryLimitsTitle": "Kategorienlimits",
+  "categoryLimitsButton": "Limits festlegen",
+  "categoryLimitHelper": "Leer lassen für kein Limit",
+  "categoryLimitsSaved": "Limits gespeichert!",
+  "budgetStatus": "Budget",
+  "budgetOk": "Innerhalb des Limits",
+  "budgetWarning": "Warnung",
+  "budgetExceeded": "Limit überschritten",
+  "totalLimitsLabel": "Gesamtlimits:",
+  "limitsExceedSalaryWarning": "Limits überschreiten Gehalt!",
+  "limitsWithinSalary": "Limits innerhalb des Gehalts",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

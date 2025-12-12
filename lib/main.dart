@@ -400,6 +400,11 @@ class _MyHomePageState extends State<MyHomePage> {
         body: PageView(
           controller: _pageController,
           onPageChanged: (index) {
+            // Limpa o modo de seleção ao trocar de página
+            final selectionProvider = context.read<SelectionProvider>();
+            if (selectionProvider.isSelectionMode) {
+              selectionProvider.exitSelectionMode();
+            }
             setState(() {
               _currentIndex = index;
             });

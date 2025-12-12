@@ -117,6 +117,17 @@
   "storeAnalyticsTitle": "Where You Spent Most",
   "storeAnalyticsSubtitle": "Spending analysis by store",
   "averageLabel": "Average",
+  "categoryLimitsTitle": "Category Limits",
+  "categoryLimitsButton": "Set Limits",
+  "categoryLimitHelper": "Leave empty for no limit",
+  "categoryLimitsSaved": "Limits saved!",
+  "budgetStatus": "Budget",
+  "budgetOk": "Within limit",
+  "budgetWarning": "Warning",
+  "budgetExceeded": "Limit exceeded",
+  "totalLimitsLabel": "Total Limits:",
+  "limitsExceedSalaryWarning": "Limits exceed salary!",
+  "limitsWithinSalary": "Limits within salary",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

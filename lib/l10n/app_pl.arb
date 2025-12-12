@@ -117,6 +117,17 @@
   "storeAnalyticsTitle": "Gdzie Wydano Najwięcej",
   "storeAnalyticsSubtitle": "Analiza wydatków według sklepu",
   "averageLabel": "Średnia",
+  "categoryLimitsTitle": "Limity Kategorii",
+  "categoryLimitsButton": "Ustaw Limity",
+  "categoryLimitHelper": "Pozostaw puste dla braku limitu",
+  "categoryLimitsSaved": "Limity zapisane!",
+  "budgetStatus": "Budżet",
+  "budgetOk": "W limicie",
+  "budgetWarning": "Ostrzeżenie",
+  "budgetExceeded": "Limit przekroczony",
+  "totalLimitsLabel": "Całkowite Limity:",
+  "limitsExceedSalaryWarning": "Limity przekraczają wynagrodzenie!",
+  "limitsWithinSalary": "Limity w ramach wynagrodzenia",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

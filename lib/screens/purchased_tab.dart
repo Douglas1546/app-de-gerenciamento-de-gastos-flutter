@@ -18,6 +18,30 @@ class _PurchasedTabState extends State<PurchasedTab> {
   bool _isSelectionMode = false;
   final Set<int> _selectedIds = {};
 
+  @override
+  void dispose() {
+    // Limpa o modo de seleção ao sair da tela
+    if (_isSelectionMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<SelectionProvider>().exitSelectionMode();
+        }
+      });
+    }
+    super.dispose();
+  }
+
+  void _checkSelectionMode() {
+    // Verifica se o modo de seleção foi desativado externamente
+    final selectionProvider = context.read<SelectionProvider>();
+    if (!selectionProvider.isSelectionMode && _isSelectionMode) {
+      setState(() {
+        _isSelectionMode = false;
+        _selectedIds.clear();
+      });
+    }
+  }
+
   void _toggleSelectionMode() {
     setState(() {
       _isSelectionMode = !_isSelectionMode;
@@ -134,6 +158,9 @@ class _PurchasedTabState extends State<PurchasedTab> {
 
   @override
   Widget build(BuildContext context) {
+    // Verifica se o modo de seleção foi desativado externamente
+    _checkSelectionMode();
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Consumer<ProductProvider>(

@@ -410,4 +410,46 @@ class ProductProvider extends ChangeNotifier {
     }
     return stores.toList()..sort();
   }
+
+  // Category Limits methods
+  Future<void> setCategoryLimit(
+    int year,
+    int month,
+    String category,
+    double limitAmount,
+  ) async {
+    await _dbHelper.setCategoryLimit(year, month, category, limitAmount);
+    notifyListeners();
+  }
+
+  Future<double?> getCategoryLimit(int year, int month, String category) async {
+    return await _dbHelper.getCategoryLimit(year, month, category);
+  }
+
+  Future<Map<String, double>> getCategoryLimits(int year, int month) async {
+    return await _dbHelper.getCategoryLimits(year, month);
+  }
+
+  Future<void> deleteCategoryLimit(int year, int month, String category) async {
+    await _dbHelper.deleteCategoryLimit(year, month, category);
+    notifyListeners();
+  }
+
+  // Get category spending status with limit
+  Map<String, dynamic> getCategorySpendingStatus(
+    int year,
+    int month,
+    ProductCategory category,
+  ) {
+    final report = getMonthlyReport(year, month);
+    final spending = report[category]?['totalSpent'] as double? ?? 0.0;
+
+    return {
+      'category': category,
+      'spending': spending,
+      'limit': null, // Will be filled by UI with async call
+      'percentage': 0.0,
+      'status': 'ok', // ok, warning, exceeded
+    };
+  }
 }
