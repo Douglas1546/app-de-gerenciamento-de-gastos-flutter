@@ -8,6 +8,11 @@ App para gerenciar seus gastos mensais
 - flutter gen-l10n
 - flutter run
 
+
+# o ios 26.1 ta com bug, para rodar no ios use
+
+- flutter run --profile
+
 ## Mudanças recentes
 
 - Suporte a novos idiomas: Alemão (`de`), Italiano (`it`), Japonês (`ja`), Coreano (`ko`), Polonês (`pl`), Russo (`ru`), Chinês Simplificado (`zh_Hans`) e Chinês Tradicional (`zh_Hant`).
