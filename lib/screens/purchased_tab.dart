@@ -301,6 +301,12 @@ class _PurchasedTabState extends State<PurchasedTab> {
                                   _updateSelectionProvider();
                                 }
                               },
+                              onFavoriteToggle: () async {
+                                await Provider.of<ProductProvider>(
+                                  context,
+                                  listen: false,
+                                ).toggleFavorite(product.id!);
+                              },
                               onDelete: () async {
                                 await Provider.of<ProductProvider>(
                                   context,

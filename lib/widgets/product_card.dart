@@ -15,6 +15,7 @@ class ProductCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback? onSelectionToggle;
   final VoidCallback? onLongPress;
+  final VoidCallback? onFavoriteToggle;
 
   const ProductCard({
     Key? key,
@@ -29,6 +30,7 @@ class ProductCard extends StatelessWidget {
     this.isSelected = false,
     this.onSelectionToggle,
     this.onLongPress,
+    this.onFavoriteToggle,
   }) : super(key: key);
 
   Color _getCategoryColor(ProductCategory category) {
@@ -335,46 +337,65 @@ class ProductCard extends StatelessWidget {
                   ],
                 ),
               ),
-              trailing:
-                  onDelete != null
-                      ? IconButton(
-                        icon: const Icon(
-                          Icons.delete_outline,
-                          color: Colors.redAccent,
-                        ),
-                        tooltip: l?.delete ?? 'Excluir',
-                        onPressed: () async {
-                          final confirmed = await _showSmoothDialog<bool>(
-                            context,
-                            AlertDialog(
-                              title: Text(l?.confirm ?? 'Confirmar'),
-                              content: Text(
-                                l?.deleteConfirmMessage ??
-                                    'Deseja realmente excluir este produto?',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed:
-                                      () => Navigator.of(context).pop(false),
-                                  child: Text(l?.cancel ?? 'Cancelar'),
-                                ),
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.red,
-                                  ),
-                                  onPressed:
-                                      () => Navigator.of(context).pop(true),
-                                  child: Text(l?.delete ?? 'Excluir'),
-                                ),
-                              ],
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Favorite button (only for purchased products)
+                  if (onFavoriteToggle != null && product.isPurchased)
+                    IconButton(
+                      icon: Icon(
+                        product.isFavorite ? Icons.star : Icons.star_border,
+                        color: product.isFavorite ? Colors.amber : Colors.grey,
+                      ),
+                      tooltip:
+                          product.isFavorite
+                              ? (l?.removeFromFavorites ??
+                                  'Remover dos favoritos')
+                              : (l?.addToFavorites ??
+                                  'Adicionar aos favoritos'),
+                      onPressed: onFavoriteToggle,
+                    ),
+                  // Delete button
+                  if (onDelete != null)
+                    IconButton(
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.redAccent,
+                      ),
+                      tooltip: l?.delete ?? 'Excluir',
+                      onPressed: () async {
+                        final confirmed = await _showSmoothDialog<bool>(
+                          context,
+                          AlertDialog(
+                            title: Text(l?.confirm ?? 'Confirmar'),
+                            content: Text(
+                              l?.deleteConfirmMessage ??
+                                  'Deseja realmente excluir este produto?',
                             ),
-                          );
-                          if (confirmed == true && onDelete != null) {
-                            onDelete!();
-                          }
-                        },
-                      )
-                      : null,
+                            actions: [
+                              TextButton(
+                                onPressed:
+                                    () => Navigator.of(context).pop(false),
+                                child: Text(l?.cancel ?? 'Cancelar'),
+                              ),
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.red,
+                                ),
+                                onPressed:
+                                    () => Navigator.of(context).pop(true),
+                                child: Text(l?.delete ?? 'Excluir'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirmed == true && onDelete != null) {
+                          onDelete!();
+                        }
+                      },
+                    ),
+                ],
+              ),
             ),
             if (showConfirmButton)
               SizedBox(

@@ -53,6 +53,7 @@ class Product {
   final double? price;
   final String? store;
   final bool isPurchased;
+  final bool isFavorite;
   final DateTime createdAt;
   final DateTime? purchasedAt;
 
@@ -64,6 +65,7 @@ class Product {
     this.price,
     this.store,
     this.isPurchased = false,
+    this.isFavorite = false,
     required this.createdAt,
     this.purchasedAt,
   });
@@ -77,6 +79,7 @@ class Product {
       'price': price,
       'store': store,
       'isPurchased': isPurchased ? 1 : 0,
+      'isFavorite': isFavorite ? 1 : 0,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'purchasedAt': purchasedAt?.millisecondsSinceEpoch,
     };
@@ -91,6 +94,7 @@ class Product {
       price: map['price'] as double?,
       store: map['store'] as String?,
       isPurchased: map['isPurchased'] == 1,
+      isFavorite: (map['isFavorite'] as int?) == 1,
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
       purchasedAt:
           map['purchasedAt'] != null
@@ -107,6 +111,7 @@ class Product {
     double? price,
     String? store,
     bool? isPurchased,
+    bool? isFavorite,
     DateTime? createdAt,
     DateTime? purchasedAt,
   }) {
@@ -118,6 +123,7 @@ class Product {
       price: price ?? this.price,
       store: store ?? this.store,
       isPurchased: isPurchased ?? this.isPurchased,
+      isFavorite: isFavorite ?? this.isFavorite,
       createdAt: createdAt ?? this.createdAt,
       purchasedAt: purchasedAt ?? this.purchasedAt,
     );

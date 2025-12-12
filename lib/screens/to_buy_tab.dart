@@ -6,6 +6,7 @@ import '../widgets/add_product_dialog.dart';
 import '../widgets/purchase_dialog.dart';
 import '../widgets/product_card.dart';
 import '../widgets/import_previous_month_dialog.dart';
+import '../widgets/favorites_dialog.dart';
 import '../models/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -16,12 +17,32 @@ class ToBuyTab extends StatefulWidget {
   State<ToBuyTab> createState() => _ToBuyTabState();
 }
 
-class _ToBuyTabState extends State<ToBuyTab> {
+class _ToBuyTabState extends State<ToBuyTab>
+    with SingleTickerProviderStateMixin {
   bool _isSelectionMode = false;
   final Set<int> _selectedIds = {};
+  bool _isFabExpanded = false;
+  late AnimationController _menuAnimationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _menuAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+  }
+
+  void _closeMenu() {
+    setState(() {
+      _isFabExpanded = false;
+    });
+    _menuAnimationController.reverse();
+  }
 
   @override
   void dispose() {
+    _menuAnimationController.dispose();
     // Limpa o modo de seleção ao sair da tela
     if (_isSelectionMode) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -274,47 +295,215 @@ class _ToBuyTabState extends State<ToBuyTab> {
                 builder: (context, provider, child) {
                   final previousMonthProducts =
                       provider.getPreviousMonthProducts();
+                  final l = AppLocalizations.of(context);
 
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       // Delete selection button
-                      FloatingActionButton(
-                        heroTag: 'delete_selection_button',
-                        backgroundColor: Colors.red,
-                        onPressed: _toggleSelectionMode,
-                        child: const Icon(Icons.close, color: Colors.white),
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(
+                          begin: 0.0,
+                          end: _isFabExpanded ? 1.0 : 0.0,
+                        ),
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOutBack,
+                        builder: (context, value, child) {
+                          return Transform(
+                            transform:
+                                Matrix4.identity()
+                                  ..setEntry(3, 2, 0.001) // perspective
+                                  ..translate(
+                                    0.0,
+                                    (1 - value) * 100,
+                                    (1 - value) * -50,
+                                  )
+                                  ..scale(0.5 + (value * 0.5)),
+                            alignment: Alignment.center,
+                            child: Opacity(
+                              opacity: value.clamp(0.0, 1.0),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: FloatingActionButton(
+                          heroTag: 'delete_selection_button',
+                          backgroundColor: Colors.red,
+                          mini: true,
+                          onPressed: () {
+                            _toggleSelectionMode();
+                          },
+                          child: const Icon(
+                            Icons.delete_sweep,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: _isFabExpanded ? 12 : 0),
                       // Import from previous month button
                       if (previousMonthProducts.isNotEmpty)
-                        FloatingActionButton(
-                          heroTag: 'import_button',
-                          backgroundColor: const Color(0xFF2E7D32),
-                          onPressed: () async {
-                            final selectedProducts =
-                                await _showSmoothDialog<List<Product>>(
+                        TweenAnimationBuilder<double>(
+                          tween: Tween(
+                            begin: 0.0,
+                            end: _isFabExpanded ? 1.0 : 0.0,
+                          ),
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeOutBack,
+                          builder: (context, value, child) {
+                            return Transform(
+                              transform:
+                                  Matrix4.identity()
+                                    ..setEntry(3, 2, 0.001)
+                                    ..translate(
+                                      0.0,
+                                      (1 - value) * 100,
+                                      (1 - value) * -50,
+                                    )
+                                    ..scale(0.5 + (value * 0.5)),
+                              alignment: Alignment.center,
+                              child: Opacity(
+                                opacity: value.clamp(0.0, 1.0),
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: FloatingActionButton(
+                            heroTag: 'import_button',
+                            backgroundColor: const Color(0xFF2E7D32),
+                            mini: true,
+                            onPressed: () async {
+                              final selectedProducts =
+                                  await _showSmoothDialog<List<Product>>(
+                                    context,
+                                    ImportPreviousMonthDialog(
+                                      previousMonthProducts:
+                                          previousMonthProducts,
+                                    ),
+                                  );
+
+                              if (selectedProducts != null &&
+                                  selectedProducts.isNotEmpty &&
+                                  context.mounted) {
+                                await Provider.of<ProductProvider>(
                                   context,
-                                  ImportPreviousMonthDialog(
-                                    previousMonthProducts:
-                                        previousMonthProducts,
-                                  ),
+                                  listen: false,
+                                ).addProductsFromPreviousMonth(
+                                  selectedProducts,
                                 );
 
-                            if (selectedProducts != null &&
-                                selectedProducts.isNotEmpty &&
-                                context.mounted) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        '${l?.productsImported ?? 'Produtos importados'}: ${selectedProducts.length}',
+                                      ),
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor: const Color(0xFF2E7D32),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            child: const Icon(
+                              Icons.history,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      if (previousMonthProducts.isNotEmpty)
+                        SizedBox(height: _isFabExpanded ? 12 : 0),
+                      // Favorites button
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(
+                          begin: 0.0,
+                          end: _isFabExpanded ? 1.0 : 0.0,
+                        ),
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOutBack,
+                        builder: (context, value, child) {
+                          return Transform(
+                            transform:
+                                Matrix4.identity()
+                                  ..setEntry(3, 2, 0.001)
+                                  ..translate(
+                                    0.0,
+                                    (1 - value) * 100,
+                                    (1 - value) * -50,
+                                  )
+                                  ..scale(0.5 + (value * 0.5)),
+                            alignment: Alignment.center,
+                            child: Opacity(
+                              opacity: value.clamp(0.0, 1.0),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: FloatingActionButton(
+                          heroTag: 'favorites_button',
+                          backgroundColor: Colors.amber,
+                          mini: true,
+                          onPressed: () async {
+                            await _showSmoothDialog(
+                              context,
+                              const FavoritesDialog(),
+                            );
+                          },
+                          child: const Icon(
+                            Icons.star,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: _isFabExpanded ? 12 : 0),
+                      // Add product button
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(
+                          begin: 0.0,
+                          end: _isFabExpanded ? 1.0 : 0.0,
+                        ),
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOutBack,
+                        builder: (context, value, child) {
+                          return Transform(
+                            transform:
+                                Matrix4.identity()
+                                  ..setEntry(3, 2, 0.001)
+                                  ..translate(
+                                    0.0,
+                                    (1 - value) * 100,
+                                    (1 - value) * -50,
+                                  )
+                                  ..scale(0.5 + (value * 0.5)),
+                            alignment: Alignment.center,
+                            child: Opacity(
+                              opacity: value.clamp(0.0, 1.0),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: FloatingActionButton(
+                          heroTag: 'add_button',
+                          backgroundColor: const Color(0xFF2E7D32),
+                          mini: true,
+                          onPressed: () async {
+                            final product = await _showSmoothDialog<Product>(
+                              context,
+                              const AddProductDialog(),
+                            );
+
+                            if (product != null && context.mounted) {
                               await Provider.of<ProductProvider>(
                                 context,
                                 listen: false,
-                              ).addProductsFromPreviousMonth(selectedProducts);
-
+                              ).addProduct(product);
                               if (context.mounted) {
-                                final l = AppLocalizations.of(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      '${l?.productsImported ?? 'Produtos importados'}: ${selectedProducts.length}',
+                                      l?.productAdded ?? 'Produto adicionado!',
                                     ),
                                     duration: const Duration(seconds: 2),
                                     backgroundColor: const Color(0xFF2E7D32),
@@ -323,40 +512,33 @@ class _ToBuyTabState extends State<ToBuyTab> {
                               }
                             }
                           },
-                          child: const Icon(Icons.history, color: Colors.white),
+                          child: const Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
-                      if (previousMonthProducts.isNotEmpty)
-                        const SizedBox(height: 16),
-                      // Add product button
+                      ),
+                      SizedBox(height: _isFabExpanded ? 12 : 0),
+                      // Main FAB (Menu toggle)
                       FloatingActionButton(
-                        heroTag: 'add_button',
+                        heroTag: 'menu_button',
                         backgroundColor: const Color(0xFF2E7D32),
-                        onPressed: () async {
-                          final product = await _showSmoothDialog<Product>(
-                            context,
-                            const AddProductDialog(),
-                          );
-
-                          if (product != null && context.mounted) {
-                            await Provider.of<ProductProvider>(
-                              context,
-                              listen: false,
-                            ).addProduct(product);
-                            if (context.mounted) {
-                              final l = AppLocalizations.of(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    l?.productAdded ?? 'Produto adicionado!',
-                                  ),
-                                  duration: const Duration(seconds: 2),
-                                  backgroundColor: const Color(0xFF2E7D32),
-                                ),
-                              );
+                        onPressed: () {
+                          setState(() {
+                            _isFabExpanded = !_isFabExpanded;
+                            if (_isFabExpanded) {
+                              _menuAnimationController.forward();
+                            } else {
+                              _menuAnimationController.reverse();
                             }
-                          }
+                          });
                         },
-                        child: const Icon(Icons.add, color: Colors.white),
+                        child: AnimatedIcon(
+                          icon: AnimatedIcons.menu_close,
+                          progress: _menuAnimationController,
+                          color: Colors.white,
+                        ),
                       ),
                     ],
                   );

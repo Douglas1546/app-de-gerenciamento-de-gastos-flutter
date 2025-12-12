@@ -128,6 +128,18 @@
   "totalLimitsLabel": "Total dos Limites:",
   "limitsExceedSalaryWarning": "Os limites excedem o salário!",
   "limitsWithinSalary": "Limites dentro do salário",
+  "addFromFavorites": "Adicionar dos Favoritos",
+  "favorites": "Favoritos",
+  "mostPurchased": "Mais Comprados",
+  "noFavorites": "Nenhum favorito ainda",
+  "noFavoritesHint": "Marque produtos como favoritos para acesso rápido",
+  "noMostPurchased": "Nenhum histórico ainda",
+  "timesSingular": "vez",
+  "timesPlural": "vezes",
+  "addToFavorites": "Adicionar aos favoritos",
+  "removeFromFavorites": "Remover dos favoritos",
+  "deleteSelection": "Seleção múltipla",
+  "importFromPreviousMonth": "Importar do mês anterior",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 4,
+      version: 5,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -36,6 +36,7 @@ class DatabaseHelper {
         price REAL,
         store TEXT,
         isPurchased INTEGER NOT NULL,
+        isFavorite INTEGER NOT NULL DEFAULT 0,
         createdAt INTEGER NOT NULL,
         purchasedAt INTEGER
       )
@@ -94,6 +95,11 @@ class DatabaseHelper {
           createdAt INTEGER NOT NULL,
           UNIQUE(year, month, category)
         )
+      ''');
+    }
+    if (oldVersion < 5) {
+      await db.execute('''
+        ALTER TABLE products ADD COLUMN isFavorite INTEGER NOT NULL DEFAULT 0
       ''');
     }
   }

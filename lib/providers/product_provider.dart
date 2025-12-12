@@ -452,4 +452,57 @@ class ProductProvider extends ChangeNotifier {
       'status': 'ok', // ok, warning, exceeded
     };
   }
+
+  // Favorite products methods
+  Future<void> toggleFavorite(int productId) async {
+    // Busca o produto em ambas as listas
+    Product? product;
+    try {
+      product = _productsToBuy.firstWhere((p) => p.id == productId);
+    } catch (e) {
+      product = _purchasedProducts.firstWhere((p) => p.id == productId);
+    }
+
+    final updatedProduct = product.copyWith(isFavorite: !product.isFavorite);
+    await _dbHelper.updateProduct(updatedProduct);
+    await loadProducts();
+  }
+
+  List<Product> get favoriteProducts {
+    // Retorna produtos favoritos que foram comprados (histórico)
+    return _purchasedProducts.where((p) => p.isFavorite).toList();
+  }
+
+  Future<List<Map<String, dynamic>>> getMostPurchasedProducts({
+    int limit = 10,
+  }) async {
+    // Busca todos os produtos comprados do banco
+    final allProducts = await _dbHelper.getAllProducts();
+    final purchasedProducts = allProducts.where((p) => p.isPurchased).toList();
+
+    // Agrupa produtos por nome e conta quantas vezes foram comprados
+    final Map<String, Map<String, dynamic>> productCount = {};
+
+    for (var product in purchasedProducts) {
+      final key = product.name.toLowerCase();
+      if (productCount.containsKey(key)) {
+        productCount[key]!['count'] = (productCount[key]!['count'] as int) + 1;
+      } else {
+        productCount[key] = {
+          'name': product.name,
+          'category': product.category,
+          'count': 1,
+          'lastPrice': product.price,
+          'lastStore': product.store,
+        };
+      }
+    }
+
+    // Ordena por contagem e retorna os top N
+    final sorted =
+        productCount.values.toList()
+          ..sort((a, b) => (b['count'] as int).compareTo(a['count'] as int));
+
+    return sorted.take(limit).toList();
+  }
 }
