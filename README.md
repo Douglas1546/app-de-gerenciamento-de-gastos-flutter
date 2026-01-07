@@ -8,6 +8,8 @@ App para gerenciar seus gastos mensais
 - flutter gen-l10n
 - flutter run
 
+# caso os icones não sejam carregados, use:
+- flutter pub run flutter_launcher_icons 
 
 # o ios 26.1 ta com bug, para rodar no ios use
 
