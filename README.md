@@ -12,8 +12,12 @@ App para gerenciar seus gastos mensais
 - flutter pub run flutter_launcher_icons 
 
 
-# para gerar o apk use:
+# para gerar o apk para compartilhar, use:
 - flutter build apk --release
+
+# Para distrubuir na Google play store, precisa gerar um app bundle (.aab) em vez de apk, então use:
+- flutter build appbundle --release
+
 
 - O app buildado vai ta em ../shopping_list/build/app/outputs/flutter-apk/app-release.apk
 
