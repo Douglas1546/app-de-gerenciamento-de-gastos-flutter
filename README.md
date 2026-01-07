@@ -11,6 +11,12 @@ App para gerenciar seus gastos mensais
 # caso os icones não sejam carregados, use:
 - flutter pub run flutter_launcher_icons 
 
+
+# para gerar o apk use:
+- flutter build apk --release
+
+- O app buildado vai ta em ../shopping_list/build/app/outputs/flutter-apk/app-release.apk
+
 # o ios 26.1 ta com bug, para rodar no ios use
 
 - flutter run --profile
