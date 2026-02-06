@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
@@ -17,14 +18,35 @@ class PurchasedTab extends StatefulWidget {
 class _PurchasedTabState extends State<PurchasedTab> {
   bool _isSelectionMode = false;
   final Set<int> _selectedIds = {};
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      final provider = Provider.of<ProductProvider>(context, listen: false);
+      provider.setSearchQueryPurchased(_searchController.text);
+    });
+  }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel();
     // Limpa o modo de seleção ao sair da tela
     if (_isSelectionMode) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           context.read<SelectionProvider>().exitSelectionMode();
+          // Clear search query when leaving tab
+          context.read<ProductProvider>().setSearchQueryPurchased('');
         }
       });
     }
@@ -169,6 +191,42 @@ class _PurchasedTabState extends State<PurchasedTab> {
 
           return Column(
             children: [
+              // Search Bar
+              Container(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF1E1E1E)
+                    : const Color.fromARGB(137, 255, 255, 255),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)?.searchProducts ??
+                        'Pesquisar produtos',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                            },
+                          )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF2A2A2A)
+                        : Colors.grey[200],
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+              ),
+              // Filter Chips
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 color:

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -24,6 +25,8 @@ class _ToBuyTabState extends State<ToBuyTab>
   final Set<int> _selectedIds = {};
   bool _isFabExpanded = false;
   late AnimationController _menuAnimationController;
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -32,16 +35,30 @@ class _ToBuyTabState extends State<ToBuyTab>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      final provider = Provider.of<ProductProvider>(context, listen: false);
+      provider.setSearchQueryToBuy(_searchController.text);
+    });
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel();
     _menuAnimationController.dispose();
     // Limpa o modo de seleção ao sair da tela
     if (_isSelectionMode) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           context.read<SelectionProvider>().exitSelectionMode();
+          // Clear search query when leaving tab
+          context.read<ProductProvider>().setSearchQueryToBuy('');
         }
       });
     }
@@ -168,42 +185,79 @@ class _ToBuyTabState extends State<ToBuyTab>
         builder: (context, provider, child) {
           final products = provider.productsToBuy;
 
-          if (products.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 80,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    AppLocalizations.of(context)?.noProductsAdded ??
-                        'Nenhum produto adicionado',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[700],
+          return Column(
+            children: [
+              // Search Bar - always visible
+              Container(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF1E1E1E)
+                    : const Color.fromARGB(137, 255, 255, 255),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)?.searchProducts ??
+                        'Pesquisar produtos',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                            },
+                          )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF2A2A2A)
+                        : Colors.grey[200],
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    AppLocalizations.of(context)?.addProductsUsingPlus ??
-                        'Adicione produtos usando o botão +',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                  ),
-                ],
+                ),
               ),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              final product = products[index];
-              final isSelected = _selectedIds.contains(product.id);
+              // Product List or Empty State
+              Expanded(
+                child: products.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.shopping_cart_outlined,
+                              size: 80,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              AppLocalizations.of(context)?.noProductsAdded ??
+                                  'Nenhum produto adicionado',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              AppLocalizations.of(context)?.addProductsUsingPlus ??
+                                  'Adicione produtos usando o botão +',
+                              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          final product = products[index];
+                          final isSelected = _selectedIds.contains(product.id);
 
               return ProductCard(
                 product: product,
@@ -276,12 +330,15 @@ class _ToBuyTabState extends State<ToBuyTab>
                       );
                     }
                   }
-                },
-              );
-            },
-          );
-        },
-      ),
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    },
+  ),
       floatingActionButton:
           _isSelectionMode
               ? const SizedBox.shrink()

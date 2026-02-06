@@ -108,6 +108,7 @@
   "noMonthsAvailable": "購入した商品がある月がありません",
   "selectMonth": "月を選択",
   "close": "閉じる",
+  "searchProducts": "商品を検索",
   "selectAll": "すべて選択",
   "productsImported": "商品がインポートされました",
   "selectItemsToDelete": "削除するアイテムを選択",

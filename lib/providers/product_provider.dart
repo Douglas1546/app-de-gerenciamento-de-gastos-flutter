@@ -11,55 +11,84 @@ class ProductProvider extends ChangeNotifier {
   List<Product> _purchasedProducts = [];
   PurchasedFilter _currentFilter = PurchasedFilter.all;
   DateTime? _selectedDayFilter;
+  String _searchQueryToBuy = '';
+  String _searchQueryPurchased = '';
 
-  List<Product> get productsToBuy => _productsToBuy;
+  List<Product> get productsToBuy => _filteredProductsToBuy;
   List<Product> get purchasedProducts => _filteredPurchasedProducts;
   PurchasedFilter get currentFilter => _currentFilter;
   DateTime? get selectedDayFilter => _selectedDayFilter;
+  String get searchQueryToBuy => _searchQueryToBuy;
+  String get searchQueryPurchased => _searchQueryPurchased;
 
   ProductProvider() {
     loadProducts();
   }
 
+  List<Product> get _filteredProductsToBuy {
+    if (_searchQueryToBuy.isEmpty) {
+      return _productsToBuy;
+    }
+    final query = _searchQueryToBuy.toLowerCase();
+    return _productsToBuy.where((product) {
+      return product.name.toLowerCase().contains(query);
+    }).toList();
+  }
+
   List<Product> get _filteredPurchasedProducts {
     final now = DateTime.now();
+    List<Product> filtered;
 
     switch (_currentFilter) {
       case PurchasedFilter.today:
         final startOfDay = DateTime(now.year, now.month, now.day);
         final endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
-        return _purchasedProducts.where((product) {
+        filtered = _purchasedProducts.where((product) {
           if (product.purchasedAt == null) return false;
           return product.purchasedAt!.isAfter(startOfDay) &&
               product.purchasedAt!.isBefore(endOfDay);
         }).toList();
+        break;
 
       case PurchasedFilter.thisMonth:
-        return _purchasedProducts.where((product) {
+        filtered = _purchasedProducts.where((product) {
           if (product.purchasedAt == null) return false;
           return product.purchasedAt!.year == now.year &&
               product.purchasedAt!.month == now.month;
         }).toList();
+        break;
 
       case PurchasedFilter.thisYear:
-        return _purchasedProducts.where((product) {
+        filtered = _purchasedProducts.where((product) {
           if (product.purchasedAt == null) return false;
           return product.purchasedAt!.year == now.year;
         }).toList();
+        break;
 
       case PurchasedFilter.specificDay:
         final date = _selectedDayFilter ?? now;
         final startOfDay = DateTime(date.year, date.month, date.day);
         final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
-        return _purchasedProducts.where((product) {
+        filtered = _purchasedProducts.where((product) {
           if (product.purchasedAt == null) return false;
           return product.purchasedAt!.isAfter(startOfDay) &&
               product.purchasedAt!.isBefore(endOfDay);
         }).toList();
+        break;
 
       case PurchasedFilter.all:
-        return _purchasedProducts;
+        filtered = _purchasedProducts;
+        break;
     }
+
+    // Apply search filter after date filter
+    if (_searchQueryPurchased.isEmpty) {
+      return filtered;
+    }
+    final query = _searchQueryPurchased.toLowerCase();
+    return filtered.where((product) {
+      return product.name.toLowerCase().contains(query);
+    }).toList();
   }
 
   Future<void> loadProducts() async {
@@ -106,6 +135,16 @@ class ProductProvider extends ChangeNotifier {
   void setFilterDay(DateTime day) {
     _selectedDayFilter = day;
     _currentFilter = PurchasedFilter.specificDay;
+    notifyListeners();
+  }
+
+  void setSearchQueryToBuy(String query) {
+    _searchQueryToBuy = query;
+    notifyListeners();
+  }
+
+  void setSearchQueryPurchased(String query) {
+    _searchQueryPurchased = query;
     notifyListeners();
   }
 
