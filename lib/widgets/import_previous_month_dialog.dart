@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import '../models/product.dart';
 
 class ImportPreviousMonthDialog extends StatefulWidget {
-  final List<Product> previousMonthProducts;
+  final List<DateTime> availableMonths;
+  final Function(int year, int month) onMonthSelected;
 
   const ImportPreviousMonthDialog({
     Key? key,
-    required this.previousMonthProducts,
+    required this.availableMonths,
+    required this.onMonthSelected,
   }) : super(key: key);
 
   @override
@@ -16,6 +19,99 @@ class ImportPreviousMonthDialog extends StatefulWidget {
 }
 
 class _ImportPreviousMonthDialogState extends State<ImportPreviousMonthDialog> {
+  String _getMonthName(BuildContext context, DateTime date) {
+    final locale = Localizations.localeOf(context).toString();
+    final formatter = DateFormat.yMMMM(locale);
+    return formatter.format(date);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    if (widget.availableMonths.isEmpty) {
+      return AlertDialog(
+        title: Text(
+          l10n?.importPreviousMonthTitle ?? 'Importar Produtos',
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              l10n?.noMonthsAvailable ??
+                  'Nenhum mês com produtos comprados disponível',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n?.close ?? 'Fechar'),
+          ),
+        ],
+      );
+    }
+
+    return AlertDialog(
+      title: Text(l10n?.selectMonth ?? 'Selecionar Mês'),
+      content: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.5,
+          maxWidth: double.maxFinite,
+        ),
+        child: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: widget.availableMonths.length,
+            itemBuilder: (context, index) {
+              final month = widget.availableMonths[index];
+              final monthName = _getMonthName(context, month);
+
+              return ListTile(
+                leading: const Icon(
+                  Icons.calendar_month,
+                  color: Color(0xFF2E7D32),
+                ),
+                title: Text(monthName),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  widget.onMonthSelected(month.year, month.month);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n?.cancel ?? 'Cancelar'),
+        ),
+      ],
+    );
+  }
+}
+
+class ImportProductsDialog extends StatefulWidget {
+  final List<Product> products;
+  final String monthName;
+
+  const ImportProductsDialog({
+    Key? key,
+    required this.products,
+    required this.monthName,
+  }) : super(key: key);
+
+  @override
+  State<ImportProductsDialog> createState() => _ImportProductsDialogState();
+}
+
+class _ImportProductsDialogState extends State<ImportProductsDialog> {
   final Set<String> _selectedProductIds = {};
   bool _selectAll = false;
 
@@ -25,7 +121,7 @@ class _ImportPreviousMonthDialogState extends State<ImportPreviousMonthDialog> {
     // Initially select all products
     _selectAll = true;
     _selectedProductIds.addAll(
-      widget.previousMonthProducts.map((p) => p.id.toString()),
+      widget.products.map((p) => p.id.toString()),
     );
   }
 
@@ -34,7 +130,7 @@ class _ImportPreviousMonthDialogState extends State<ImportPreviousMonthDialog> {
       _selectAll = !_selectAll;
       if (_selectAll) {
         _selectedProductIds.addAll(
-          widget.previousMonthProducts.map((p) => p.id.toString()),
+          widget.products.map((p) => p.id.toString()),
         );
       } else {
         _selectedProductIds.clear();
@@ -49,7 +145,7 @@ class _ImportPreviousMonthDialogState extends State<ImportPreviousMonthDialog> {
         _selectAll = false;
       } else {
         _selectedProductIds.add(productId);
-        if (_selectedProductIds.length == widget.previousMonthProducts.length) {
+        if (_selectedProductIds.length == widget.products.length) {
           _selectAll = true;
         }
       }
@@ -86,10 +182,10 @@ class _ImportPreviousMonthDialogState extends State<ImportPreviousMonthDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    if (widget.previousMonthProducts.isEmpty) {
+    if (widget.products.isEmpty) {
       return AlertDialog(
         title: Text(
-          l10n?.importPreviousMonthTitle ?? 'Importar do Mês Anterior',
+          l10n?.importPreviousMonthTitle ?? 'Importar Produtos',
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -114,7 +210,7 @@ class _ImportPreviousMonthDialogState extends State<ImportPreviousMonthDialog> {
     }
 
     return AlertDialog(
-      title: Text(l10n?.importPreviousMonthTitle ?? 'Importar do Mês Anterior'),
+      title: Text(widget.monthName),
       content: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.5,
@@ -131,7 +227,7 @@ class _ImportPreviousMonthDialogState extends State<ImportPreviousMonthDialog> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                  '${widget.previousMonthProducts.length} ${widget.previousMonthProducts.length == 1 ? (l10n?.itemSingular ?? 'item') : (l10n?.itemPlural ?? 'itens')}',
+                  '${widget.products.length} ${widget.products.length == 1 ? (l10n?.itemSingular ?? 'item') : (l10n?.itemPlural ?? 'itens')}',
                 ),
                 value: _selectAll,
                 onChanged: (_) => _toggleSelectAll(),
@@ -141,9 +237,9 @@ class _ImportPreviousMonthDialogState extends State<ImportPreviousMonthDialog> {
               Expanded(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: widget.previousMonthProducts.length,
+                  itemCount: widget.products.length,
                   itemBuilder: (context, index) {
-                    final product = widget.previousMonthProducts[index];
+                    final product = widget.products[index];
                     final productId = product.id.toString();
                     final isSelected = _selectedProductIds.contains(productId);
 
@@ -175,7 +271,7 @@ class _ImportPreviousMonthDialogState extends State<ImportPreviousMonthDialog> {
                   ? null
                   : () {
                     final selectedProducts =
-                        widget.previousMonthProducts
+                        widget.products
                             .where(
                               (p) =>
                                   _selectedProductIds.contains(p.id.toString()),

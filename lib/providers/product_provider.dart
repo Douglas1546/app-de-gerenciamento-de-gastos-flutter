@@ -319,6 +319,35 @@ class ProductProvider extends ChangeNotifier {
     }).toList();
   }
 
+  // Get products purchased in a specific month
+  List<Product> getProductsFromMonth(int year, int month) {
+    return _purchasedProducts.where((product) {
+      if (product.purchasedAt == null) return false;
+      return product.purchasedAt!.year == year &&
+          product.purchasedAt!.month == month;
+    }).toList();
+  }
+
+  // Get all available months that have purchased products
+  List<DateTime> getAvailableMonths() {
+    final Set<String> monthKeys = {};
+    final List<DateTime> months = [];
+
+    for (var product in _purchasedProducts) {
+      if (product.purchasedAt != null) {
+        final key = '${product.purchasedAt!.year}-${product.purchasedAt!.month}';
+        if (!monthKeys.contains(key)) {
+          monthKeys.add(key);
+          months.add(DateTime(product.purchasedAt!.year, product.purchasedAt!.month));
+        }
+      }
+    }
+
+    // Sort in descending order (most recent first)
+    months.sort((a, b) => b.compareTo(a));
+    return months;
+  }
+
   // Add multiple products from previous month
   Future<void> addProductsFromPreviousMonth(List<Product> products) async {
     for (final product in products) {

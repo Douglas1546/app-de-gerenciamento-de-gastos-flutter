@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import '../providers/product_provider.dart';
 import '../providers/selection_provider.dart';
 import '../widgets/add_product_dialog.dart';
@@ -286,8 +287,7 @@ class _ToBuyTabState extends State<ToBuyTab>
               ? const SizedBox.shrink()
               : Consumer<ProductProvider>(
                 builder: (context, provider, child) {
-                  final previousMonthProducts =
-                      provider.getPreviousMonthProducts();
+                  final availableMonths = provider.getAvailableMonths();
                   final l = AppLocalizations.of(context);
 
                   return Column(
@@ -335,78 +335,103 @@ class _ToBuyTabState extends State<ToBuyTab>
                       ),
                       SizedBox(height: _isFabExpanded ? 12 : 0),
                       // Import from previous month button
-                      if (previousMonthProducts.isNotEmpty)
-                        TweenAnimationBuilder<double>(
-                          tween: Tween(
-                            begin: 0.0,
-                            end: _isFabExpanded ? 1.0 : 0.0,
-                          ),
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeOutBack,
-                          builder: (context, value, child) {
-                            return Transform(
-                              transform:
-                                  Matrix4.identity()
-                                    ..setEntry(3, 2, 0.001)
-                                    ..translate(
-                                      0.0,
-                                      (1 - value) * 100,
-                                      (1 - value) * -50,
-                                    )
-                                    ..scale(0.5 + (value * 0.5)),
-                              alignment: Alignment.center,
-                              child: Opacity(
-                                opacity: value.clamp(0.0, 1.0),
-                                child: child,
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(
+                          begin: 0.0,
+                          end: _isFabExpanded ? 1.0 : 0.0,
+                        ),
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOutBack,
+                        builder: (context, value, child) {
+                          return Transform(
+                            transform:
+                                Matrix4.identity()
+                                  ..setEntry(3, 2, 0.001)
+                                  ..translate(
+                                    0.0,
+                                    (1 - value) * 100,
+                                    (1 - value) * -50,
+                                  )
+                                  ..scale(0.5 + (value * 0.5)),
+                            alignment: Alignment.center,
+                            child: Opacity(
+                              opacity: value.clamp(0.0, 1.0),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: FloatingActionButton(
+                          heroTag: 'import_button',
+                          backgroundColor: const Color(0xFF2E7D32),
+                          mini: true,
+                          onPressed: () async {
+                            // Step 1: Show month selection dialog
+                            await _showSmoothDialog(
+                              context,
+                              ImportPreviousMonthDialog(
+                                availableMonths: availableMonths,
+                                onMonthSelected: (year, month) async {
+                                  Navigator.of(context).pop();
+                                  
+                                  if (!context.mounted) return;
+                                  
+                                  // Step 2: Get products from selected month
+                                  final products = Provider.of<ProductProvider>(
+                                    context,
+                                    listen: false,
+                                  ).getProductsFromMonth(year, month);
+                                  
+                                  // Format month name
+                                  final locale = Localizations.localeOf(context).toString();
+                                  final formatter = DateFormat.yMMMM(locale);
+                                  final monthName = formatter.format(DateTime(year, month));
+                                  
+                                  if (!context.mounted) return;
+                                  
+                                  // Step 3: Show product selection dialog
+                                  final selectedProducts =
+                                      await _showSmoothDialog<List<Product>>(
+                                        context,
+                                        ImportProductsDialog(
+                                          products: products,
+                                          monthName: monthName,
+                                        ),
+                                      );
+                                  
+                                  if (selectedProducts != null &&
+                                      selectedProducts.isNotEmpty &&
+                                      context.mounted) {
+                                    await Provider.of<ProductProvider>(
+                                      context,
+                                      listen: false,
+                                    ).addProductsFromPreviousMonth(
+                                      selectedProducts,
+                                    );
+                                    
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            '${l?.productsImported ?? 'Produtos importados'}: ${selectedProducts.length}',
+                                          ),
+                                          duration: const Duration(seconds: 2),
+                                          backgroundColor: const Color(0xFF2E7D32),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
                               ),
                             );
                           },
-                          child: FloatingActionButton(
-                            heroTag: 'import_button',
-                            backgroundColor: const Color(0xFF2E7D32),
-                            mini: true,
-                            onPressed: () async {
-                              final selectedProducts =
-                                  await _showSmoothDialog<List<Product>>(
-                                    context,
-                                    ImportPreviousMonthDialog(
-                                      previousMonthProducts:
-                                          previousMonthProducts,
-                                    ),
-                                  );
-
-                              if (selectedProducts != null &&
-                                  selectedProducts.isNotEmpty &&
-                                  context.mounted) {
-                                await Provider.of<ProductProvider>(
-                                  context,
-                                  listen: false,
-                                ).addProductsFromPreviousMonth(
-                                  selectedProducts,
-                                );
-
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        '${l?.productsImported ?? 'Produtos importados'}: ${selectedProducts.length}',
-                                      ),
-                                      duration: const Duration(seconds: 2),
-                                      backgroundColor: const Color(0xFF2E7D32),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                            child: const Icon(
-                              Icons.history,
-                              color: Colors.white,
-                              size: 20,
-                            ),
+                          child: const Icon(
+                            Icons.history,
+                            color: Colors.white,
+                            size: 20,
                           ),
                         ),
-                      if (previousMonthProducts.isNotEmpty)
-                        SizedBox(height: _isFabExpanded ? 12 : 0),
+                      ),
+                      SizedBox(height: _isFabExpanded ? 12 : 0),
                       // Favorites button
                       TweenAnimationBuilder<double>(
                         tween: Tween(
