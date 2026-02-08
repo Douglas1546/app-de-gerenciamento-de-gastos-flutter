@@ -41,8 +41,7 @@ class MyApp extends StatelessWidget {
       child: Builder(
         builder:
             (context) => MaterialApp(
-              title:
-                  AppLocalizations.of(context)?.appTitle ?? 'MeuGasto',
+              title: AppLocalizations.of(context)?.appTitle ?? 'MeuGasto',
               debugShowCheckedModeBanner: false,
               supportedLocales: AppLocalizations.supportedLocales,
               locale: context.watch<ThemeProvider>().locale,
@@ -328,6 +327,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          centerTitle: true,
           backgroundColor:
               isSelectionMode
                   ? const Color(0xFF2E7D32)
@@ -342,7 +342,7 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text(
             isSelectionMode
                 ? '${selectionProvider.selectedCount} ${AppLocalizations.of(context)?.selected ?? 'selecionados'}'
-                : AppLocalizations.of(context)?.expensesTitle ?? 'DESPESAS',
+                : AppLocalizations.of(context)?.expensesTitle ?? 'MeuGasto',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color:
