@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
 import '../providers/selection_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/product_card.dart';
 import '../models/product.dart';
 import '../widgets/add_product_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../widgets/support_card.dart';
 
 class PurchasedTab extends StatefulWidget {
   const PurchasedTab({Key? key}) : super(key: key);
@@ -335,9 +337,36 @@ class _PurchasedTabState extends State<PurchasedTab> {
                           ),
                         )
                         : ListView.builder(
-                          padding: const EdgeInsets.only(top: 8, bottom: 16),
-                          itemCount: products.length,
+                          padding: const EdgeInsets.only(top: 8, bottom: 100),
+                          itemCount: products.length +
+                              (products.isNotEmpty &&
+                                      context
+                                          .watch<ThemeProvider>()
+                                          .showSupportCard
+                                  ? 1
+                                  : 0),
                           itemBuilder: (context, index) {
+                            final showSupportCard =
+                                context.watch<ThemeProvider>().showSupportCard;
+                            // Adjust index if support card is hidden
+                            if (!showSupportCard && index == products.length) {
+                              return const SizedBox.shrink();
+                            }
+
+                            if (index == products.length) {
+                              return Column(
+                                children: [
+                                  SupportCard(
+                                    onClose: () {
+                                      context
+                                          .read<ThemeProvider>()
+                                          .setShowSupportCard(false);
+                                    },
+                                  ),
+                                  const SizedBox(height: 80),
+                                ],
+                              );
+                            }
                             final product = products[index];
                             final isSelected = _selectedIds.contains(
                               product.id,

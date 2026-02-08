@@ -5,10 +5,13 @@ import 'dart:ui' show Locale;
 class ThemeProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light;
   String? _localeCode;
+  bool _showSupportCard = true;
 
   ThemeMode get themeMode => _themeMode;
   bool get isDark => _themeMode == ThemeMode.dark;
   String? get localeCode => _localeCode;
+  bool get showSupportCard => _showSupportCard;
+
   Locale? get locale {
     if (_localeCode == null || _localeCode!.isEmpty) return null;
     final code = _localeCode!;
@@ -42,12 +45,16 @@ class ThemeProvider extends ChangeNotifier {
     _persist();
   }
 
+  void setShowSupportCard(bool value) {
+    _showSupportCard = value;
+    notifyListeners();
+  }
+
   Future<void> loadPersistedTheme() async {
     final prefs = await SharedPreferences.getInstance();
     final stored = prefs.getBool('isDark');
     if (stored != null) {
       _themeMode = stored ? ThemeMode.dark : ThemeMode.light;
-      notifyListeners();
     }
     _localeCode = prefs.getString('localeCode');
     notifyListeners();

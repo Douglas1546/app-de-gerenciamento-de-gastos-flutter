@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/product_provider.dart';
 import '../providers/selection_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/add_product_dialog.dart';
 import '../widgets/purchase_dialog.dart';
 import '../widgets/product_card.dart';
@@ -11,6 +12,7 @@ import '../widgets/import_previous_month_dialog.dart';
 import '../widgets/favorites_dialog.dart';
 import '../models/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../widgets/support_card.dart';
 
 class ToBuyTab extends StatefulWidget {
   const ToBuyTab({Key? key}) : super(key: key);
@@ -254,86 +256,119 @@ class _ToBuyTabState extends State<ToBuyTab>
                         ),
                       )
                     : ListView.builder(
-                        itemCount: products.length,
+                        padding: const EdgeInsets.only(bottom: 100),
+                        itemCount: products.length +
+                            (products.isNotEmpty &&
+                                    context
+                                        .watch<ThemeProvider>()
+                                        .showSupportCard
+                                ? 1
+                                : 0),
                         itemBuilder: (context, index) {
+                          final showSupportCard =
+                              context.watch<ThemeProvider>().showSupportCard;
+                          // Adjust index if support card is hidden
+                          if (!showSupportCard && index == products.length) {
+                            return const SizedBox.shrink();
+                          }
+
+                          if (index == products.length) {
+                            return Column(
+                              children: [
+                                SupportCard(
+                                  onClose: () {
+                                    context
+                                        .read<ThemeProvider>()
+                                        .setShowSupportCard(false);
+                                  },
+                                ),
+                                const SizedBox(height: 80),
+                              ],
+                            );
+                          }
                           final product = products[index];
                           final isSelected = _selectedIds.contains(product.id);
 
-              return ProductCard(
-                product: product,
-                showCheckbox: _isSelectionMode,
-                showConfirmButton: !_isSelectionMode,
-                isSelectionMode: _isSelectionMode,
-                isSelected: isSelected,
-                onSelectionToggle: () => _toggleSelection(product.id!),
-                onLongPress: () {
-                  if (!_isSelectionMode) {
-                    setState(() {
-                      _isSelectionMode = true;
-                      _selectedIds.add(product.id!);
-                    });
-                    _updateSelectionProvider();
-                  }
-                },
-                onCheckboxChanged: () async {
-                  final result = await _showSmoothDialog<Map<String, dynamic>>(
-                    context,
-                    PurchaseDialog(product: product),
-                  );
+                          return ProductCard(
+                            product: product,
+                            showCheckbox: _isSelectionMode,
+                            showConfirmButton: !_isSelectionMode,
+                            isSelectionMode: _isSelectionMode,
+                            isSelected: isSelected,
+                            onSelectionToggle: () => _toggleSelection(product.id!),
+                            onLongPress: () {
+                              if (!_isSelectionMode) {
+                                setState(() {
+                                  _isSelectionMode = true;
+                                  _selectedIds.add(product.id!);
+                                });
+                                _updateSelectionProvider();
+                              }
+                            },
+                            onCheckboxChanged: () async {
+                              final result =
+                                  await _showSmoothDialog<Map<String, dynamic>>(
+                                    context,
+                                    PurchaseDialog(product: product),
+                                  );
 
-                  if (result != null && context.mounted) {
-                    final unitPrice = result['price'] as double;
-                    final store = result['store'] as String?;
-                    final totalPrice = unitPrice * product.quantity;
-                    await Provider.of<ProductProvider>(
-                      context,
-                      listen: false,
-                    ).purchaseProduct(product, totalPrice, store);
-                  }
-                },
-                onDelete: () async {
-                  await Provider.of<ProductProvider>(
-                    context,
-                    listen: false,
-                  ).deleteProduct(product.id!);
-                  if (context.mounted) {
-                    final l = AppLocalizations.of(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l?.productRemoved ?? 'Produto removido!'),
-                        duration: const Duration(seconds: 2),
+                              if (result != null && context.mounted) {
+                                final unitPrice = result['price'] as double;
+                                final store = result['store'] as String?;
+                                final totalPrice = unitPrice * product.quantity;
+                                await Provider.of<ProductProvider>(
+                                  context,
+                                  listen: false,
+                                ).purchaseProduct(product, totalPrice, store);
+                              }
+                            },
+                            onDelete: () async {
+                              await Provider.of<ProductProvider>(
+                                context,
+                                listen: false,
+                              ).deleteProduct(product.id!);
+                              if (context.mounted) {
+                                final l = AppLocalizations.of(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      l?.productRemoved ?? 'Produto removido!',
+                                    ),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            },
+                            onTap: () async {
+                              final updatedProduct =
+                                  await _showSmoothDialog<Product>(
+                                    context,
+                                    AddProductDialog(product: product),
+                                  );
+
+                              if (updatedProduct != null && context.mounted) {
+                                await Provider.of<ProductProvider>(
+                                  context,
+                                  listen: false,
+                                ).updateProduct(updatedProduct);
+                                if (context.mounted) {
+                                  final l = AppLocalizations.of(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        l?.productUpdated ??
+                                            'Produto atualizado!',
+                                      ),
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor: const Color(0xFF2E7D32),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          );
+                        },
                       ),
-                    );
-                  }
-                },
-                onTap: () async {
-                  final updatedProduct = await _showSmoothDialog<Product>(
-                    context,
-                    AddProductDialog(product: product),
-                  );
-
-                  if (updatedProduct != null && context.mounted) {
-                    await Provider.of<ProductProvider>(
-                      context,
-                      listen: false,
-                    ).updateProduct(updatedProduct);
-                    if (context.mounted) {
-                      final l = AppLocalizations.of(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            l?.productUpdated ?? 'Produto atualizado!',
-                          ),
-                          duration: const Duration(seconds: 2),
-                          backgroundColor: const Color(0xFF2E7D32),
-                        ),
-                      );
-                    }
-                  }
-                  },
-                );
-              },
-            ),
           ),
         ],
       );

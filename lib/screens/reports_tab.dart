@@ -8,6 +8,7 @@ import '../models/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/salary_dialog.dart';
 import '../widgets/category_limits_dialog.dart';
+import '../widgets/support_card.dart';
 
 class ReportsTab extends StatefulWidget {
   const ReportsTab({Key? key}) : super(key: key);
@@ -1618,6 +1619,9 @@ class _ReportsTabState extends State<ReportsTab> {
                     );
                   },
                 ),
+                const SizedBox(height: 16),
+                const SupportCard(),
+                const SizedBox(height: 80),
               ],
             ],
           ),
