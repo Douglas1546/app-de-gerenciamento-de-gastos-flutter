@@ -144,6 +144,9 @@
   "removeFromFavorites": "Usuń z ulubionych",
   "deleteSelection": "Wielokrotny wybór",
   "importFromPreviousMonth": "Importuj z poprzedniego miesiąca",
+  "supportSectionTitle": "Podoba Ci się nasz projekt?",
+  "supportMessage": "Jeśli pomaga Ci w codziennym życiu i chcesz wesprzeć projekt, będziemy bardzo wdzięczni. Wsparcie jest w 100% dobrowolne i nie odblokowuje dodatkowych korzyści. To tylko sposób na powiedzenie „dziękuję”.",
+  "supportButton": "Wesprzyj projekt",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

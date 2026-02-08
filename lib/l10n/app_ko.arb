@@ -144,6 +144,9 @@
   "removeFromFavorites": "즐겨찾기에서 제거",
   "deleteSelection": "다중 선택",
   "importFromPreviousMonth": "이전 달에서 가져오기",
+  "supportSectionTitle": "저희 프로젝트가 마음에 드시나요?",
+  "supportMessage": "일상 생활에 도움이 되어 프로젝트를 후원하고 싶으시다면 대단히 감사하겠습니다. 후원은 100% 자발적이며 추가 혜택은 없습니다. 단지 \"고맙습니다\"라고 말하는 방법일 뿐입니다.",
+  "supportButton": "프로젝트 후원하기",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

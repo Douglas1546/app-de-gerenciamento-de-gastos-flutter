@@ -144,6 +144,9 @@
   "removeFromFavorites": "お気に入りから削除",
   "deleteSelection": "複数選択",
   "importFromPreviousMonth": "前月からインポート",
+  "supportSectionTitle": "プロジェクトを気に入っていただけましたか？",
+  "supportMessage": "日々の生活に役立ち、プロジェクトを支援したいと思っていただけるなら、大変感謝いたします。支援は100％任意であり、特典はありません。単なる「ありがとう」の気持ちです。",
+  "supportButton": "プロジェクトを支援する",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

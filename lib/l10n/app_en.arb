@@ -144,6 +144,9 @@
   "removeFromFavorites": "Remove from favorites",
   "deleteSelection": "Multiple selection",
   "importFromPreviousMonth": "Import from previous month",
+  "supportSectionTitle": "Enjoying our project?",
+  "supportMessage": "If it helps you daily and you want to support the project, we would be very grateful. Support is 100% voluntary and does not unlock perks. It's just a way to say \"thank you\"",
+  "supportButton": "Support the project",
   "@backupSavedAt": {
     "placeholders": {
       "path": {

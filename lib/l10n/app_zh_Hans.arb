@@ -144,6 +144,9 @@
   "removeFromFavorites": "从收藏中移除",
   "deleteSelection": "多选",
   "importFromPreviousMonth": "从上月导入",
+  "supportSectionTitle": "喜欢我们的项目吗？",
+  "supportMessage": "如果它对您的日常生活有帮助，并且您想支持该项目，我们将不胜感激。支持是 100% 自愿的，不会解锁额外福利。这只是表达“谢谢”的一种方式。",
+  "supportButton": "支持项目",
   "@backupSavedAt": {
     "placeholders": {
       "path": {
