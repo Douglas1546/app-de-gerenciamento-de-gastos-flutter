@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         builder:
             (context) => MaterialApp(
               title:
-                  AppLocalizations.of(context)?.appTitle ?? 'Lista de Compras',
+                  AppLocalizations.of(context)?.appTitle ?? 'MeuGasto',
               debugShowCheckedModeBanner: false,
               supportedLocales: AppLocalizations.supportedLocales,
               locale: context.watch<ThemeProvider>().locale,
